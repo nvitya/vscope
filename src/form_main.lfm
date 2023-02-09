@@ -1,0 +1,107 @@
+object frmMain: TfrmMain
+  Left = 1336
+  Height = 600
+  Top = 115
+  Width = 800
+  Caption = 'VScope'
+  ClientHeight = 576
+  ClientWidth = 800
+  Menu = mainmenu
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '2.2.4.0'
+  object tbMain: TToolBar
+    Left = 0
+    Height = 26
+    Top = 0
+    Width = 800
+    Caption = 'tbMain'
+    TabOrder = 0
+  end
+  object pnlScopeGroup: TPanel
+    Left = 0
+    Height = 410
+    Top = 26
+    Width = 562
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 410
+    ClientWidth = 562
+    TabOrder = 1
+    object sbScope: TScrollBar
+      Left = 0
+      Height = 20
+      Top = 390
+      Width = 562
+      Align = alBottom
+      PageSize = 0
+      TabOrder = 0
+    end
+    object pnlScopeView: TPanel
+      Left = 0
+      Height = 390
+      Top = 0
+      Width = 562
+      Align = alClient
+      BevelOuter = bvNone
+      Color = clGray
+      ParentColor = False
+      TabOrder = 1
+    end
+  end
+  object pnlBottom: TPanel
+    Left = 0
+    Height = 140
+    Top = 436
+    Width = 800
+    Align = alBottom
+    BevelOuter = bvLowered
+    TabOrder = 2
+  end
+  object pnlRight: TPanel
+    Left = 562
+    Height = 410
+    Top = 26
+    Width = 238
+    Align = alRight
+    BevelOuter = bvLowered
+    ClientHeight = 410
+    ClientWidth = 238
+    TabOrder = 3
+    object pnlWaves: TPanel
+      Left = 1
+      Height = 243
+      Top = 1
+      Width = 236
+      Align = alClient
+      TabOrder = 0
+    end
+    object pnlInfo: TPanel
+      Left = 1
+      Height = 165
+      Top = 244
+      Width = 236
+      Align = alBottom
+      Color = clTeal
+      ParentColor = False
+      TabOrder = 1
+    end
+  end
+  object mainmenu: TMainMenu
+    Left = 24
+    Top = 520
+    object miFile: TMenuItem
+      Caption = 'File'
+      object miOpen: TMenuItem
+        Caption = 'Open...'
+      end
+      object Separator1: TMenuItem
+        Caption = '-'
+      end
+      object miExit: TMenuItem
+        Caption = 'Exit'
+        OnClick = miExitClick
+      end
+    end
+  end
+end
