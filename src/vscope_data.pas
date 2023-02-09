@@ -13,8 +13,6 @@ type
   TFloatDynArray  = array of single;
   TDoubleDynArray = array of double;
 
-  TWaveDataFormat = (wdtF64Hex, wdtIntArray, wdtF64Array);
-
   { TWaveData }
 
   TWaveData = class
@@ -34,15 +32,15 @@ type
 
     procedure AllocateData(asamples : cardinal);
 
-    procedure SaveToJsonNode(jnode : TJsonNode; aformat : TWaveDataFormat = wdtF64Hex);
-    procedure SaveToJsonFile(afilename : string; aformat : TWaveDataFormat = wdtF64Hex);
+    procedure SaveToJsonNode(jnode : TJsonNode);
+    procedure SaveToJsonFile(afilename : string);
     function LoadFromJsonNode(jnode : TJsonNode) : boolean;
     function LoadFromJsonFile(afilename : string) : boolean;
 
     property StartTime : double read startt;
     function EndTime : double;
 
-    procedure CalcTimeRange;
+    procedure LoadFloatArray(astr : string);
 
     procedure DoOnDataUpdate; virtual;
   end;
@@ -63,7 +61,7 @@ type
 
     procedure ClearWaves;
 
-    procedure SaveToJsonFile(afilename : string; aformat : TWaveDataFormat = wdtF64Hex);
+    procedure SaveToJsonFile(afilename : string);
     procedure LoadFromJsonFile(afilename : string);
   end;
 
@@ -74,6 +72,9 @@ implementation
 
 const
   hexchar_array : array of char = ('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F');
+
+var
+  float_number_format : TFormatSettings;
 
 function BufferToHexStr(pbuf : pointer; len : cardinal) : string;
 var
@@ -166,38 +167,22 @@ begin
   SetLength(data, asamples);
 end;
 
-procedure TWaveData.SaveToJsonNode(jnode : TJsonNode; aformat : TWaveDataFormat);
+procedure TWaveData.SaveToJsonNode(jnode : TJsonNode);
 var
-  s, sv : string;
+  s : string;
   i : integer;
 begin
   jnode := jnode.AsObject;  // forces the type of object
   jnode.Add('NAME', name);
   jnode.Add('SAMPLT', samplt);
-  if wdtIntArray = aformat then
+
+  s := '';
+  for i := 0 to length(data) - 1 do
   begin
-    s := '';
-    for i := 0 to length(data) - 1 do
-    begin
-      if i > 0 then s += '|';
-      s += IntToStr(round(data[i]));
-    end;
-    jnode.Add('INTARR', s);
-  end
-  else if wdtF64Array = aformat then
-  begin
-    s := '';
-    for i := 0 to length(data) - 1 do
-    begin
-      if i > 0 then s += '|';
-      s += FloatToStr(data[i]);
-    end;
-    jnode.Add('FLOATARR', s);
-  end
-  else // wdtF64Hex
-  begin
-    jnode.Add('DATA', BufferToHexStr(@data[0], sizeof(data[0]) * length(data)));
+    if i > 0 then s += '|';
+    s += FloatToStr(data[i], float_number_format);  // uses always "." as decimal separator
   end;
+  jnode.Add('VALUES', s);
 
   jnode.Add('STARTT', startt);
   jnode.Add('DATAUNIT', dataunit);
@@ -215,11 +200,11 @@ begin
   name := jv.AsString;
   if not jnode.Find('SAMPLT', jv) then EXIT;
   samplt := jv.AsNumber;
-  if not jnode.Find('DATA', jv) then EXIT;
-  rawdatastr := jv.AsString;
 
-  SetLength(data, length(rawdatastr) shr 4); // 16 hex chars = one double precision float
-  HexStrToBuffer(rawdatastr, @data[0], sizeof(data[0]) * length(data));
+  if not jnode.Find('VALUES', jv) then EXIT;
+
+  rawdatastr := jv.AsString;
+  LoadFloatArray(rawdatastr);
 
   // optional fields
   startt := 0;
@@ -237,13 +222,13 @@ begin
   result := true;
 end;
 
-procedure TWaveData.SaveToJsonFile(afilename : string; aformat : TWaveDataFormat);
+procedure TWaveData.SaveToJsonFile(afilename : string);
 var
   jf : TJsonNode;
 begin
   jf := TJsonNode.Create();
   try
-    SaveToJsonNode(jf, aformat);
+    SaveToJsonNode(jf);
     jf.SaveToFile(afilename);
   finally
     jf.Free;
@@ -269,9 +254,49 @@ begin
   result := startt + length(data) * samplt;
 end;
 
-procedure TWaveData.CalcTimeRange;
-begin
+procedure TWaveData.LoadFloatArray(astr : string);
+var
+  si, di : integer;
+  s : string;
+  c : char;
 
+  procedure AppendToData(dstr : string);
+  var
+    v : double;
+  begin
+    if dstr <> '' then
+    begin
+      v := StrToFloatDef(dstr, 0, float_number_format);
+      if di >= length(data) then SetLength(data, length(data) * 2);
+      data[di] := v;
+      inc(di);
+    end;
+  end;
+
+begin
+  SetLength(data, 16384); // preallocate some bigger array
+  di := 0;
+
+  si := 1;
+  s := '';
+  while si <= length(astr) do
+  begin
+    c := astr[si];
+    if (c = '-') or ((c >= '0') and (c <= '9')) or (c = '.') or (c = 'e') or (c = 'E') then
+    begin
+      s := s + c;
+    end
+    else
+    begin
+      AppendToData(s);
+      s := '';
+    end;
+    inc(si);
+  end;
+
+  AppendToData(s);
+
+  SetLength(data, di);
 end;
 
 procedure TWaveData.DoOnDataUpdate;
@@ -316,7 +341,7 @@ begin
   waves.Clear;
 end;
 
-procedure TScopeData.SaveToJsonFile(afilename : string; aformat : TWaveDataFormat);
+procedure TScopeData.SaveToJsonFile(afilename : string);
 var
   jf : TJsonNode;
   w  : TWaveData;
@@ -328,7 +353,7 @@ begin
     for w in waves do
     begin
       jn := jwarr.Add();
-      w.SaveToJsonNode(jn, aformat);
+      w.SaveToJsonNode(jn);
     end;
     jf.SaveToFile(afilename);
   finally
@@ -364,6 +389,12 @@ begin
     if w <> nil then DeleteWave(w);
     jf.Free;
   end;
+end;
+
+initialization
+begin
+  float_number_format.DecimalSeparator := '.';
+  float_number_format.ThousandSeparator := chr(0);
 end;
 
 end.
