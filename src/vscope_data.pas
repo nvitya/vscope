@@ -321,7 +321,7 @@ var
   ddi : double;
 begin
   ddi := (t - startt) / samplt;
-  di := round(ddi); // TODO: make interpolation
+  di := trunc(ddi); // TODO: make interpolation
   if (di < 0) or (di >= length(data))
   then
       result := 0

@@ -70,7 +70,6 @@ type
     function GetTimeDiv : double;
     procedure SetViewStart(AValue : double);
     procedure SetViewRange(AValue : double);
-    procedure SetTimeDiv(AValue : double);
   protected
     fmargin_pixels : integer;
 
@@ -137,7 +136,9 @@ type
 
     property ViewStart : double read fviewstart write SetViewStart;
     property ViewRange : double read fviewrange write SetViewRange;
-    property TimeDiv   : double read GetTimeDiv write SetTimeDiv;
+    property TimeDiv   : double read GetTimeDiv;
+
+    procedure SetTimeDiv(AValue : double; fixtimepos : double);
   end;
 
 
@@ -223,29 +224,37 @@ end;
 procedure TWaveDisplay.ReDrawWave;
 var
   di, vi, maxdi : integer;
+  ddi : double;
   varr : array of TVertex;
   v : TVertex;
   vcnt : integer;
   t : double;
   x, dx : double;
 begin
+{$if 0}
 
-  //t := startt;
-  //if t < scope.ViewStart then
+  ddi := (t - startt) / samplt;
 
-  t := scope.ViewStart;
+  if ddi < 0 then
+  begin
 
-  x := 0;
+  end;
+
+{$else}
+
   vi := 0;
   dx := samplt / scope.TimeDiv;
 
-  di := trunc((t - startt) / samplt);
+  di := trunc((scope.ViewStart - startt) / samplt);
   if di < 0 then
   begin
-    x += -di * dx;
+    //x += -di * dx;
     di := 0;
   end;
+
   t := startt + di * samplt;
+
+  x := (t - scope.ViewStart) / scope.TimeDiv;
 
   maxdi := length(data);
   if maxdi < 0 then maxdi := 0;
@@ -254,6 +263,12 @@ begin
   vcnt := maxdi - di;
   if scope.draw_steps then vcnt *= 2;
   SetLength(varr, vcnt);
+
+  while x < 0 do
+  begin
+    inc(di);
+    x += dx;
+  end;
 
   while (di < maxdi) and (x < 10) do
   begin
@@ -277,6 +292,8 @@ begin
     inc(vi);
     x += dx;
   end;
+
+{$endif}
 
   wshp.Clear; // removes all primitives
   wshp.AddPrimitive(GL_LINE_STRIP, vi, @varr[0]);
@@ -471,13 +488,19 @@ begin
   RenderWaves;
 end;
 
-procedure TScopeDisplay.SetTimeDiv(AValue : double);
+procedure TScopeDisplay.SetTimeDiv(AValue : double; fixtimepos : double);
 var
-  fviewmid : double;
+  //fviewmid : double;
+  ftimeratio : double;
 begin
-  fviewmid := fviewstart + fviewrange / 2;
+  //fviewmid := fviewstart + fviewrange / 2;
+
+  ftimeratio := (fixtimepos - fviewstart) / fviewrange;
+
   fviewrange := AValue * 10;
-  fviewstart := fviewmid - fviewrange / 2;
+
+  fviewstart := fixtimepos - fviewrange * ftimeratio;
+  //fviewstart := fviewmid - fviewrange / 2;
 
   RenderWaves;
 end;

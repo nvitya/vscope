@@ -70,7 +70,7 @@ type
 
     vertdrag : boolean;
     vdx : integer;
-    vdt : double;
+    vdviewstart : double;
 
     procedure UpdateScrollBar;
     procedure UpdateTimeDiv;
@@ -167,7 +167,15 @@ end;
 
 procedure TfrmMain.btnTdMinusClick(Sender : TObject);
 begin
-  scope.TimeDiv := FindNextTimeDiv(scope.TimeDiv, -1);
+  scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, -1), scope.ViewStart + scope.ViewRange / 2);
+  UpdateTimeDiv;
+  UpdateScrollBar;
+  scope.DoOnPaint;
+end;
+
+procedure TfrmMain.btnTdPlusClick(Sender : TObject);
+begin
+  scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, 1), scope.ViewStart + scope.ViewRange / 2);
   UpdateTimeDiv;
   UpdateScrollBar;
   scope.DoOnPaint;
@@ -182,9 +190,16 @@ end;
 
 procedure TfrmMain.pnlScopeViewMouseWheel(Sender : TObject;
   Shift : TShiftState; WheelDelta : Integer; MousePos : TPoint; var Handled : Boolean);
+var
+  pm : integer;
 begin
-  if WheelDelta < 0 then btnTdPlus.Click
-                    else btnTdMinus.Click;
+  if WheelDelta < 0 then pm := 1
+                    else pm := -1;
+
+  scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, pm), scope.ConvertXToTime(MousePos.x));
+  UpdateTimeDiv;
+  UpdateScrollBar;
+  scope.DoOnPaint;
 end;
 
 procedure TfrmMain.pnlScopeViewMouseDown(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
@@ -193,7 +208,15 @@ begin
   begin
     vertdrag := true;
     vdx := x;
-    vdt := scope.ViewStart;
+    vdviewstart := scope.ViewStart;
+  end;
+end;
+
+procedure TfrmMain.pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
+begin
+  if mbLeft = Button then
+  begin
+    vertdrag := false;
   end;
 end;
 
@@ -202,9 +225,10 @@ var
   t : double;
   wd : TWaveDisplay;
 begin
+
   if vertdrag then
   begin
-    scope.ViewStart := vdt + 10 * scope.TimeDiv * (vdx - x) / scope.Width;
+    scope.ViewStart := vdviewstart + (scope.ConvertXToTime(vdx) - scope.ConvertXToTime(x));
     UpdateTimeDiv;
     UpdateScrollBar;
     //scope.DoOnPaint;
@@ -236,27 +260,11 @@ begin
   scope.Repaint;
 end;
 
-procedure TfrmMain.pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
-begin
-  if mbLeft = Button then
-  begin
-    vertdrag := false;
-  end;
-end;
-
 procedure TfrmMain.cbDrawStepsChange(Sender : TObject);
 begin
   scope.draw_steps := cbDrawSteps.Checked;
   scope.RenderWaves;
   scope.Repaint;
-end;
-
-procedure TfrmMain.btnTdPlusClick(Sender : TObject);
-begin
-  scope.TimeDiv := FindNextTimeDiv(scope.TimeDiv, 1);
-  UpdateTimeDiv;
-  UpdateScrollBar;
-  scope.DoOnPaint;
 end;
 
 procedure TfrmMain.UpdateScrollBar;
@@ -286,11 +294,28 @@ end;
 procedure TfrmMain.SelectWave(awidx : integer);
 var
   wd : TWaveDisplay;
+  i : integer;
 begin
   chgrid.Row := awidx + 1;
 
+  for i := 0 to scope.waves.Count - 1 do
+  begin
+    wd := scope.waves[i];
+    if i = awidx then
+    begin
+      wd.wshp.alpha := 0.8;
+      wd.wshp.parent.MoveTop(wd.wshp);
+    end
+    else
+    begin
+      wd.wshp.alpha := 0.5;
+    end;
+  end;
+
   wd := scope.waves[awidx];
   txtChInfo.Caption := wd.name;
+
+  scope.Repaint;
 end;
 
 function TfrmMain.SelectedWave : TWaveDisplay;

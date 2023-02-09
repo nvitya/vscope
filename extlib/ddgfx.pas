@@ -184,6 +184,7 @@ type
   TShape = class(TDrawable)
   public
     color : TColorGL;  // white by default
+    linewidth : TddFloat;
     primitives : array of TPrimitive;
 
     constructor Create(aparent : TDrawGroup); override;
@@ -333,6 +334,12 @@ type
     function NewPixmap(awidth, aheight : integer) : TPixmap;
     function CloneShape(aoriginal : TShape) : TClonedShape;
     function CloneGroup(aoriginal : TDrawGroup) : TClonedGroup;
+
+    procedure MoveTo(aobj : TDrawable; topos : integer);
+    procedure MoveTop(aobj : TDrawable);
+    procedure MoveBottom(aobj : TDrawable);
+
+    function FindIndex(aobj : TDrawable) : integer;
 
   end;
 
@@ -899,6 +906,7 @@ begin
   inherited Create(aparent);
 
   color := ddcolor_white;  // white is the default color
+  linewidth := 1;
 
   SetLength(primitives, 0);
 end;
@@ -958,6 +966,8 @@ begin
   // pass the matrix to the shader
   shader_fixcolor.SetMVPMatrix(rmatrix);
   shader_fixcolor.SetColor(color.r, color.g, color.b, color.a * ralpha);
+
+  glLineWidth(linewidth);
 
   for dprim in primitives do
   begin
@@ -1476,6 +1486,37 @@ end;
 function TDrawGroup.CloneGroup(aoriginal : TDrawGroup) : TClonedGroup;
 begin
   result := TClonedGroup.Create(self, aoriginal);
+end;
+
+procedure TDrawGroup.MoveTo(aobj : TDrawable; topos : integer);
+var
+  si : integer;
+begin
+  si := FindIndex(aobj);
+  if si < 0 then EXIT;
+  delete(children, si, 1);
+  insert(aobj, children, topos);
+end;
+
+procedure TDrawGroup.MoveTop(aobj : TDrawable);
+begin
+  MoveTo(aobj, length(children));
+end;
+
+procedure TDrawGroup.MoveBottom(aobj : TDrawable);
+begin
+  MoveTo(aobj, 0);
+end;
+
+function TDrawGroup.FindIndex(aobj : TDrawable) : integer;
+var
+  i : integer;
+begin
+  for i := 0 to length(children) do
+  begin
+    if children[i] = aobj then EXIT(i);
+  end;
+  result := -1;
 end;
 
 { TClonedGroup }
