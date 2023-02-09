@@ -54,6 +54,8 @@ type
     constructor Create(ascope: TScopeDisplay; aname: string; asamplt: double); reintroduce;
     destructor Destroy; override;
 
+    procedure SetColor(acolor : cardinal);
+
     procedure DoOnDataUpdate; override;
   end;
 
@@ -118,6 +120,8 @@ type
 
     function LoadWave(afilename : string) : TWaveDisplay;
 
+    procedure LoadScopeFile(afilename : string);
+
     property TimeRange : double read ftimerange;
     property MinTime : double read fmintime;
     property MaxTime : double read fmaxtime;
@@ -127,6 +131,20 @@ type
     property TimeDiv   : double read GetTimeDiv write SetTimeDiv;
   end;
 
+
+const
+  default_wave_colors : array[0..7] of cardinal = (
+  // aabbggrr
+    $FF00FFFF,
+    $FFFF8080,
+    $FF40FF40,
+    $FFFF00FF,
+
+    $FF408080,
+    $FFFF4040,
+    $FF208020,
+    $FF802080
+  );
 
 function  FindNextTimeDiv(adiv : double; adir : integer) : double;
 
@@ -181,6 +199,18 @@ begin
   inherited Destroy;
 end;
 
+procedure TWaveDisplay.SetColor(acolor : cardinal);
+begin
+  color := acolor;
+  wshp.SetColor(
+    ((color shr  0) and $FF) / 255,
+    ((color shr  8) and $FF) / 255,
+    ((color shr 16) and $FF) / 255,
+    ((color shr 24) and $FF) / 255
+  );
+  wshp.alpha := 0.5;
+end;
+
 procedure TWaveDisplay.DoOnDataUpdate;
 var
   di, vi, maxdi : integer;
@@ -189,6 +219,7 @@ var
   vcnt : integer;
   t : double;
   x, dx : double;
+  ci : integer;
 begin
 
   //t := startt;
@@ -241,8 +272,12 @@ begin
 
   wshp.Clear; // removes all primitives
   wshp.AddPrimitive(GL_LINE_STRIP, vi, @varr[0]);
-  wshp.SetColor(0.0, 1.0, 0.0);
-  wshp.alpha := 0.4;
+
+  if color = $FFFFFFFF then // if no color was set
+  begin
+    ci := (scope.waves.Count - 1) mod 8;
+    SetColor(default_wave_colors[ci]);
+  end;
 
   varr := [];
 end;
@@ -504,6 +539,35 @@ begin
   begin
     CalcTimeRange;
   end;
+end;
+
+procedure TScopeDisplay.LoadScopeFile(afilename : string);
+var
+  jf, jwlist, jw : TJsonNode;
+  i : integer;
+  wd : TWaveDisplay;
+begin
+  jf := TJsonNode.Create();
+  try
+    jf.LoadFromFile(afilename);
+
+    jwlist := jf.Find('WAVES');
+    if jwlist = nil then raise EScopeData.Create('Scope data format error: "WAVES" node not found.');
+
+    for i := 0 to jwlist.Count - 1 do
+    begin
+      jw := jwlist.Child(i);
+      wd := AddWave('???', 1/1000);
+      if not wd.LoadFromJsonNode(jw) then
+      begin
+        DeleteWave(wd);
+      end;
+    end;
+  finally
+    jf.Free;
+  end;
+
+  CalcTimeRange;
 end;
 
 end.

@@ -9,9 +9,7 @@ uses
 
 type
 
-  TByteDynArray   = array of byte;
-  TFloatDynArray  = array of single;
-  TDoubleDynArray = array of double;
+  EScopeData = class(Exception);
 
   { TWaveData }
 
@@ -25,6 +23,8 @@ type
     dataunit : string;  // data unit
     dscale   : double;  // display scale
     doffset  : double;  // display offset
+
+    color  : cardinal;
 
     constructor Create(aname: string; asamplt: double);
     destructor Destroy; override;
@@ -64,6 +64,7 @@ type
     procedure SaveToJsonFile(afilename : string);
     procedure LoadFromJsonFile(afilename : string);
   end;
+
 
 procedure HexStrToBuffer(const astr : string; pbuf : pointer; buflen : cardinal);
 function  BufferToHexStr(pbuf : pointer; len : cardinal) : string;
@@ -150,6 +151,7 @@ begin
   dataunit := '';
   dscale := 1;
   doffset := 0;
+  color := $FFFFFFFF;
 end;
 
 destructor TWaveData.Destroy;

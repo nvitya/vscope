@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ComCtrls,
-  ExtCtrls, StdCtrls, Types, math, ddgfx, dglOpenGL, vscope_data, vscope_display;
+  ExtCtrls, StdCtrls, math, ddgfx, dglOpenGL, vscope_data, vscope_display;
 
 type
 
@@ -49,8 +49,8 @@ implementation
 { TfrmMain }
 
 procedure TfrmMain.FormCreate(Sender : TObject);
-var
-  w : TWaveDisplay;
+//var
+//  w : TWaveDisplay;
 begin
   scope := TScopeDisplay.Create(self, pnlScopeView);
   scope.ViewStart := 0;
@@ -60,8 +60,7 @@ begin
   scope.draw_steps := false;
   //cbDrawSteps.Checked := scope.draw_steps;
 
-  w := scope.LoadWave('z_acc.json');
-  if w <> nil then ;  // to supress warning
+  scope.LoadScopeFile('vscope.json');
 
   UpdateScrollBar;
   UpdateTimeDiv;
