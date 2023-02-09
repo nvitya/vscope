@@ -21,8 +21,9 @@ type
     data   : array of double;
 
     dataunit : string;  // data unit
-    dscale   : double;  // display scale
-    doffset  : double;  // display offset
+
+    viewscale   : double;  // display scale
+    viewoffset  : double;  // display offset
 
     color  : cardinal;
 
@@ -43,6 +44,8 @@ type
     procedure LoadFloatArray(astr : string);
 
     procedure DoOnDataUpdate; virtual;
+
+    function GetValueAt(t : double) : double;
   end;
 
   TWaveDataList = specialize TFPGList<TWaveData>;
@@ -149,8 +152,8 @@ begin
   startt := 0;
   data := [];
   dataunit := '';
-  dscale := 1;
-  doffset := 0;
+  viewscale := 1;
+  viewoffset := 0;
   color := $FFFFFFFF;
 end;
 
@@ -188,8 +191,8 @@ begin
 
   jnode.Add('STARTT', startt);
   jnode.Add('DATAUNIT', dataunit);
-  jnode.Add('DSCALE', dscale);
-  jnode.Add('DOFFSET', doffset);
+  jnode.Add('DSCALE', viewscale);
+  jnode.Add('DOFFSET', viewoffset);
 end;
 
 function TWaveData.LoadFromJsonNode(jnode : TJsonNode) : boolean;
@@ -211,13 +214,19 @@ begin
   // optional fields
   startt := 0;
   dataunit := '';
-  dscale := 1;
-  doffset := 0;
+  viewscale := 1;
+  viewoffset := 0;
 
   if jnode.Find('STARTT', jv)   then startt   := jv.AsNumber;
   if jnode.Find('DATAUNIT', jv) then dataunit := jv.AsString;
-  if jnode.Find('DSCALE', jv)   then dscale   := jv.AsNumber;
-  if jnode.Find('DOFFSET', jv)  then doffset  := jv.AsNumber;
+
+  // deprecated:
+  if jnode.Find('DSCALE', jv)   then viewscale   := jv.AsNumber;
+  if jnode.Find('DOFFSET', jv)  then viewoffset  := jv.AsNumber;
+
+  if jnode.Find('VIEWSCALE', jv)   then viewscale   := jv.AsNumber;
+  if jnode.Find('VIEWOFFSET', jv)  then viewoffset  := jv.AsNumber;
+
 
   DoOnDataUpdate;
 
@@ -304,6 +313,20 @@ end;
 procedure TWaveData.DoOnDataUpdate;
 begin
   // nothing here
+end;
+
+function TWaveData.GetValueAt(t : double) : double;
+var
+  di : integer;
+  ddi : double;
+begin
+  ddi := (t - startt) / samplt;
+  di := round(ddi); // TODO: make interpolation
+  if (di < 0) or (di >= length(data))
+  then
+      result := 0
+  else
+      result := data[di];
 end;
 
 { TScopeData }

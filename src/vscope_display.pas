@@ -56,6 +56,8 @@ type
 
     procedure SetColor(acolor : cardinal);
 
+    procedure ReDrawWave;
+
     procedure DoOnDataUpdate; override;
   end;
 
@@ -99,6 +101,10 @@ type
     valframe  : TShape;
 
   public
+
+    timecursor : TShape;
+
+  public
     procedure DoOnResize; override;
 
     procedure RenderWaves;
@@ -122,6 +128,9 @@ type
 
     procedure LoadScopeFile(afilename : string);
 
+    function ConvertXToTime(x : integer) : double;
+    procedure SetTimeCursor(t : double);
+
     property TimeRange : double read ftimerange;
     property MinTime : double read fmintime;
     property MaxTime : double read fmaxtime;
@@ -136,11 +145,11 @@ const
   default_wave_colors : array[0..7] of cardinal = (
   // aabbggrr
     $FF00FFFF,
-    $FFFF8080,
+    $FFFC7307,
     $FF40FF40,
     $FFFF00FF,
 
-    $FF408080,
+    $FF0773FC,
     $FFFF4040,
     $FF208020,
     $FF802080
@@ -211,7 +220,7 @@ begin
   wshp.alpha := 0.5;
 end;
 
-procedure TWaveDisplay.DoOnDataUpdate;
+procedure TWaveDisplay.ReDrawWave;
 var
   di, vi, maxdi : integer;
   varr : array of TVertex;
@@ -219,7 +228,6 @@ var
   vcnt : integer;
   t : double;
   x, dx : double;
-  ci : integer;
 begin
 
   //t := startt;
@@ -250,7 +258,7 @@ begin
   while (di < maxdi) and (x < 10) do
   begin
     v[0] := x;
-    v[1] := data[di] * dscale * 0.00001; // + doffset;
+    v[1] := data[di] * viewscale * 0.00001; // + viewoffset;
 
     // clamping the Y:
     if v[1] > 5 then v[1] := 5
@@ -273,13 +281,20 @@ begin
   wshp.Clear; // removes all primitives
   wshp.AddPrimitive(GL_LINE_STRIP, vi, @varr[0]);
 
+  varr := [];
+end;
+
+procedure TWaveDisplay.DoOnDataUpdate;
+var
+  ci : integer;
+begin
+  ReDrawWave;
+
   if color = $FFFFFFFF then // if no color was set
   begin
     ci := (scope.waves.Count - 1) mod 8;
     SetColor(default_wave_colors[ci]);
   end;
-
-  varr := [];
 end;
 
 { TScopeDisplay }
@@ -429,6 +444,13 @@ begin
     end;
   end;
 
+  timecursor := grid.NewShape();
+  timecursor.AddPrimitive(GL_LINES, 2, @vline_vertices);
+  timecursor.x := 1.5;
+  timecursor.SetColor(1, 0.5, 0.5);
+  timecursor.alpha := 0.3;
+  timecursor.visible := true;
+
 end;
 
 procedure TScopeDisplay.CleanupGrid;
@@ -568,6 +590,32 @@ begin
   end;
 
   CalcTimeRange;
+end;
+
+function TScopeDisplay.ConvertXToTime(x : integer) : double;
+var
+  gx : integer;
+  gw : integer;
+begin
+  gw := Width - 2 * fmargin_pixels;
+  gx := x - fmargin_pixels;
+  result := ViewStart + 10 * TimeDiv * gx / gw;
+end;
+
+procedure TScopeDisplay.SetTimeCursor(t : double);
+var
+  gt : double;
+begin
+  gt := (t - ViewStart) / TimeDiv;
+  if (gt < 0) or (gt > 10) then
+  begin
+    timecursor.visible := false;
+  end
+  else
+  begin
+    timecursor.x := gt;
+    timecursor.visible := true;
+  end;
 end;
 
 end.
