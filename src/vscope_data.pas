@@ -5,7 +5,7 @@ unit vscope_data;
 interface
 
 uses
-  Classes, SysUtils, fgl, jsontools;
+  Classes, SysUtils, fgl, math, jsontools;
 
 type
 
@@ -46,6 +46,12 @@ type
     procedure DoOnDataUpdate; virtual;
 
     function GetValueAt(t : double) : double;
+
+    procedure CalcMinMax(fromtime, totime : double; out data_min : double; out data_max : double; out scnt : integer);
+
+    function FindNearestScale(ascale : double) : double;
+    function ScalingStr : string;
+
   end;
 
   TWaveDataList = specialize TFPGList<TWaveData>;
@@ -72,13 +78,13 @@ type
 procedure HexStrToBuffer(const astr : string; pbuf : pointer; buflen : cardinal);
 function  BufferToHexStr(pbuf : pointer; len : cardinal) : string;
 
+var
+  float_number_format : TFormatSettings;
+
 implementation
 
 const
   hexchar_array : array of char = ('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F');
-
-var
-  float_number_format : TFormatSettings;
 
 function BufferToHexStr(pbuf : pointer; len : cardinal) : string;
 var
@@ -191,8 +197,9 @@ begin
 
   jnode.Add('STARTT', startt);
   jnode.Add('DATAUNIT', dataunit);
-  jnode.Add('DSCALE', viewscale);
-  jnode.Add('DOFFSET', viewoffset);
+
+  jnode.Add('VIEWSCALE', viewscale);
+  jnode.Add('VIEWOFFSET', viewoffset);
 end;
 
 function TWaveData.LoadFromJsonNode(jnode : TJsonNode) : boolean;
@@ -327,6 +334,86 @@ begin
       result := 0
   else
       result := data[di];
+end;
+
+procedure TWaveData.CalcMinMax(fromtime, totime : double; out data_min : double; out data_max : double; out scnt : integer);
+var
+  di, dito : integer;
+  d : double;
+begin
+
+  di   := Ceil( (fromtime - startt) / samplt );
+  dito := Floor( (totime - startt) / samplt );
+
+  scnt := 0;
+  data_min := 0;
+  data_max := 0;
+
+  if di < 0 then di := 0;
+  while di <= dito do
+  begin
+    d := data[di];
+    if scnt = 0 then
+    begin
+      data_min := d;
+      data_max := d;
+    end
+    else
+    begin
+      if d < data_min then data_min := d;
+      if d > data_max then data_max := d;
+    end;
+    inc(di);
+    inc(scnt);
+  end;
+end;
+
+function TWaveData.FindNearestScale(ascale : double) : double;
+var
+  log10_scale : double;
+  log10_int_scale : double;
+  smul : double;
+begin
+  log10_scale := log10(ascale);
+  log10_int_scale := trunc(log10_scale);
+  if log10_scale < 0 then  // 0 < ascale < 1
+  begin
+    smul := power(10, log10_int_scale) / ascale;
+    if      smul > 5 then smul := 10
+    else if smul > 2 then smul := 5
+    else if smul > 1 then smul := 2
+    else                  smul := 1;
+
+    result := power(10, log10_int_scale) / smul;
+  end
+  else  // ascale >= 1
+  begin
+    smul := ascale / power(10, log10_int_scale);
+    if      smul > 5 then smul := 10
+    else if smul > 2 then smul := 5
+    else if smul > 1 then smul := 2
+    else                  smul := 1;
+
+    result := power(10, log10_int_scale) * smul;
+  end;
+end;
+
+function TWaveData.ScalingStr : string;
+var
+  invsc : double;
+  log10_scale : double;
+begin
+  invsc := 1 / viewscale;
+  log10_scale := log10(invsc);
+
+  if log10_scale >= 0 then
+  begin
+    result := format('%.0f', [invsc]);
+  end
+  else
+  begin
+    result := format('%.'+IntToStr(Ceil(-log10_scale))+'f', [invsc]);
+  end;
 end;
 
 { TScopeData }

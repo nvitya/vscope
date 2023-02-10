@@ -44,12 +44,16 @@ type
     txtCursorTime : TStaticText;
     Label4 : TLabel;
     txtCursorValue : TStaticText;
+    miSave : TMenuItem;
+    miSaveAs : TMenuItem;
+    menuWave : TMenuItem;
+    miAutoscaleAll : TMenuItem;
+    miAutoscale : TMenuItem;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
 
     procedure chgridDrawCell(Sender : TObject; aCol, aRow : Integer; aRect : TRect; aState : TGridDrawState);
-    procedure chgridClick(Sender : TObject);
     procedure btnTdPlusClick(Sender : TObject);
     procedure btnTdMinusClick(Sender : TObject);
     procedure sbScopeScroll(Sender : TObject; ScrollCode : TScrollCode;
@@ -63,10 +67,20 @@ type
     procedure pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton;
       Shift : TShiftState; X, Y : Integer);
     procedure cbDrawStepsChange(Sender : TObject);
+    procedure btnChScalePlusMinusClick(Sender : TObject);
+    procedure btnChOffsPlusMinusClick(Sender : TObject);
+    procedure miSaveClick(Sender : TObject);
+    procedure miAutoscaleClick(Sender : TObject);
+    procedure miAutoscaleAllClick(Sender : TObject);
+    procedure chgridSelection(Sender : TObject; aCol, aRow : Integer);
   private
 
   public
     scope : TScopeDisplay;
+
+    cursor_time : double;
+
+    filename : string;
 
     vertdrag : boolean;
     vdx : integer;
@@ -95,6 +109,9 @@ procedure TfrmMain.FormCreate(Sender : TObject);
 //var
 //  w : TWaveDisplay;
 begin
+
+  filename := 'vscope.json';
+
   scope := TScopeDisplay.Create(self, pnlScopeView);
   scope.ViewStart := 0;
   scope.ViewRange := 5;
@@ -103,7 +120,8 @@ begin
   scope.draw_steps := true;
   cbDrawSteps.Checked := scope.draw_steps;
 
-  scope.LoadScopeFile('vscope.json');
+  scope.LoadScopeFile(filename);
+  //scope.AutoScale;
 
   UpdateScrollBar;
   UpdateTimeDiv;
@@ -151,18 +169,18 @@ begin
   end
   else if 2 = acol then
   begin
-    s := '...'; //item.ScalingStr; //format('%.6f', [item.vscale]);
-    //s := format('%.6f', [item.vscale]);
+    s := w.ScalingStr;
+    ts.Alignment := taRightJustify;
+  end
+  else if 3 = acol then // cursor value
+  begin
+    s := FloatToStr(w.GetValueAt(cursor_time), float_number_format);
+    ts.Alignment := taRightJustify;
   end
   else s := '?';
 
   c.TextStyle := ts;
   c.TextRect(aRect, arect.Left, arect.top, s);
-end;
-
-procedure TfrmMain.chgridClick(Sender : TObject);
-begin
-  SelectWave(chgrid.row - 1);
 end;
 
 procedure TfrmMain.btnTdMinusClick(Sender : TObject);
@@ -244,6 +262,7 @@ begin
   end;
 
   t := scope.ConvertXToTime(x);
+  cursor_time := t;
   txtCursorTime.Caption := format('%.6f', [t]);
   scope.SetTimeCursor(t);
 
@@ -258,6 +277,7 @@ begin
   end;
 
   scope.Repaint;
+  chgrid.Repaint;
 end;
 
 procedure TfrmMain.cbDrawStepsChange(Sender : TObject);
@@ -265,6 +285,80 @@ begin
   scope.draw_steps := cbDrawSteps.Checked;
   scope.RenderWaves;
   scope.Repaint;
+end;
+
+procedure TfrmMain.btnChScalePlusMinusClick(Sender : TObject);
+var
+  wd : TWaveDisplay;
+  oldscale : double;
+  newscale : double;
+begin
+  wd := SelectedWave;
+  if wd = nil then EXIT;
+  oldscale := wd.viewscale;
+  newscale := oldscale;
+  while oldscale = wd.viewscale do
+  begin
+    if Sender = btnChScalePlus
+    then
+        newscale := newscale * 2
+    else
+        newscale := newscale / 2;
+
+    wd.viewscale := wd.FindNearestScale(newscale);
+  end;
+
+  wd.CorrectOffset;
+  scope.RenderWaves;
+  scope.Repaint;
+  chgrid.Refresh;
+end;
+
+procedure TfrmMain.btnChOffsPlusMinusClick(Sender : TObject);
+var
+  wd : TWaveDisplay;
+begin
+  wd := SelectedWave;
+  if wd = nil then EXIT;
+
+  if Sender = btnChOffsPlus
+  then
+      wd.viewoffset += 1
+  else
+      wd.viewoffset -= 1;
+
+  scope.RenderWaves;
+  scope.Repaint;
+  //chgrid.Refresh;
+end;
+
+procedure TfrmMain.miSaveClick(Sender : TObject);
+begin
+  scope.SaveScopeFile(filename);
+end;
+
+procedure TfrmMain.miAutoscaleClick(Sender : TObject);
+var
+  wd : TWaveDisplay;
+begin
+  wd := SelectedWave;
+  if wd = nil then EXIT;
+
+  wd.AutoScale;
+  scope.RenderWaves;
+  scope.Repaint;
+end;
+
+procedure TfrmMain.miAutoscaleAllClick(Sender : TObject);
+begin
+  scope.AutoScale;
+  scope.RenderWaves;
+  scope.Repaint;
+end;
+
+procedure TfrmMain.chgridSelection(Sender : TObject; aCol, aRow : Integer);
+begin
+  SelectWave(chgrid.row - 1);
 end;
 
 procedure TfrmMain.UpdateScrollBar;

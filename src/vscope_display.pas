@@ -5,7 +5,7 @@ unit vscope_display;
 interface
 
 uses
-  Classes, SysUtils, Controls, fgl, jsontools, dglOpenGL, ddgfx, ddgfx_font, vscope_data;
+  Classes, SysUtils, Controls, fgl, math, jsontools, dglOpenGL, ddgfx, ddgfx_font, vscope_data;
 
 const
   vscope_timedivs : array of double =
@@ -57,6 +57,9 @@ type
     procedure SetColor(acolor : cardinal);
 
     procedure ReDrawWave;
+
+    procedure AutoScale;
+    procedure CorrectOffset;
 
     procedure DoOnDataUpdate; override;
   end;
@@ -120,12 +123,15 @@ type
 
     procedure ClearWaves;
 
+    procedure AutoScale;
+
     function AddWave(aname: string; asamplt: double): TWaveDisplay;
     function DeleteWave(awave : TWaveDisplay) : boolean;
 
     function LoadWave(afilename : string) : TWaveDisplay;
 
     procedure LoadScopeFile(afilename : string);
+    procedure SaveScopeFile(afilename : string);
 
     function ConvertXToTime(x : integer) : double;
     procedure SetTimeCursor(t : double);
@@ -136,6 +142,7 @@ type
 
     property ViewStart : double read fviewstart write SetViewStart;
     property ViewRange : double read fviewrange write SetViewRange;
+    function ViewEnd   : double;
     property TimeDiv   : double read GetTimeDiv;
 
     procedure SetTimeDiv(AValue : double; fixtimepos : double);
@@ -223,38 +230,33 @@ end;
 
 procedure TWaveDisplay.ReDrawWave;
 var
-  di, vi, maxdi : integer;
-  ddi : double;
+  i : integer;
+  di,  maxdi : integer; // data index
+  //ddi : double;
+  vi  : integer; // vertex index
   varr : array of TVertex;
   v : TVertex;
   vcnt : integer;
   t : double;
   x, dx : double;
 begin
-{$if 0}
-
-  ddi := (t - startt) / samplt;
-
-  if ddi < 0 then
-  begin
-
-  end;
-
-{$else}
-
   vi := 0;
   dx := samplt / scope.TimeDiv;
 
   di := trunc((scope.ViewStart - startt) / samplt);
   if di < 0 then
   begin
-    //x += -di * dx;
     di := 0;
   end;
 
   t := startt + di * samplt;
-
   x := (t - scope.ViewStart) / scope.TimeDiv;
+  if x < 0 then
+  begin
+    i := Ceil(-x / dx);
+    di += i;
+    x += dx * i;
+  end;
 
   maxdi := length(data);
   if maxdi < 0 then maxdi := 0;
@@ -264,17 +266,11 @@ begin
   if scope.draw_steps then vcnt *= 2;
   SetLength(varr, vcnt);
 
-  while x < 0 do
-  begin
-    inc(di);
-    x += dx;
-  end;
-
   while (di < maxdi) and (x < 10) do
   begin
     v[0] := x;
-    v[1] := data[di] * viewscale * 0.00001; // + viewoffset;
 
+    v[1] := data[di] * viewscale + viewoffset;
     // clamping the Y:
     if v[1] > 5 then v[1] := 5
     else if v[1] < -5 then v[1] := -5;
@@ -293,12 +289,37 @@ begin
     x += dx;
   end;
 
-{$endif}
-
   wshp.Clear; // removes all primitives
   wshp.AddPrimitive(GL_LINE_STRIP, vi, @varr[0]);
 
   varr := [];
+end;
+
+procedure TWaveDisplay.AutoScale;
+var
+  ddiff : double;
+  data_min, data_max : double;
+  scnt : integer;
+begin
+  CalcMinMax(startt, EndTime, data_min, data_max, scnt);
+
+  ddiff := (data_max - data_min);
+  if ddiff < 0.001 then ddiff := 0.001;
+
+  viewscale := FindNearestScale(10 / ddiff);
+  viewoffset := -5 - data_min * viewscale
+end;
+
+procedure TWaveDisplay.CorrectOffset;
+var
+  ddiff : double;
+  data_min, data_max : double;
+  scnt : integer;
+begin
+  CalcMinMax(scope.ViewStart, scope.ViewEnd, data_min, data_max, scnt);
+
+  if      data_min * viewscale > 5  then viewoffset := 5 - data_max * viewscale
+  else if data_max * viewscale < -5 then viewoffset := -5 - data_min * viewscale;
 end;
 
 procedure TWaveDisplay.DoOnDataUpdate;
@@ -546,6 +567,17 @@ begin
   waves.Clear;
 end;
 
+procedure TScopeDisplay.AutoScale;
+var
+  wd : TWaveDisplay;
+begin
+  for wd in waves do
+  begin
+    wd.AutoScale;
+  end;
+  RenderWaves;
+end;
+
 function TScopeDisplay.AddWave(aname: string; asamplt: double) : TWaveDisplay;
 begin
   result := TWaveDisplay.Create(self, aname, asamplt);
@@ -615,6 +647,26 @@ begin
   CalcTimeRange;
 end;
 
+procedure TScopeDisplay.SaveScopeFile(afilename : string);
+var
+  jf : TJsonNode;
+  w  : TWaveDisplay;
+  jwarr, jn : TJSonNode;
+begin
+  jf := TJsonNode.Create();
+  try
+    jwarr := jf.Add('WAVES', nkArray);
+    for w in waves do
+    begin
+      jn := jwarr.Add();
+      w.SaveToJsonNode(jn);
+    end;
+    jf.SaveToFile(afilename);
+  finally
+    jf.Free;
+  end;
+end;
+
 function TScopeDisplay.ConvertXToTime(x : integer) : double;
 var
   gx : integer;
@@ -639,6 +691,11 @@ begin
     timecursor.x := gt;
     timecursor.visible := true;
   end;
+end;
+
+function TScopeDisplay.ViewEnd : double;
+begin
+  result := ViewStart + ViewRange;
 end;
 
 end.

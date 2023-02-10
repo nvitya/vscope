@@ -20,19 +20,19 @@ object frmMain: TfrmMain
   end
   object pnlScopeGroup: TPanel
     Left = 0
-    Height = 410
+    Height = 438
     Top = 26
-    Width = 562
+    Width = 552
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 410
-    ClientWidth = 562
+    ClientHeight = 438
+    ClientWidth = 552
     TabOrder = 1
     object sbScope: TScrollBar
       Left = 0
       Height = 20
-      Top = 390
-      Width = 562
+      Top = 418
+      Width = 552
       Align = alBottom
       PageSize = 0
       TabOrder = 0
@@ -40,9 +40,9 @@ object frmMain: TfrmMain
     end
     object pnlScopeView: TPanel
       Left = 0
-      Height = 390
+      Height = 418
       Top = 0
-      Width = 562
+      Width = 552
       Align = alClient
       BevelOuter = bvNone
       Color = clGray
@@ -56,12 +56,12 @@ object frmMain: TfrmMain
   end
   object pnlBottom: TPanel
     Left = 0
-    Height = 140
-    Top = 436
+    Height = 112
+    Top = 464
     Width = 800
     Align = alBottom
     BevelOuter = bvLowered
-    ClientHeight = 140
+    ClientHeight = 112
     ClientWidth = 800
     TabOrder = 2
     object Label1: TLabel
@@ -169,61 +169,65 @@ object frmMain: TfrmMain
     end
   end
   object pnlRight: TPanel
-    Left = 562
-    Height = 410
+    Left = 552
+    Height = 438
     Top = 26
-    Width = 238
+    Width = 248
     Align = alRight
     BevelOuter = bvLowered
-    ClientHeight = 410
-    ClientWidth = 238
+    ClientHeight = 438
+    ClientWidth = 248
     TabOrder = 3
     object pnlWaves: TPanel
       Left = 1
-      Height = 287
+      Height = 315
       Top = 1
-      Width = 236
+      Width = 246
       Align = alClient
-      ClientHeight = 287
-      ClientWidth = 236
+      ClientHeight = 315
+      ClientWidth = 246
       TabOrder = 0
       object chgrid: TDrawGrid
         Left = 1
-        Height = 285
+        Height = 313
         Top = 1
-        Width = 234
+        Width = 244
         Align = alClient
-        ColCount = 3
+        ColCount = 4
         Columns = <        
           item
             Title.Caption = 'Ch.'
             Width = 25
           end        
           item
-            Title.Caption = 'Parameter'
-            Width = 80
+            Title.Caption = 'Wave'
+            Width = 70
           end        
           item
             Title.Caption = 'Units / Div'
-            Width = 80
+            Width = 70
+          end        
+          item
+            Title.Caption = 'Cur. Value'
+            Width = 70
           end>
         ExtendedSelect = False
         FixedCols = 0
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goSmoothScroll]
         ScrollBars = ssNone
         TabOrder = 0
-        OnClick = chgridClick
         OnDrawCell = chgridDrawCell
+        OnSelection = chgridSelection
       end
     end
     object pnlInfo: TPanel
       Left = 1
       Height = 121
-      Top = 288
-      Width = 236
+      Top = 316
+      Width = 246
       Align = alBottom
       ClientHeight = 121
-      ClientWidth = 236
+      ClientWidth = 246
       ParentColor = False
       TabOrder = 1
       object btnChOffsPlus: TBitBtn
@@ -232,6 +236,7 @@ object frmMain: TfrmMain
         Top = 40
         Width = 75
         Caption = '++ Offs'
+        OnClick = btnChOffsPlusMinusClick
         TabOrder = 0
       end
       object btnChScalePlus: TBitBtn
@@ -240,6 +245,7 @@ object frmMain: TfrmMain
         Top = 40
         Width = 75
         Caption = '++ Scale'
+        OnClick = btnChScalePlusMinusClick
         TabOrder = 1
       end
       object btnChOffsMinus: TBitBtn
@@ -248,6 +254,7 @@ object frmMain: TfrmMain
         Top = 80
         Width = 75
         Caption = '-- Offs'
+        OnClick = btnChOffsPlusMinusClick
         TabOrder = 2
       end
       object btnChScaleMinus: TBitBtn
@@ -256,6 +263,7 @@ object frmMain: TfrmMain
         Top = 80
         Width = 75
         Caption = '-- Scale'
+        OnClick = btnChScalePlusMinusClick
         TabOrder = 3
       end
       object txtChInfo: TStaticText
@@ -276,12 +284,30 @@ object frmMain: TfrmMain
       object miOpen: TMenuItem
         Caption = 'Open...'
       end
+      object miSave: TMenuItem
+        Caption = 'Save'
+        OnClick = miSaveClick
+      end
+      object miSaveAs: TMenuItem
+        Caption = 'Save As...'
+      end
       object Separator1: TMenuItem
         Caption = '-'
       end
       object miExit: TMenuItem
         Caption = 'Exit'
         OnClick = miExitClick
+      end
+    end
+    object menuWave: TMenuItem
+      Caption = 'Wave'
+      object miAutoscale: TMenuItem
+        Caption = 'Autoscale'
+        OnClick = miAutoscaleClick
+      end
+      object miAutoscaleAll: TMenuItem
+        Caption = 'Autoscale All'
+        OnClick = miAutoscaleAllClick
       end
     end
   end
