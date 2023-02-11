@@ -9,6 +9,9 @@ uses
   ExtCtrls, StdCtrls, Grids, Buttons, math, ddgfx, dglOpenGL, vscope_data,
   vscope_display, Types;
 
+const
+  c_value_snap_range = 10;
+
 type
 
   { TfrmMain }
@@ -56,16 +59,9 @@ type
     procedure chgridDrawCell(Sender : TObject; aCol, aRow : Integer; aRect : TRect; aState : TGridDrawState);
     procedure btnTdPlusClick(Sender : TObject);
     procedure btnTdMinusClick(Sender : TObject);
-    procedure sbScopeScroll(Sender : TObject; ScrollCode : TScrollCode;
-      var ScrollPos : Integer);
-    procedure pnlScopeViewMouseWheel(Sender : TObject; Shift : TShiftState;
-      WheelDelta : Integer; MousePos : TPoint; var Handled : Boolean);
-    procedure pnlScopeViewMouseDown(Sender : TObject; Button : TMouseButton;
-      Shift : TShiftState; X, Y : Integer);
-    procedure pnlScopeViewMouseMove(Sender : TObject; Shift : TShiftState; X,
-      Y : Integer);
-    procedure pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton;
-      Shift : TShiftState; X, Y : Integer);
+    procedure sbScopeScroll(Sender : TObject; ScrollCode : TScrollCode; var ScrollPos : Integer);
+
+
     procedure cbDrawStepsChange(Sender : TObject);
     procedure btnChScalePlusMinusClick(Sender : TObject);
     procedure btnChOffsPlusMinusClick(Sender : TObject);
@@ -73,6 +69,13 @@ type
     procedure miAutoscaleClick(Sender : TObject);
     procedure miAutoscaleAllClick(Sender : TObject);
     procedure chgridSelection(Sender : TObject; aCol, aRow : Integer);
+
+    // mouse events
+    procedure pnlScopeViewMouseWheel(Sender : TObject; Shift : TShiftState; WheelDelta : Integer; MousePos : TPoint; var Handled : Boolean);
+    procedure pnlScopeViewMouseDown(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
+    procedure pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
+    procedure pnlScopeViewMouseMove(Sender : TObject; Shift : TShiftState; X, Y : Integer);
+
   private
 
   public
@@ -241,6 +244,7 @@ end;
 procedure TfrmMain.pnlScopeViewMouseMove(Sender : TObject; Shift : TShiftState; X, Y : Integer);
 var
   t : double;
+  st : double;
   wd : TWaveDisplay;
 begin
 
@@ -251,14 +255,6 @@ begin
     UpdateScrollBar;
     //scope.DoOnPaint;
     //scope.Repaint;
-  end
-  else
-  begin
-
-    //scope.valgrp.x := x;
-    //scope.valgrp.y := y;
-    //scope.DoOnPaint; // less frame delay
-    ////scope.Repaint; // 2-3 frame delay noticeable
   end;
 
   t := scope.ConvertXToTime(x);
@@ -266,14 +262,17 @@ begin
   txtCursorTime.Caption := format('%.6f', [t]);
   scope.SetTimeCursor(t);
 
-  wd := SelectedWave;
-  if wd = nil then
+
+  wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
+  scope.ShowSampleMarker(wd, st);
+
+  if wd <> nil then
   begin
-    txtCursorValue.Caption := '-';
+    txtCursorValue.Caption := wd.name + ' = ' + FloatToStr(wd.GetValueAt(st));
   end
   else
   begin
-    txtCursorValue.Caption := wd.name + ' = ' + FloatToStr(wd.GetValueAt(t));
+    txtCursorValue.Caption := '-';
   end;
 
   scope.Repaint;

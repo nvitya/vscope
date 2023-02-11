@@ -62,6 +62,9 @@ type
     procedure CorrectOffset;
 
     procedure DoOnDataUpdate; override;
+
+    function GridValueAt(t : double) : double;
+
   end;
 
   TWaveDisplayList = specialize TFPGList<TWaveDisplay>;
@@ -106,6 +109,10 @@ type
 
     timecursor : TShape;
 
+    sample_marker : TShape;
+
+    procedure InitMarkers;
+
   public
     procedure DoOnResize; override;
 
@@ -113,7 +120,8 @@ type
 
   public
     data  : TScopeData;
-    wgrp  : TDrawGroup;
+    grp_waves  : TDrawGroup;
+    grp_markers  : TDrawGroup;
     waves : TWaveDisplayList;
 
     draw_steps : boolean;
@@ -134,7 +142,15 @@ type
     procedure SaveScopeFile(afilename : string);
 
     function ConvertXToTime(x : integer) : double;
+    function ConvertTimeToX(t : double) : integer;
+    function ConvertTimeToGrid(t : double) : double;
+    function ConvertGridToY(gridvalue : double) : integer;
+    function FindNearestWave(t : double; y : integer; range : integer) : TWaveDisplay;
+    function FindNearestWaveSample(x, y : integer; range : integer; out st : double) : TWaveDisplay;
+
     procedure SetTimeCursor(t : double);
+
+    procedure ShowSampleMarker(wd : TWaveDisplay; t : double);
 
     property TimeRange : double read ftimerange;
     property MinTime : double read fmintime;
@@ -206,7 +222,7 @@ constructor TWaveDisplay.Create(ascope: TScopeDisplay; aname: string; asamplt: d
 begin
   inherited Create(aname, asamplt);
   scope := ascope;
-  wshp := scope.wgrp.NewShape();
+  wshp := scope.grp_waves.NewShape();
   wshp.scaley := -1;
   wshp.y := 5;
 end;
@@ -312,7 +328,6 @@ end;
 
 procedure TWaveDisplay.CorrectOffset;
 var
-  ddiff : double;
   data_min, data_max : double;
   scnt : integer;
 begin
@@ -335,11 +350,25 @@ begin
   end;
 end;
 
+function TWaveDisplay.GridValueAt(t : double) : double;
+var
+  di : integer;
+begin
+  di := GetDataIndex(t);
+  if di < 0
+  then
+      EXIT(-20);
+
+  result := data[di] * viewscale + viewoffset;
+  // clamping the Y:
+  if result > 5 then result := 5
+  else if result < -5 then result := -5;
+end;
+
+
 { TScopeDisplay }
 
 constructor TScopeDisplay.Create(aowner : TComponent; aparent : TWinControl);
-const
-  frame_vertices : array[0..3] of TVertex = ((0, 0),(1,0),(1,1),(0, 1));
 begin
   inherited;
 
@@ -353,27 +382,15 @@ begin
   grid.x := fmargin_pixels;
   grid.y := fmargin_pixels;
 
-  wgrp := root.NewGroup;
-  wgrp.x := fmargin_pixels;
-  wgrp.y := fmargin_pixels;
+  grp_waves := root.NewGroup;
+  grp_waves.x := fmargin_pixels;
+  grp_waves.y := fmargin_pixels;
 
   waves := TWaveDisplayList.Create;
 
-
-  valgrp := root.NewGroup;
-
-  valframe := valgrp.NewShape;
-  valframe.AddPrimitive(GL_TRIANGLE_FAN, 4, @frame_vertices);
-  valframe.SetColor(0.2, 0.2, 0.5, 0.7);
-
-  valtxt := TTextBox.Create(valgrp, vfont.GetSizedFont(9), 'Value Sample Text');
-  valgrp.x := 50;
-  valgrp.y := 150;
-  valframe.x := -2;
-  valframe.y := -2;
-  valframe.scalex := valtxt.Width + 4;
-  valframe.scaley := valtxt.Height + 4;
-
+  grp_markers := root.NewGroup;
+  grp_markers.x := fmargin_pixels;
+  grp_markers.y := fmargin_pixels;
 
   fviewstart := 0;
   fviewrange := 1;
@@ -386,6 +403,7 @@ begin
   draw_steps := false;
 
   InitGrid;
+  InitMarkers;
 end;
 
 destructor TScopeDisplay.Destroy;
@@ -397,15 +415,25 @@ begin
 end;
 
 procedure TScopeDisplay.DoOnResize;
+var
+  gw, gh : integer;
 begin
   inherited DoOnResize;
 
-  grid.scalex := (self.width - 1 - 2 * fmargin_pixels)  / 10;
-  grid.scaley := (self.height - 1 - 2 * fmargin_pixels) / 10;
+  gw := self.width  - 2 * fmargin_pixels;
+  gh := self.Height - 2 * fmargin_pixels;
 
-  wgrp.scalex := grid.scalex;
-  wgrp.scaley := grid.scaley;
+  grid.scalex := gw / 10;
+  grid.scaley := gh / 10;
 
+  grp_waves.scalex := grid.scalex;
+  grp_waves.scaley := grid.scaley;
+
+  grp_markers.scalex := grid.scalex;
+  grp_markers.scaley := grid.scaley;
+
+  sample_marker.scalex := 30 / gw; // warning: grid scaling, rescaled to 5 pixels in DoOnResize
+  sample_marker.scaley := 30 / gh;
 end;
 
 procedure TScopeDisplay.RenderWaves;
@@ -481,19 +509,52 @@ begin
       cs.y := py;
     end;
   end;
-
-  timecursor := grid.NewShape();
-  timecursor.AddPrimitive(GL_LINES, 2, @vline_vertices);
-  timecursor.x := 1.5;
-  timecursor.SetColor(1, 0.5, 0.5);
-  timecursor.alpha := 0.3;
-  timecursor.visible := true;
-
 end;
 
 procedure TScopeDisplay.CleanupGrid;
 begin
   //
+end;
+
+procedure TScopeDisplay.InitMarkers;
+const
+  vline_vertices : array[0..1] of TVertex = ((0, 0),(0,10));
+  frame_vertices  : array[0..3] of TVertex = ((0, 0),(1,0),(1,1),(0, 1));
+  marker_vertices : array[0..3] of TVertex = ((0, -1),(0,1),(-1,0),(1, 0));
+begin
+  timecursor := grid.NewShape();
+  timecursor.AddPrimitive(GL_LINES, 2, @vline_vertices);
+  timecursor.SetColor(1, 0.1, 0.1);
+  timecursor.alpha := 0.25;
+  timecursor.visible := false;
+
+  // sample point value
+
+  valgrp := grp_markers.NewGroup;
+
+  valframe := valgrp.NewShape;
+  valframe.AddPrimitive(GL_TRIANGLE_FAN, 4, @frame_vertices);
+  valframe.SetColor(0.2, 0.2, 0.5, 0.7);
+
+  valtxt := TTextBox.Create(valgrp, vfont.GetSizedFont(9), 'Value Sample Text');
+  valgrp.x := 50;
+  valgrp.y := 150;
+  valframe.x := -2;
+  valframe.y := -2;
+  valframe.scalex := valtxt.Width + 4;
+  valframe.scaley := valtxt.Height + 4;
+
+  valgrp.visible := false;
+
+  // sample point marker
+
+  sample_marker := grp_markers.NewShape;
+  sample_marker.AddPrimitive(GL_LINES, 4, @marker_vertices);
+  sample_marker.SetColor(1, 1, 1);
+  sample_marker.alpha := 0.8;
+  sample_marker.scalex := 1; // warning: grid scaling, rescaled to 5 pixels in DoOnResize
+  sample_marker.scaley := 1;
+
 end;
 
 
@@ -677,6 +738,125 @@ begin
   result := ViewStart + 10 * TimeDiv * gx / gw;
 end;
 
+function TScopeDisplay.ConvertTimeToX(t : double) : integer;
+var
+  gw : integer;
+begin
+  gw := Width - 2 * fmargin_pixels;
+  result := fmargin_pixels + round(gw * (t - ViewStart) / ViewRange);
+end;
+
+function TScopeDisplay.ConvertTimeToGrid(t : double) : double;
+begin
+  result := (t - ViewStart) / TimeDiv;
+  if (result < 0) or (result > 10) then
+  begin
+    result := NaN;
+  end;
+end;
+
+function TScopeDisplay.ConvertGridToY(gridvalue : double) : integer;
+var
+  gh : integer;
+  gy : double;
+begin
+  gh := Height - 2 * fmargin_pixels;
+  gy := gh * (0.5 - 0.1 * gridvalue);
+  result := fmargin_pixels + round(gy);
+end;
+
+function TScopeDisplay.FindNearestWave(t : double; y : integer; range : integer) : TWaveDisplay;
+var
+  wd : TWaveDisplay;
+  dist : integer;
+  mindist : integer;
+  gv : double;
+  wy : integer;
+begin
+  result := nil;
+  mindist := range * 2;
+  for wd in waves do
+  begin
+    gv := wd.GridValueAt(t);
+    if gv <> NaN then
+    begin
+      wy := ConvertGridToY(gv);
+      dist := abs(wy - y);
+      if dist <= range then
+      begin
+        if (result = nil) or (dist <= mindist) then
+        begin
+          result := wd;
+          mindist := dist;
+        end;
+      end;
+    end;
+  end;
+end;
+
+function TScopeDisplay.FindNearestWaveSample(x, y : integer; range : integer; out st : double) : TWaveDisplay;
+var
+  wd            : TWaveDisplay;
+  t, mint, maxt : double;
+  gh, gw        : integer;
+  mindist2      : double;
+  gv, wy, dy    : double;
+  wx, dx, xinc  : double;
+  d2            : double;
+  di, maxdi     : integer;
+begin
+  result := nil;
+
+  gw := Width - 2 * fmargin_pixels;
+  gh := Height - 2 * fmargin_pixels;
+
+  mint := ConvertXToTime(x - range);
+  maxt := ConvertXToTime(x + range);
+
+  mindist2 := range * range + 1;
+
+  for wd in waves do
+  begin
+    maxdi := trunc((maxt - wd.startt) / wd.samplt);
+    if maxdi < 0
+    then
+        continue;
+
+    if maxdi > length(wd.data) then maxdi := length(wd.data);
+
+    di := trunc((mint - wd.startt) / wd.samplt);
+    if di < 0 then di := 0;
+    if di >= length(wd.data)
+    then
+        continue;
+
+    wx := fmargin_pixels + gw * (wd.GetDataIndexTime(di) - ViewStart) / ViewRange;
+    xinc := wd.samplt * gw / ViewRange;
+
+    while di <= maxdi do
+    begin
+      gv := wd.data[di] * wd.viewscale + wd.viewoffset;
+
+      // convert to screen Y coordinates:
+      wy := fmargin_pixels + gh * (0.5 - 0.1 * gv);
+
+      dx := wx - x;
+      dy := wy - y;
+      d2 := dx * dx + dy * dy;
+      if d2 < mindist2 then
+      begin
+        result := wd;
+        mindist2 := d2;
+        st := wd.GetDataIndexTime(di);
+      end;
+
+      inc(di);
+      wx += xinc;
+    end;
+  end;
+end;
+
+
 procedure TScopeDisplay.SetTimeCursor(t : double);
 var
   gt : double;
@@ -690,6 +870,20 @@ begin
   begin
     timecursor.x := gt;
     timecursor.visible := true;
+  end;
+end;
+
+procedure TScopeDisplay.ShowSampleMarker(wd : TWaveDisplay; t : double);
+begin
+  if wd <> nil then
+  begin
+    sample_marker.X := ConvertTimeToGrid(wd.NearestSampleTime(t));
+    sample_marker.Y := 5 - wd.GridValueAt(t);
+    sample_marker.visible := true;
+  end
+  else
+  begin
+    sample_marker.visible := false;
   end;
 end;
 

@@ -45,6 +45,9 @@ type
 
     procedure DoOnDataUpdate; virtual;
 
+    function GetDataIndex(t : double) : integer;
+    function NearestSampleTime(t : double) : double;
+    function GetDataIndexTime(di : integer) : double;
     function GetValueAt(t : double) : double;
 
     procedure CalcMinMax(fromtime, totime : double; out data_min : double; out data_max : double; out scnt : integer);
@@ -320,6 +323,31 @@ end;
 procedure TWaveData.DoOnDataUpdate;
 begin
   // nothing here
+end;
+
+function TWaveData.GetDataIndex(t : double) : integer;
+begin
+  result := trunc((t - startt) / samplt);
+  if (result < 0) or (result >= length(data))
+  then
+      result := -1;
+end;
+
+function TWaveData.NearestSampleTime(t : double) : double;
+var
+  di : integer;
+begin
+  di := GetDataIndex(t);
+  result := GetDataIndexTime(di);
+end;
+
+function TWaveData.GetDataIndexTime(di : integer) : double;
+begin
+  if (di < 0) or (di >= length(data))
+  then
+      EXIT(NaN);
+
+  result := startt + di * samplt;
 end;
 
 function TWaveData.GetValueAt(t : double) : double;
