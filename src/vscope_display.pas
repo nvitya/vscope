@@ -75,6 +75,7 @@ type
   TWaveDisplay = class(TWaveData)
   public
     wshp : TShape;
+    zeroline : TShape;
     scope : TScopeDisplay;
 
     constructor Create(ascope: TScopeDisplay; aname: string; asamplt: double); reintroduce;
@@ -153,6 +154,9 @@ type
   public
     data  : TScopeData;
     grp_waves  : TDrawGroup;
+    grp_zeroes : TDrawGroup;
+    grp_zeroes2 : TClonedGroup;
+
     grp_markers  : TDrawGroup;
     waves : TWaveDisplayList;
 
@@ -255,12 +259,20 @@ end;
 { TWaveDisplay }
 
 constructor TWaveDisplay.Create(ascope: TScopeDisplay; aname: string; asamplt: double);
+const
+  zeroline_vertices  : array[0..1] of TVertex = ((0, 0),(1,0));
 begin
   inherited Create(aname, asamplt);
   scope := ascope;
   wshp := scope.grp_waves.NewShape();
   wshp.scaley := -1;
   wshp.y := 5;
+
+  zeroline := scope.grp_zeroes.NewShape();
+  zeroline.scaley := -1;
+  zeroline.y := 5;
+  zeroline.AddPrimitive(GL_LINES, 2, @zeroline_vertices);
+  zeroline.alpha := 0.8;
 end;
 
 destructor TWaveDisplay.Destroy;
@@ -278,6 +290,8 @@ begin
     ((color shr 24) and $FF) / 255
   );
   wshp.alpha := 0.5;
+
+  zeroline.color := wshp.color;
 end;
 
 procedure TWaveDisplay.ReDrawWave;
@@ -290,7 +304,7 @@ var
   v : TVertex;
   vcnt : integer;
   t : double;
-  x, dx : double;
+  y, x, dx : double;
 begin
   vi := 0;
   dx := samplt / scope.TimeDiv;
@@ -345,6 +359,14 @@ begin
   wshp.AddPrimitive(GL_LINE_STRIP, vi, @varr[0]);
 
   varr := [];
+
+  // adjust the zero line
+
+  y := 5-viewoffset;
+  if y < 0 then y := 0
+  else if y > 10 then y := 10;
+  zeroline.y := y;
+
 end;
 
 procedure TWaveDisplay.AutoScale;
@@ -418,9 +440,20 @@ begin
   grid.x := fmargin_pixels;
   grid.y := fmargin_pixels;
 
+  grp_zeroes := root.NewGroup;
+  grp_zeroes.scalex := fmargin_pixels;
+  grp_zeroes.x := 0;
+  grp_zeroes.y := grid.y;
+
+  grp_zeroes2 := root.CloneGroup(grp_zeroes);
+  grp_zeroes2.scalex := fmargin_pixels;
+  grp_zeroes2.y := grid.y;
+  grp_zeroes2.x := Width - fmargin_pixels;
+
   grp_waves := root.NewGroup;
   grp_waves.x := fmargin_pixels;
   grp_waves.y := fmargin_pixels;
+
 
   waves := TWaveDisplayList.Create;
 
@@ -462,6 +495,10 @@ begin
 
   grid.scalex := gw / 10;
   grid.scaley := gh / 10;
+
+  grp_zeroes.scaley  := grid.scaley;
+  grp_zeroes2.scaley := grid.scaley;
+  grp_zeroes2.x := Width - fmargin_pixels;
 
   grp_waves.scalex := grid.scalex;
   grp_waves.scaley := grid.scaley;

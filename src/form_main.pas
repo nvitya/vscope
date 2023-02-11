@@ -471,6 +471,7 @@ begin
     begin
       wd.wshp.alpha := 0.8;
       wd.wshp.parent.MoveTop(wd.wshp);
+      wd.zeroline.parent.MoveTop(wd.zeroline);
     end
     else
     begin
