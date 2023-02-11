@@ -1,3 +1,29 @@
+(* -----------------------------------------------------------------------------
+ * This file is a part of the vscope project: https://github.com/nvitya/vscope
+ * Copyright (c) 2023 Viktor Nagy, nvitya
+ *
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from
+ * the use of this software. Permission is granted to anyone to use this
+ * software for any purpose, including commercial applications, and to alter
+ * it and redistribute it freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software in
+ *    a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ *
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ *
+ * 3. This notice may not be removed or altered from any source distribution.
+ * --------------------------------------------------------------------------- */
+ *  file:     form_main.pas
+ *  brief:    vscope main window
+ *  date:     2023-02-11
+ *  authors:  nvitya
+*)
+
 unit form_main;
 
 {$mode objfpc}{$H+}
@@ -24,34 +50,41 @@ type
     Separator1 : TMenuItem;
     tbMain : TToolBar;
     pnlScopeGroup : TPanel;
-    pnlBottom : TPanel;
     sbScope : TScrollBar;
     pnlScopeView : TPanel;
     pnlRight : TPanel;
     pnlWaves : TPanel;
     pnlInfo : TPanel;
     chgrid : TDrawGrid;
-    btnChOffsPlus : TBitBtn;
-    btnChScalePlus : TBitBtn;
-    btnChOffsMinus : TBitBtn;
-    btnChScaleMinus : TBitBtn;
-    txtChInfo : TStaticText;
-    Label1 : TLabel;
-    txtTimeDiv : TStaticText;
-    btnTdPlus : TBitBtn;
-    btnTdMinus : TBitBtn;
-    Label2 : TLabel;
-    txtViewStart : TStaticText;
-    cbDrawSteps : TCheckBox;
-    Label3 : TLabel;
-    txtCursorTime : TStaticText;
-    Label4 : TLabel;
-    txtCursorValue : TStaticText;
     miSave : TMenuItem;
     miSaveAs : TMenuItem;
     menuWave : TMenuItem;
     miAutoscaleAll : TMenuItem;
     miAutoscale : TMenuItem;
+    tbOpen : TToolButton;
+    tbSave : TToolButton;
+    ToolButton1 : TToolButton;
+    tbSaveAs : TToolButton;
+    imglist : TImageList;
+    ToolButton2 : TToolButton;
+    tbDrawSteps : TToolButton;
+    menuView : TMenuItem;
+    miDrawSteps : TMenuItem;
+    ToolButton3 : TToolButton;
+    tbZoomIn : TToolButton;
+    tbZoomOut : TToolButton;
+    Separator2 : TMenuItem;
+    miZoomIn : TMenuItem;
+    miZoomOut : TMenuItem;
+    tbScalePlus : TToolButton;
+    tbScaleMinus : TToolButton;
+    tbOffsetUp : TToolButton;
+    tbOffsetDown : TToolButton;
+    ToolButton4 : TToolButton;
+    Label2 : TLabel;
+    txtViewStart : TStaticText;
+    Label3 : TLabel;
+    txtCursorTime : TStaticText;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -62,7 +95,6 @@ type
     procedure sbScopeScroll(Sender : TObject; ScrollCode : TScrollCode; var ScrollPos : Integer);
 
 
-    procedure cbDrawStepsChange(Sender : TObject);
     procedure btnChScalePlusMinusClick(Sender : TObject);
     procedure btnChOffsPlusMinusClick(Sender : TObject);
     procedure miSaveClick(Sender : TObject);
@@ -75,6 +107,9 @@ type
     procedure pnlScopeViewMouseDown(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
     procedure pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
     procedure pnlScopeViewMouseMove(Sender : TObject; Shift : TShiftState; X, Y : Integer);
+    procedure miDrawStepsClick(Sender : TObject);
+    procedure tbZoomInClick(Sender : TObject);
+    procedure tbZoomOutClick(Sender : TObject);
 
   private
 
@@ -131,7 +166,8 @@ begin
   scope.ViewStart := 0; //-2;
 
   scope.draw_steps := true;
-  cbDrawSteps.Checked := scope.draw_steps;
+  miDrawSteps.Checked := scope.draw_steps;
+  tbDrawSteps.Down := scope.draw_steps;
 
   scope.LoadScopeFile(filename);
   //scope.AutoScale;
@@ -312,29 +348,39 @@ begin
   wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
   scope.ShowSampleMarker(wd, st);
 
-  if wd <> nil then
-  begin
-    txtCursorValue.Caption := wd.name + ' = ' + wd.GetValueStr(st);
-  end
-  else
-  begin
-    txtCursorValue.Caption := '-';
-  end;
-
   scope.Repaint;
   //chgrid.Repaint;
 end;
 
-procedure TfrmMain.cbDrawStepsChange(Sender : TObject);
+procedure TfrmMain.miDrawStepsClick(Sender : TObject);
 begin
-  scope.draw_steps := cbDrawSteps.Checked;
+  miDrawSteps.Checked := not miDrawSteps.Checked;
+  scope.draw_steps := miDrawSteps.Checked;
+  tbDrawSteps.Down := miDrawSteps.Checked;
+
   scope.RenderWaves;
   scope.Repaint;
 end;
 
+procedure TfrmMain.tbZoomInClick(Sender : TObject);
+begin
+  scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, -1), scope.ViewStart + scope.ViewRange / 2);
+  UpdateTimeDiv;
+  UpdateScrollBar;
+  scope.DoOnPaint;
+end;
+
+procedure TfrmMain.tbZoomOutClick(Sender : TObject);
+begin
+  scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, 1), scope.ViewStart + scope.ViewRange / 2);
+  UpdateTimeDiv;
+  UpdateScrollBar;
+  scope.DoOnPaint;
+end;
+
 procedure TfrmMain.btnChScalePlusMinusClick(Sender : TObject);
 begin
-  if Sender = btnChScalePlus
+  if Sender = tbScalePlus
   then
       ChangeWaveScale(2)
   else
@@ -348,11 +394,11 @@ begin
   wd := SelectedWave;
   if wd = nil then EXIT;
 
-  if Sender = btnChOffsPlus
+  if Sender = tbOffsetUp
   then
-      wd.viewoffset += 1
+      wd.viewoffset += 0.25
   else
-      wd.viewoffset -= 1;
+      wd.viewoffset -= 0.25;
 
   scope.RenderWaves;
   scope.Repaint;
@@ -400,7 +446,6 @@ end;
 
 procedure TfrmMain.UpdateTimeDiv;
 begin
-  txtTimeDiv.Caption := format('%.6f s', [scope.TimeDiv]);
   txtViewStart.Caption := format('%.6f', [scope.ViewStart]);
 end;
 
@@ -434,7 +479,6 @@ begin
   end;
 
   wd := scope.waves[awidx];
-  txtChInfo.Caption := wd.name;
 
   scope.Repaint;
 end;

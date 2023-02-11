@@ -1,3 +1,29 @@
+(* -----------------------------------------------------------------------------
+ * This file is a part of the vscope project: https://github.com/nvitya/vscope
+ * Copyright (c) 2023 Viktor Nagy, nvitya
+ *
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from
+ * the use of this software. Permission is granted to anyone to use this
+ * software for any purpose, including commercial applications, and to alter
+ * it and redistribute it freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software in
+ *    a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ *
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ *
+ * 3. This notice may not be removed or altered from any source distribution.
+ * --------------------------------------------------------------------------- */
+ *  file:     vscope_display.pas
+ *  brief:    vscope visualisation implementations
+ *  date:     2023-02-11
+ *  authors:  nvitya
+*)
+
 unit vscope_display;
 
 {$mode ObjFPC}{$H+}
@@ -105,6 +131,11 @@ type
     valgrp    : TDrawGroup;
     valframe  : TShape;
 
+    txt_timediv : TTextBox;
+    txt_abinfo  : TTextBox;
+
+    procedure InitTexts;
+
   public
 
     timecursor : TShape;
@@ -115,6 +146,7 @@ type
 
   public
     procedure DoOnResize; override;
+    procedure UpdateTimeDivPos;
 
     procedure RenderWaves;
 
@@ -164,6 +196,8 @@ type
     property TimeDiv   : double read GetTimeDiv;
 
     procedure SetTimeDiv(AValue : double; fixtimepos : double);
+
+    procedure UpdateTimeDivInfo;
   end;
 
 
@@ -406,6 +440,7 @@ begin
 
   InitGrid;
   InitMarkers;
+  InitTexts;
 end;
 
 destructor TScopeDisplay.Destroy;
@@ -434,8 +469,24 @@ begin
   grp_markers.scalex := grid.scalex;
   grp_markers.scaley := grid.scaley;
 
-  sample_marker.scalex := 30 / gw; // warning: grid scaling, rescaled to 5 pixels in DoOnResize
-  sample_marker.scaley := 30 / gh;
+  sample_marker.scalex := 40 / gw; // rescaled to 4 pixels in DoOnResize
+  sample_marker.scaley := 40 / gh;
+
+  UpdateTimeDivPos;
+
+  txt_abinfo.x := fmargin_pixels;
+  txt_abinfo.y := round(gh + fmargin_pixels + fmargin_pixels / 2 - txt_abinfo.Height / 2);
+end;
+
+procedure TScopeDisplay.UpdateTimeDivPos;
+var
+  gw, gh : integer;
+begin
+  gw := self.width  - 2 * fmargin_pixels;
+  gh := self.Height - 2 * fmargin_pixels;
+
+  txt_timediv.x := round(gw + fmargin_pixels - txt_timediv.Width);
+  txt_timediv.y := round(gh + fmargin_pixels + fmargin_pixels / 2 - txt_timediv.Height / 2);
 end;
 
 procedure TScopeDisplay.RenderWaves;
@@ -518,18 +569,10 @@ begin
   //
 end;
 
-procedure TScopeDisplay.InitMarkers;
+procedure TScopeDisplay.InitTexts;
 const
-  vline_vertices : array[0..1] of TVertex = ((0, 0),(0,10));
   frame_vertices  : array[0..3] of TVertex = ((0, 0),(1,0),(1,1),(0, 1));
-  marker_vertices : array[0..3] of TVertex = ((0, -1),(0,1),(-1,0),(1, 0));
 begin
-  timecursor := grid.NewShape();
-  timecursor.AddPrimitive(GL_LINES, 2, @vline_vertices);
-  timecursor.SetColor(1, 0.1, 0.1);
-  timecursor.alpha := 0.25;
-  timecursor.visible := false;
-
   // sample point value
 
   valgrp := root.NewGroup;
@@ -548,6 +591,24 @@ begin
   valframe.scaley := valtxt.Height + 8;
 
   valgrp.visible := false;
+
+  txt_timediv := TTextBox.Create(root, vfont.GetSizedFont(9), 'Time Div Info');
+  txt_timediv.SetColor(0.5, 0.5, 0.5);
+
+  txt_abinfo := TTextBox.Create(root, vfont.GetSizedFont(9), 'A-B Marker Info Text');;
+  txt_abinfo.SetColor(0.7, 0.7, 0.7);
+end;
+
+procedure TScopeDisplay.InitMarkers;
+const
+  vline_vertices : array[0..1] of TVertex = ((0, 0),(0,10));
+  marker_vertices : array[0..3] of TVertex = ((0, -1),(0,1),(-1,0),(1, 0));
+begin
+  timecursor := grid.NewShape();
+  timecursor.AddPrimitive(GL_LINES, 2, @vline_vertices);
+  timecursor.SetColor(1, 0.1, 0.1);
+  timecursor.alpha := 0.25;
+  timecursor.visible := false;
 
   // sample point marker
 
@@ -576,19 +637,21 @@ end;
 
 procedure TScopeDisplay.SetTimeDiv(AValue : double; fixtimepos : double);
 var
-  //fviewmid : double;
   ftimeratio : double;
 begin
-  //fviewmid := fviewstart + fviewrange / 2;
-
   ftimeratio := (fixtimepos - fviewstart) / fviewrange;
-
   fviewrange := AValue * 10;
-
   fviewstart := fixtimepos - fviewrange * ftimeratio;
-  //fviewstart := fviewmid - fviewrange / 2;
 
   RenderWaves;
+  UpdateTimeDivInfo;
+end;
+
+procedure TScopeDisplay.UpdateTimeDivInfo;
+begin
+  txt_timediv.Text := FloatToStrF(TimeDiv, ffFixed, 0, 6, float_number_format) + ' s / div';
+
+  UpdateTimeDivPos;
 end;
 
 procedure TScopeDisplay.SetViewStart(AValue : double);
@@ -825,7 +888,7 @@ end;
 function TScopeDisplay.FindNearestWaveSample(x, y : integer; range : integer; out st : double) : TWaveDisplay;
 var
   wd            : TWaveDisplay;
-  t, mint, maxt : double;
+  mint, maxt    : double;
   gh, gw        : integer;
   mindist2      : double;
   gv, wy, dy    : double;
