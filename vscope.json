@@ -1,4 +1,8 @@
 {
+	"VIEW": {
+		"TIMEDIV": 5,
+		"VIEWSTART": -4.99925426001593
+	},
 	"WAVES": [
 		{
 			"NAME": "Xacc",
@@ -7,7 +11,7 @@
 			"STARTT": 0,
 			"DATAUNIT": "",
 			"VIEWSCALE": 0.00001,
-			"VIEWOFFSET": 3.2359
+			"VIEWOFFSET": 3.07526587050187
 		},
 		{
 			"NAME": "Yacc",
@@ -16,7 +20,7 @@
 			"STARTT": 0,
 			"DATAUNIT": "",
 			"VIEWSCALE": 5E-6,
-			"VIEWOFFSET": 1.27034
+			"VIEWOFFSET": 0.269429239514996
 		},
 		{
 			"NAME": "Zacc",
@@ -25,7 +29,7 @@
 			"STARTT": 0,
 			"DATAUNIT": "",
 			"VIEWSCALE": 0.00002,
-			"VIEWOFFSET": -2.2106
+			"VIEWOFFSET": -3.45328764418289
 		}
 	]
 }

@@ -22,17 +22,17 @@ object frmMain: TfrmMain
     Left = 0
     Height = 438
     Top = 26
-    Width = 552
+    Width = 612
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 438
-    ClientWidth = 552
+    ClientWidth = 612
     TabOrder = 1
     object sbScope: TScrollBar
       Left = 0
       Height = 20
       Top = 418
-      Width = 552
+      Width = 612
       Align = alBottom
       PageSize = 0
       TabOrder = 0
@@ -42,7 +42,7 @@ object frmMain: TfrmMain
       Left = 0
       Height = 418
       Top = 0
-      Width = 552
+      Width = 612
       Align = alClient
       BevelOuter = bvNone
       Color = clGray
@@ -169,31 +169,31 @@ object frmMain: TfrmMain
     end
   end
   object pnlRight: TPanel
-    Left = 552
+    Left = 612
     Height = 438
     Top = 26
-    Width = 248
+    Width = 188
     Align = alRight
     BevelOuter = bvLowered
     ClientHeight = 438
-    ClientWidth = 248
+    ClientWidth = 188
     TabOrder = 3
     object pnlWaves: TPanel
       Left = 1
       Height = 315
       Top = 1
-      Width = 246
+      Width = 186
       Align = alClient
       ClientHeight = 315
-      ClientWidth = 246
+      ClientWidth = 186
       TabOrder = 0
       object chgrid: TDrawGrid
         Left = 1
         Height = 313
         Top = 1
-        Width = 244
+        Width = 184
         Align = alClient
-        ColCount = 4
+        ColCount = 3
         Columns = <        
           item
             Title.Caption = 'Ch.'
@@ -205,10 +205,6 @@ object frmMain: TfrmMain
           end        
           item
             Title.Caption = 'Units / Div'
-            Width = 70
-          end        
-          item
-            Title.Caption = 'Cur. Value'
             Width = 70
           end>
         ExtendedSelect = False
@@ -224,10 +220,10 @@ object frmMain: TfrmMain
       Left = 1
       Height = 121
       Top = 316
-      Width = 246
+      Width = 186
       Align = alBottom
       ClientHeight = 121
-      ClientWidth = 246
+      ClientWidth = 186
       ParentColor = False
       TabOrder = 1
       object btnChOffsPlus: TBitBtn
@@ -240,7 +236,7 @@ object frmMain: TfrmMain
         TabOrder = 0
       end
       object btnChScalePlus: TBitBtn
-        Left = 116
+        Left = 100
         Height = 30
         Top = 40
         Width = 75
@@ -258,7 +254,7 @@ object frmMain: TfrmMain
         TabOrder = 2
       end
       object btnChScaleMinus: TBitBtn
-        Left = 116
+        Left = 100
         Height = 30
         Top = 80
         Width = 75

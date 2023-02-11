@@ -145,6 +145,8 @@ type
     function ConvertTimeToX(t : double) : integer;
     function ConvertTimeToGrid(t : double) : double;
     function ConvertGridToY(gridvalue : double) : integer;
+    function ConvertYToGrid(y : integer) : double;
+
     function FindNearestWave(t : double; y : integer; range : integer) : TWaveDisplay;
     function FindNearestWaveSample(x, y : integer; range : integer; out st : double) : TWaveDisplay;
 
@@ -530,19 +532,20 @@ begin
 
   // sample point value
 
-  valgrp := grp_markers.NewGroup;
+  valgrp := root.NewGroup;
 
   valframe := valgrp.NewShape;
   valframe.AddPrimitive(GL_TRIANGLE_FAN, 4, @frame_vertices);
-  valframe.SetColor(0.2, 0.2, 0.5, 0.7);
+  valframe.SetColor(0.0, 0.0, 0.0);
+  valframe.alpha := 0.8;
 
   valtxt := TTextBox.Create(valgrp, vfont.GetSizedFont(9), 'Value Sample Text');
   valgrp.x := 50;
   valgrp.y := 150;
-  valframe.x := -2;
-  valframe.y := -2;
-  valframe.scalex := valtxt.Width + 4;
-  valframe.scaley := valtxt.Height + 4;
+  valframe.x := -4;
+  valframe.y := -4;
+  valframe.scalex := valtxt.Width + 8;
+  valframe.scaley := valtxt.Height + 8;
 
   valgrp.visible := false;
 
@@ -554,6 +557,7 @@ begin
   sample_marker.alpha := 0.8;
   sample_marker.scalex := 1; // warning: grid scaling, rescaled to 5 pixels in DoOnResize
   sample_marker.scaley := 1;
+  sample_marker.visible := false;
 
 end;
 
@@ -682,6 +686,7 @@ end;
 procedure TScopeDisplay.LoadScopeFile(afilename : string);
 var
   jf, jwlist, jw : TJsonNode;
+  jview, jv : TJsonNode;
   i : integer;
   wd : TWaveDisplay;
 begin
@@ -701,27 +706,42 @@ begin
         DeleteWave(wd);
       end;
     end;
+
+    if jf.Find('VIEW', jview) then
+    begin
+      if jview.Find('VIEWSTART', jv) then ViewStart := jv.AsNumber;
+      if jview.Find('TIMEDIV', jv)   then SetTimeDiv(jv.AsNumber, ViewStart);
+    end;
+
+    CalcTimeRange;
+
   finally
     jf.Free;
   end;
 
-  CalcTimeRange;
 end;
 
 procedure TScopeDisplay.SaveScopeFile(afilename : string);
 var
   jf : TJsonNode;
   w  : TWaveDisplay;
+  jview : TJsonNode;
   jwarr, jn : TJSonNode;
 begin
   jf := TJsonNode.Create();
+
+  jview := jf.Add('VIEW', nkObject);
+  jview.Add('TIMEDIV', TimeDiv);
+  jview.Add('VIEWSTART', ViewStart);
+
+  jwarr := jf.Add('WAVES', nkArray);
+  for w in waves do
+  begin
+    jn := jwarr.Add();
+    w.SaveToJsonNode(jn);
+  end;
+
   try
-    jwarr := jf.Add('WAVES', nkArray);
-    for w in waves do
-    begin
-      jn := jwarr.Add();
-      w.SaveToJsonNode(jn);
-    end;
     jf.SaveToFile(afilename);
   finally
     jf.Free;
@@ -763,6 +783,14 @@ begin
   gh := Height - 2 * fmargin_pixels;
   gy := gh * (0.5 - 0.1 * gridvalue);
   result := fmargin_pixels + round(gy);
+end;
+
+function TScopeDisplay.ConvertYToGrid(y : integer) : double;
+var
+  gh : integer;
+begin
+  gh := Height - 2 * fmargin_pixels;
+  result := 5 - 10 * (y - fmargin_pixels) / gh;
 end;
 
 function TScopeDisplay.FindNearestWave(t : double; y : integer; range : integer) : TWaveDisplay;
@@ -874,16 +902,39 @@ begin
 end;
 
 procedure TScopeDisplay.ShowSampleMarker(wd : TWaveDisplay; t : double);
+var
+  gv : double;
 begin
   if wd <> nil then
   begin
+    gv := wd.GridValueAt(t);
     sample_marker.X := ConvertTimeToGrid(wd.NearestSampleTime(t));
-    sample_marker.Y := 5 - wd.GridValueAt(t);
+    sample_marker.Y := 5 - gv;
     sample_marker.visible := true;
+
+    {$if 0}
+    valtxt.Text := wd.name + ' = ' + wd.GetValueStr(t);
+    {$else}
+    valtxt.Text := wd.GetValueStr(t);
+    valtxt.SetColor(
+      ((wd.color shr  0) and $FF) / 255,
+      ((wd.color shr  8) and $FF) / 255,
+      ((wd.color shr 16) and $FF) / 255
+    );
+    {$endif}
+
+    valframe.scalex := valtxt.Width + 8;
+    valframe.scaley := valtxt.Height + 8;
+
+    valgrp.x := ConvertTimeToX(t) + 20;
+    valgrp.y := ConvertGridToY(gv) + 20;
+    valgrp.visible := true;
+
   end
   else
   begin
     sample_marker.visible := false;
+    valgrp.visible := false;
   end;
 end;
 

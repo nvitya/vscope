@@ -85,17 +85,27 @@ type
 
     filename : string;
 
-    vertdrag : boolean;
-    vdx : integer;
-    vdviewstart : double;
+    drag_start_x : integer;
+    drag_start_y : integer;
+
+    time_dragging : boolean;
+    td_viewstart : double;
+
+    wave_dragging : boolean; // wave offset change
+    wdr_wave : TWaveDisplay;
+    wdr_start_offs : double;
 
     procedure UpdateScrollBar;
     procedure UpdateTimeDiv;
 
     procedure UpdateChGrid;
 
-    procedure SelectWave(awidx : integer);
+    procedure SelectWave(awidx : integer); overload;
+    procedure SelectWave(wd : TWaveDisplay); overload;
+
     function SelectedWave : TWaveDisplay;
+
+    procedure ChangeWaveScale(amul : double);
 
   end;
 
@@ -175,11 +185,13 @@ begin
     s := w.ScalingStr;
     ts.Alignment := taRightJustify;
   end
+  {
   else if 3 = acol then // cursor value
   begin
-    s := FloatToStr(w.GetValueAt(cursor_time), float_number_format);
+    s := w.GetValueStr(cursor_time);
     ts.Alignment := taRightJustify;
   end
+  }
   else s := '?';
 
   c.TextStyle := ts;
@@ -217,19 +229,46 @@ begin
   if WheelDelta < 0 then pm := 1
                     else pm := -1;
 
-  scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, pm), scope.ConvertXToTime(MousePos.x));
-  UpdateTimeDiv;
-  UpdateScrollBar;
-  scope.DoOnPaint;
+  if Shift = [] then  // normal time zoom
+  begin
+    scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, pm), scope.ConvertXToTime(MousePos.x));
+    UpdateTimeDiv;
+    UpdateScrollBar;
+    scope.DoOnPaint;
+  end
+  else if ssCtrl in Shift then
+  begin
+    if WheelDelta < 0 then ChangeWaveScale(0.5)
+                      else ChangeWaveScale(2)
+  end;
+
 end;
 
 procedure TfrmMain.pnlScopeViewMouseDown(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
+var
+  wd : TWaveDisplay;
+  st : double;
 begin
   if mbLeft = Button then
   begin
-    vertdrag := true;
-    vdx := x;
-    vdviewstart := scope.ViewStart;
+    time_dragging := true;
+    drag_start_x := x;
+    td_viewstart := scope.ViewStart;
+
+    wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
+    SelectWave(wd);
+  end
+  else if mbRight = Button then
+  begin
+    wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
+    if wd = nil then EXIT;
+
+    SelectWave(wd);
+
+    wave_dragging := true;
+    wdr_wave := wd;
+    drag_start_y := y;
+    wdr_start_offs := wd.viewoffset;
   end;
 end;
 
@@ -237,7 +276,11 @@ procedure TfrmMain.pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton; 
 begin
   if mbLeft = Button then
   begin
-    vertdrag := false;
+    time_dragging := false;
+  end
+  else if mbRight = Button then
+  begin
+    wave_dragging := false;
   end;
 end;
 
@@ -248,13 +291,16 @@ var
   wd : TWaveDisplay;
 begin
 
-  if vertdrag then
+  if time_dragging then
   begin
-    scope.ViewStart := vdviewstart + (scope.ConvertXToTime(vdx) - scope.ConvertXToTime(x));
+    scope.ViewStart := td_viewstart + (scope.ConvertXToTime(drag_start_x) - scope.ConvertXToTime(x));
     UpdateTimeDiv;
     UpdateScrollBar;
-    //scope.DoOnPaint;
-    //scope.Repaint;
+  end
+  else if wave_dragging then
+  begin
+    wdr_wave.viewoffset := wdr_start_offs + (scope.ConvertYToGrid(y) - scope.ConvertYToGrid(drag_start_y));
+    wdr_wave.ReDrawWave;
   end;
 
   t := scope.ConvertXToTime(x);
@@ -268,7 +314,7 @@ begin
 
   if wd <> nil then
   begin
-    txtCursorValue.Caption := wd.name + ' = ' + FloatToStr(wd.GetValueAt(st));
+    txtCursorValue.Caption := wd.name + ' = ' + wd.GetValueStr(st);
   end
   else
   begin
@@ -276,7 +322,7 @@ begin
   end;
 
   scope.Repaint;
-  chgrid.Repaint;
+  //chgrid.Repaint;
 end;
 
 procedure TfrmMain.cbDrawStepsChange(Sender : TObject);
@@ -287,30 +333,12 @@ begin
 end;
 
 procedure TfrmMain.btnChScalePlusMinusClick(Sender : TObject);
-var
-  wd : TWaveDisplay;
-  oldscale : double;
-  newscale : double;
 begin
-  wd := SelectedWave;
-  if wd = nil then EXIT;
-  oldscale := wd.viewscale;
-  newscale := oldscale;
-  while oldscale = wd.viewscale do
-  begin
-    if Sender = btnChScalePlus
-    then
-        newscale := newscale * 2
-    else
-        newscale := newscale / 2;
-
-    wd.viewscale := wd.FindNearestScale(newscale);
-  end;
-
-  wd.CorrectOffset;
-  scope.RenderWaves;
-  scope.Repaint;
-  chgrid.Refresh;
+  if Sender = btnChScalePlus
+  then
+      ChangeWaveScale(2)
+  else
+      ChangeWaveScale(0.5);
 end;
 
 procedure TfrmMain.btnChOffsPlusMinusClick(Sender : TObject);
@@ -411,6 +439,20 @@ begin
   scope.Repaint;
 end;
 
+procedure TfrmMain.SelectWave(wd : TWaveDisplay);
+var
+  i : integer;
+begin
+  for i := 0 to scope.waves.Count - 1 do
+  begin
+    if scope.waves[i] = wd then
+    begin
+      SelectWave(i);
+      break;
+    end;
+  end;
+end;
+
 function TfrmMain.SelectedWave : TWaveDisplay;
 var
   wi : integer;
@@ -418,6 +460,28 @@ begin
   wi := chgrid.Row - 1;
   if (wi >= 0) and (wi < scope.waves.Count) then  result := scope.waves[wi]
                                             else  result := nil;
+end;
+
+procedure TfrmMain.ChangeWaveScale(amul : double);
+var
+  wd : TWaveDisplay;
+  oldscale : double;
+  newscale : double;
+begin
+  wd := SelectedWave;
+  if wd = nil then EXIT;
+  oldscale := wd.viewscale;
+  newscale := oldscale;
+  while oldscale = wd.viewscale do
+  begin
+    newscale := newscale * amul;
+    wd.viewscale := wd.FindNearestScale(newscale);
+  end;
+
+  wd.CorrectOffset;
+  scope.RenderWaves;
+  scope.Repaint;
+  chgrid.Refresh;
 end;
 
 procedure TfrmMain.miExitClick(Sender : TObject);

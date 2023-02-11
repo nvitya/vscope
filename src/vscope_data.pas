@@ -49,6 +49,7 @@ type
     function NearestSampleTime(t : double) : double;
     function GetDataIndexTime(di : integer) : double;
     function GetValueAt(t : double) : double;
+    function GetValueStr(t : double) : string;
 
     procedure CalcMinMax(fromtime, totime : double; out data_min : double; out data_max : double; out scnt : integer);
 
@@ -364,6 +365,11 @@ begin
       result := data[di];
 end;
 
+function TWaveData.GetValueStr(t : double) : string;
+begin
+  result := FloatToStr(GetValueAt(t), float_number_format);
+end;
+
 procedure TWaveData.CalcMinMax(fromtime, totime : double; out data_min : double; out data_max : double; out scnt : integer);
 var
   di, dito : integer;
@@ -488,13 +494,15 @@ var
   jwarr, jn : TJSonNode;
 begin
   jf := TJsonNode.Create();
+
+  jwarr := jf.Add('WAVES', nkArray);
+  for w in waves do
+  begin
+    jn := jwarr.Add();
+    w.SaveToJsonNode(jn);
+  end;
+
   try
-    jwarr := jf.Add('WAVES', nkArray);
-    for w in waves do
-    begin
-      jn := jwarr.Add();
-      w.SaveToJsonNode(jn);
-    end;
     jf.SaveToFile(afilename);
   finally
     jf.Free;

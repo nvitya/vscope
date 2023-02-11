@@ -263,6 +263,9 @@ type
 
     procedure Draw(const apmatrix : TMatrix; apalpha : TddFloat); override;
 
+    procedure SetColor(r, g, b : TddFloat); overload;
+    procedure SetColor(r, g, b, a : TddFloat); overload;
+
     procedure SetSize(awidth, aheight : integer);
 
     property BmpWidth  : integer  read bmp_width;
@@ -938,6 +941,7 @@ begin
   color.r := r;
   color.b := b;
   color.g := g;
+  color.a := 1;
 end;
 
 procedure TShape.SetColor(r, g, b, a : TddFloat);
@@ -1000,6 +1004,7 @@ begin
   color.r := r;
   color.b := b;
   color.g := g;
+  color.a := 1;
 end;
 
 procedure TClonedShape.SetColor(r, g, b, a : TddFloat);
@@ -1320,6 +1325,22 @@ begin
   glBindVertexArray(vao);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
+end;
+
+procedure TAlphaMap.SetColor(r, g, b : TddFloat);
+begin
+  color.r := r;
+  color.b := b;
+  color.g := g;
+  color.a := 1;
+end;
+
+procedure TAlphaMap.SetColor(r, g, b, a : TddFloat);
+begin
+  color.r := r;
+  color.b := b;
+  color.g := g;
+  color.a := a;
 end;
 
 procedure TAlphaMap.SetSize(awidth, aheight : integer);
