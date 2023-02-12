@@ -80,11 +80,17 @@ type
     tbScaleMinus : TToolButton;
     tbOffsetUp : TToolButton;
     tbOffsetDown : TToolButton;
-    ToolButton4 : TToolButton;
     Label2 : TLabel;
     txtViewStart : TStaticText;
     Label3 : TLabel;
     txtCursorTime : TStaticText;
+    ToolButton5 : TToolButton;
+    tbMarkerA : TToolButton;
+    tbMarkerB : TToolButton;
+    tbMarkerClear : TToolButton;
+    Bevel1 : TBevel;
+    Bevel3 : TBevel;
+    Bevel4 : TBevel;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -107,9 +113,14 @@ type
     procedure pnlScopeViewMouseDown(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
     procedure pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
     procedure pnlScopeViewMouseMove(Sender : TObject; Shift : TShiftState; X, Y : Integer);
+
     procedure miDrawStepsClick(Sender : TObject);
     procedure tbZoomInClick(Sender : TObject);
     procedure tbZoomOutClick(Sender : TObject);
+    procedure Bevel3ChangeBounds(Sender : TObject);
+    procedure tbMarkerAClick(Sender : TObject);
+    procedure tbMarkerClearClick(Sender : TObject);
+    procedure tbMarkerBClick(Sender : TObject);
 
   private
 
@@ -129,6 +140,9 @@ type
     wave_dragging : boolean; // wave offset change
     wdr_wave : TWaveDisplay;
     wdr_start_offs : double;
+
+    marker_placing : integer;
+    marker_was_moved : boolean;
 
     procedure UpdateScrollBar;
     procedure UpdateTimeDiv;
@@ -158,6 +172,8 @@ procedure TfrmMain.FormCreate(Sender : TObject);
 //  w : TWaveDisplay;
 begin
 
+  marker_placing := 0;
+
   filename := 'vscope.json';
 
   scope := TScopeDisplay.Create(self, pnlScopeView);
@@ -171,6 +187,9 @@ begin
 
   scope.LoadScopeFile(filename);
   //scope.AutoScale;
+
+  //scope.SetMarker(0, scope.TimeRange / 3);
+  //scope.SetMarker(1, scope.TimeRange / 2);
 
   UpdateScrollBar;
   UpdateTimeDiv;
@@ -284,15 +303,24 @@ procedure TfrmMain.pnlScopeViewMouseDown(Sender : TObject; Button : TMouseButton
 var
   wd : TWaveDisplay;
   st : double;
+  tm : TScopeMarker;
 begin
   if mbLeft = Button then
   begin
-    time_dragging := true;
-    drag_start_x := x;
-    td_viewstart := scope.ViewStart;
+    tm := scope.FindNearestMarker(x, 5);
+    if tm <> nil then
+    begin
+      marker_placing := tm.index + 1;
+    end
+    else
+    begin
+      time_dragging := true;
+      drag_start_x := x;
+      td_viewstart := scope.ViewStart;
 
-    wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
-    SelectWave(wd);
+      wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
+      SelectWave(wd);
+    end;
   end
   else if mbRight = Button then
   begin
@@ -312,7 +340,16 @@ procedure TfrmMain.pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton; 
 begin
   if mbLeft = Button then
   begin
-    time_dragging := false;
+    if (marker_placing > 0) and not marker_was_moved then
+    begin
+      // keep the marker placing mode
+    end
+    else
+    begin
+      time_dragging := false;
+      marker_placing := 0;
+      marker_was_moved := false;
+    end;
   end
   else if mbRight = Button then
   begin
@@ -342,8 +379,17 @@ begin
   t := scope.ConvertXToTime(x);
   cursor_time := t;
   txtCursorTime.Caption := format('%.6f', [t]);
-  scope.SetTimeCursor(t);
 
+  if marker_placing > 0 then
+  begin
+    scope.SetMarker(marker_placing - 1, t);
+    scope.timecursor.visible := false;
+    marker_was_moved := true;
+  end
+  else
+  begin
+    scope.SetTimeCursor(t);
+  end;
 
   wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
   scope.ShowSampleMarker(wd, st);
@@ -375,7 +421,28 @@ begin
   scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, 1), scope.ViewStart + scope.ViewRange / 2);
   UpdateTimeDiv;
   UpdateScrollBar;
-  scope.DoOnPaint;
+  scope.Repaint;
+end;
+
+procedure TfrmMain.Bevel3ChangeBounds(Sender : TObject);
+begin
+
+end;
+
+procedure TfrmMain.tbMarkerAClick(Sender : TObject);
+begin
+  marker_placing := 1;
+end;
+
+procedure TfrmMain.tbMarkerClearClick(Sender : TObject);
+begin
+  scope.ClearMarkers;
+  scope.Repaint;
+end;
+
+procedure TfrmMain.tbMarkerBClick(Sender : TObject);
+begin
+  marker_placing := 2;
 end;
 
 procedure TfrmMain.btnChScalePlusMinusClick(Sender : TObject);

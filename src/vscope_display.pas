@@ -96,6 +96,34 @@ type
 
   TWaveDisplayList = specialize TFPGList<TWaveDisplay>;
 
+  { TScopeMarker }
+
+  TScopeMarker = class
+  private
+    fvisible : boolean;
+    procedure SetVisible(AValue : boolean);
+
+  public
+    index   : integer;
+    mtime    : double;
+
+    vline  : TShape;
+    letter : TTextBox;
+    letterbg : TShape;
+
+    scope : TScopeDisplay;
+
+    constructor Create(ascope : TScopeDisplay; aindex : integer; atime : double);
+    destructor Destroy; override;
+
+    procedure SetTo(t : double);
+
+    property Visible : boolean read fvisible write SetVisible;
+
+    procedure Update;
+
+  end;
+
   { TScopeDisplay }
 
   TScopeDisplay = class(TddScene)
@@ -143,7 +171,15 @@ type
 
     sample_marker : TShape;
 
+    grp_top_icons : TDrawGroup;  // screen aligned
+
+    marker : array[0..1] of TScopeMarker;
+
     procedure InitMarkers;
+    procedure UpdateMarkers;
+
+    procedure SetMarker(aindex : integer; t : double);
+    procedure ClearMarkers;
 
   public
     procedure DoOnResize; override;
@@ -153,11 +189,11 @@ type
 
   public
     data  : TScopeData;
-    grp_waves  : TDrawGroup;
-    grp_zeroes : TDrawGroup;
-    grp_zeroes2 : TClonedGroup;
+    grp_waves  : TDrawGroup;    // grid-scaled
+    grp_zeroes : TDrawGroup;    // grid-scaled
+    grp_zeroes2 : TClonedGroup; // grid-scaled
 
-    grp_markers  : TDrawGroup;
+    grp_markers  : TDrawGroup;  // grid-scaled
     waves : TWaveDisplayList;
 
     draw_steps : boolean;
@@ -183,7 +219,7 @@ type
     function ConvertGridToY(gridvalue : double) : integer;
     function ConvertYToGrid(y : integer) : double;
 
-    function FindNearestWave(t : double; y : integer; range : integer) : TWaveDisplay;
+    function FindNearestMarker(x, range : integer) : TScopeMarker;
     function FindNearestWaveSample(x, y : integer; range : integer; out st : double) : TWaveDisplay;
 
     procedure SetTimeCursor(t : double);
@@ -219,6 +255,8 @@ const
     $FF802080
   );
 
+  scope_marker_letters : array[0..1] of char = ('A', 'B');
+
 function  FindNextTimeDiv(adiv : double; adir : integer) : double;
 
 implementation
@@ -252,6 +290,80 @@ begin
 
       Dec(tdi);
     end;
+  end;
+end;
+
+{ TScopeMarker }
+
+procedure TScopeMarker.SetVisible(AValue : boolean);
+begin
+  if fvisible = AValue then Exit;
+  fvisible := AValue;
+  Update;
+end;
+
+constructor TScopeMarker.Create(ascope : TScopeDisplay; aindex : integer; atime : double);
+const
+  vline_vertices  : array[0..1] of TVertex = ((0, 0),(0,10));
+  //lshp_vertices   : array[0..5] of TVertex = ((0, 0),(0,10));
+begin
+  scope := ascope;
+  index := aindex;
+  visible := false;
+  mtime  := atime;
+
+  vline  := scope.grp_markers.NewShape;
+  vline.AddPrimitive(GL_LINES, 2, @vline_vertices);
+  vline.x := 0.5;
+  vline.alpha := 0.5;
+  if aindex = 0 then
+  begin
+    vline.SetColor(0.8, 0.8, 1);
+  end
+  else
+  begin
+    vline.SetColor(0.8, 1, 0.8);
+  end;
+
+  //letterbg := grp.NewShape;
+  letter := TTextBox.Create(scope.grp_top_icons, scope.vfont.GetSizedFont(8), scope_marker_letters[index]);
+  letter.y := -letter.Height;
+  letter.color := vline.color;
+end;
+
+destructor TScopeMarker.Destroy;
+begin
+  vline.Free;
+  letter.Free;
+  inherited Destroy;
+end;
+
+procedure TScopeMarker.SetTo(t : double);
+begin
+  mtime := t;
+  fvisible := true;
+  Update;
+end;
+
+procedure TScopeMarker.Update;
+var
+  gt : double;
+begin
+  if fvisible then
+  begin
+    gt := (mtime - scope.ViewStart) / scope.TimeDiv;
+    if      gt <  0 then gt := 0
+    else if gt > 10 then gt := 10;
+    vline.x := gt;
+    vline.visible := true;
+
+    letter.x := round((scope.Width - 2 * scope.fmargin_pixels) * gt / 10 - letter.Width / 2 + 0.25);
+    letter.visible := true;
+  end
+  else
+  begin
+    vline.visible := false;
+    letter.visible := false;
   end;
 end;
 
@@ -471,6 +583,10 @@ begin
 
   draw_steps := false;
 
+  grp_top_icons := root.NewGroup;
+  grp_top_icons.x := fmargin_pixels;
+  grp_top_icons.y := fmargin_pixels;
+
   InitGrid;
   InitMarkers;
   InitTexts;
@@ -478,6 +594,9 @@ end;
 
 destructor TScopeDisplay.Destroy;
 begin
+  marker[0].Free;
+  marker[1].Free;
+
   ClearWaves;
 
   data.Free;
@@ -511,6 +630,8 @@ begin
 
   UpdateTimeDivPos;
 
+  UpdateMarkers;
+
   txt_abinfo.x := fmargin_pixels;
   txt_abinfo.y := round(gh + fmargin_pixels + fmargin_pixels / 2 - txt_abinfo.Height / 2);
 end;
@@ -531,6 +652,8 @@ var
   w : TWaveDisplay;
 begin
   for w in waves do w.DoOnDataUpdate;
+
+  UpdateMarkers;
 end;
 
 procedure TScopeDisplay.InitGrid;
@@ -630,7 +753,7 @@ begin
   valgrp.visible := false;
 
   txt_timediv := TTextBox.Create(root, vfont.GetSizedFont(9), 'Time Div Info');
-  txt_timediv.SetColor(0.5, 0.5, 0.5);
+  txt_timediv.SetColor(0.7, 0.7, 0.7);
 
   txt_abinfo := TTextBox.Create(root, vfont.GetSizedFont(9), 'A-B Marker Info Text');;
   txt_abinfo.SetColor(0.7, 0.7, 0.7);
@@ -657,6 +780,55 @@ begin
   sample_marker.scaley := 1;
   sample_marker.visible := false;
 
+  // A-B marker
+  marker[0] := TScopeMarker.Create(self, 0, 0);
+  marker[1] := TScopeMarker.Create(self, 1, 1);
+end;
+
+procedure TScopeDisplay.UpdateMarkers;
+var
+  m : TScopeMarker;
+  allvisible : boolean;
+  dt : double;
+  hz : double;
+begin
+  allvisible := true;
+  for m in marker do
+  begin
+    m.Update;
+    if not m.Visible then allvisible := false;
+  end;
+
+  if not allvisible then
+  begin
+    txt_abinfo.Visible := false;
+  end
+  else
+  begin
+    dt := marker[1].mtime - marker[0].mtime;
+    hz := 1 / dt;
+    txt_abinfo.Text := 'B-A: '
+       + FloatToStrF(dt, ffFixed, 0, 6, float_number_format) + ' s'
+       + ', ' + FloatToStrF(hz, ffFixed, 0, 3, float_number_format) + ' Hz'
+    ;
+    txt_abinfo.Visible := true;
+  end;
+end;
+
+procedure TScopeDisplay.SetMarker(aindex : integer; t : double);
+begin
+  if (aindex < 0) or (aindex > 1) then EXIT;
+
+  marker[aindex].SetTo(t);
+
+  UpdateMarkers;
+end;
+
+procedure TScopeDisplay.ClearMarkers;
+begin
+  marker[0].Visible := false;
+  marker[1].Visible := false;
+  UpdateMarkers;
 end;
 
 
@@ -893,31 +1065,20 @@ begin
   result := 5 - 10 * (y - fmargin_pixels) / gh;
 end;
 
-function TScopeDisplay.FindNearestWave(t : double; y : integer; range : integer) : TWaveDisplay;
+function TScopeDisplay.FindNearestMarker(x, range : integer) : TScopeMarker;
 var
-  wd : TWaveDisplay;
-  dist : integer;
-  mindist : integer;
-  gv : double;
-  wy : integer;
+  tm : TScopeMarker;
+  dx, mindx : integer;
 begin
   result := nil;
-  mindist := range * 2;
-  for wd in waves do
+  mindx := range + 1;
+  for tm in marker do
   begin
-    gv := wd.GridValueAt(t);
-    if gv <> NaN then
+    dx := abs(x - ConvertTimeToX(tm.mtime));
+    if dx < mindx then
     begin
-      wy := ConvertGridToY(gv);
-      dist := abs(wy - y);
-      if dist <= range then
-      begin
-        if (result = nil) or (dist <= mindist) then
-        begin
-          result := wd;
-          mindist := dist;
-        end;
-      end;
+      result := tm;
+      mindx := dx;
     end;
   end;
 end;
