@@ -5,7 +5,7 @@ object frmMain: TfrmMain
   Width = 800
   AllowDropFiles = True
   Caption = 'VScope'
-  ClientHeight = 576
+  ClientHeight = 580
   ClientWidth = 800
   Menu = mainmenu
   OnCreate = FormCreate
@@ -171,18 +171,18 @@ object frmMain: TfrmMain
   end
   object pnlScopeGroup: TPanel
     Left = 0
-    Height = 550
+    Height = 554
     Top = 26
     Width = 612
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 550
+    ClientHeight = 554
     ClientWidth = 612
     TabOrder = 1
     object sbScope: TScrollBar
       Left = 0
       Height = 20
-      Top = 530
+      Top = 534
       Width = 612
       Align = alBottom
       PageSize = 0
@@ -191,7 +191,7 @@ object frmMain: TfrmMain
     end
     object pnlScopeView: TPanel
       Left = 0
-      Height = 530
+      Height = 534
       Top = 0
       Width = 612
       Align = alClient
@@ -207,26 +207,26 @@ object frmMain: TfrmMain
   end
   object pnlRight: TPanel
     Left = 612
-    Height = 550
+    Height = 554
     Top = 26
     Width = 188
     Align = alRight
     BevelOuter = bvLowered
-    ClientHeight = 550
+    ClientHeight = 554
     ClientWidth = 188
     TabOrder = 2
     object pnlWaves: TPanel
       Left = 1
-      Height = 423
+      Height = 427
       Top = 1
       Width = 186
       Align = alClient
-      ClientHeight = 423
+      ClientHeight = 427
       ClientWidth = 186
       TabOrder = 0
       object chgrid: TDrawGrid
         Left = 1
-        Height = 421
+        Height = 425
         Top = 1
         Width = 184
         Align = alClient
@@ -256,7 +256,7 @@ object frmMain: TfrmMain
     object pnlInfo: TPanel
       Left = 1
       Height = 125
-      Top = 424
+      Top = 428
       Width = 186
       Align = alBottom
       ClientHeight = 125
@@ -265,9 +265,9 @@ object frmMain: TfrmMain
       TabOrder = 1
       object Label2: TLabel
         Left = 8
-        Height = 14
+        Height = 15
         Top = 12
-        Width = 55
+        Width = 52
         Caption = 'View Start'
         ParentColor = False
       end
@@ -284,9 +284,9 @@ object frmMain: TfrmMain
       end
       object Label3: TLabel
         Left = 8
-        Height = 14
+        Height = 15
         Top = 64
-        Width = 49
+        Width = 48
         Caption = 'Cursor t.:'
         ParentColor = False
       end

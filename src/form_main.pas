@@ -349,6 +349,7 @@ var
   wd : TWaveDisplay;
   st : double;
   tm : TScopeMarker;
+  di : integer;
 begin
   if mbLeft = Button then
   begin
@@ -363,13 +364,13 @@ begin
       drag_start_x := x;
       td_viewstart := scope.ViewStart;
 
-      wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
+      wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, di);
       SelectWave(wd);
     end;
   end
   else if mbRight = Button then
   begin
-    wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
+    wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, di);
     if wd = nil then EXIT;
 
     SelectWave(wd);
@@ -406,6 +407,7 @@ procedure TfrmMain.pnlScopeViewMouseMove(Sender : TObject; Shift : TShiftState; 
 var
   t : double;
   st : double;
+  di : integer;
   wd : TWaveDisplay;
   instantupdate : boolean = False;
 begin
@@ -437,8 +439,8 @@ begin
     scope.SetTimeCursor(t);
   end;
 
-  wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
-  scope.ShowSampleMarker(wd, st);
+  wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, di);
+  scope.ShowSampleMarker(wd, di);
 
   if instantupdate
   then

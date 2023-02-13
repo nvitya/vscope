@@ -90,6 +90,7 @@ type
 
     procedure DoOnDataUpdate; override;
 
+    function GridValue(di : integer) : double;
     function GridValueAt(t : double) : double;
 
   end;
@@ -220,11 +221,11 @@ type
     function ConvertYToGrid(y : integer) : double;
 
     function FindNearestMarker(x, range : integer) : TScopeMarker;
-    function FindNearestWaveSample(x, y : integer; range : integer; out st : double) : TWaveDisplay;
+    function FindNearestWaveSample(x, y : integer; range : integer; out rdi : integer) : TWaveDisplay;
 
     procedure SetTimeCursor(t : double);
 
-    procedure ShowSampleMarker(wd : TWaveDisplay; t : double);
+    procedure ShowSampleMarker(wd : TWaveDisplay; di : integer); //t : double);
 
     property TimeRange : double read ftimerange;
     property MinTime : double read fmintime;
@@ -532,6 +533,18 @@ var
 begin
   di := GetDataIndex(t);
   if di < 0
+  then
+      EXIT(-20);
+
+  result := data[di] * viewscale + viewoffset;
+  // clamping the Y:
+  if result > 5 then result := 5
+  else if result < -5 then result := -5;
+end;
+
+function TWaveDisplay.GridValue(di : integer) : double;
+begin
+  if (di < 0) or (di >= length(data))
   then
       EXIT(-20);
 
@@ -1120,7 +1133,7 @@ begin
   end;
 end;
 
-function TScopeDisplay.FindNearestWaveSample(x, y : integer; range : integer; out st : double) : TWaveDisplay;
+function TScopeDisplay.FindNearestWaveSample(x, y : integer; range : integer; out rdi : integer) : TWaveDisplay;
 var
   wd            : TWaveDisplay;
   mint, maxt    : double;
@@ -1173,7 +1186,7 @@ begin
       begin
         result := wd;
         mindist2 := d2;
-        st := wd.GetDataIndexTime(di);
+        rdi := di; //wd.GetDataIndexTime(di);
       end;
 
       inc(di);
@@ -1199,14 +1212,16 @@ begin
   end;
 end;
 
-procedure TScopeDisplay.ShowSampleMarker(wd : TWaveDisplay; t : double);
+procedure TScopeDisplay.ShowSampleMarker(wd : TWaveDisplay; di : integer);
 var
   gv : double;
+  t  : double;
 begin
   if wd <> nil then
   begin
-    gv := wd.GridValueAt(t);
-    sample_marker.X := ConvertTimeToGrid(wd.NearestSampleTime(t));
+    t := wd.GetDataIndexTime(di);
+    gv := wd.GridValue(di);
+    sample_marker.X := ConvertTimeToGrid(t);
     sample_marker.Y := 5 - gv;
     sample_marker.visible := true;
 
