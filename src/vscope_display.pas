@@ -242,6 +242,9 @@ type
 
 
 const
+
+  default_font_path : string = 'vscope_font.ttf';
+
   default_wave_colors : array[0..7] of cardinal = (
   // aabbggrr
     $FF00FFFF,
@@ -389,6 +392,9 @@ end;
 
 destructor TWaveDisplay.Destroy;
 begin
+  wshp.Free;
+  zeroline.Free;
+
   inherited Destroy;
 end;
 
@@ -540,14 +546,17 @@ end;
 
 constructor TScopeDisplay.Create(aowner : TComponent; aparent : TWinControl);
 begin
-  inherited;
+  inherited Create(aowner, aparent);
+
+  data := TScopeData.Create;
+  waves := TWaveDisplayList.Create;
+
 
   InitFontManager;
-  vfont := fontmanager.GetFont('vscope_font.ttf');
+  vfont := fontmanager.GetFont(default_font_path);
 
   fmargin_pixels := 32;
 
-  data := TScopeData.Create;
   grid := root.NewGroup;
   grid.x := fmargin_pixels;
   grid.y := fmargin_pixels;
@@ -567,7 +576,6 @@ begin
   grp_waves.y := fmargin_pixels;
 
 
-  waves := TWaveDisplayList.Create;
 
   grp_markers := root.NewGroup;
   grp_markers.x := fmargin_pixels;
@@ -593,9 +601,10 @@ begin
 end;
 
 destructor TScopeDisplay.Destroy;
+var
+  m : TScopeMarker;
 begin
-  marker[0].Free;
-  marker[1].Free;
+  for m in marker do if m <> nil then m.Free;
 
   ClearWaves;
 
@@ -958,13 +967,18 @@ end;
 procedure TScopeDisplay.LoadScopeFile(afilename : string);
 var
   jf, jwlist, jw : TJsonNode;
+  jn : TJsonNode;
   jview, jv : TJsonNode;
+  jmarkers : TJsonNode;
   i : integer;
   wd : TWaveDisplay;
 begin
   jf := TJsonNode.Create();
   try
     jf.LoadFromFile(afilename);
+
+    ClearWaves;
+    ClearMarkers;
 
     jwlist := jf.Find('WAVES');
     if jwlist = nil then raise EScopeData.Create('Scope data format error: "WAVES" node not found.');
@@ -987,6 +1001,19 @@ begin
 
     CalcTimeRange;
 
+    if jf.Find('MARKERS', jmarkers) then
+    begin
+      for i := 0 to jmarkers.Count - 1 do
+      begin
+        jn := jmarkers.Child(i);
+        if jn.Find('MTIME', jv)   then marker[i].mtime := jv.AsNumber;
+        if jn.Find('VISIBLE', jv) then marker[i].fvisible := jv.AsBoolean;
+      end;
+      UpdateMarkers;
+    end;
+
+    UpdateTimeDivInfo;
+
   finally
     jf.Free;
   end;
@@ -998,13 +1025,23 @@ var
   jf : TJsonNode;
   w  : TWaveDisplay;
   jview : TJsonNode;
+  jmarkers : TJsonNode;
   jwarr, jn : TJSonNode;
+  i : integer;
 begin
   jf := TJsonNode.Create();
 
   jview := jf.Add('VIEW', nkObject);
   jview.Add('TIMEDIV', TimeDiv);
   jview.Add('VIEWSTART', ViewStart);
+
+  jmarkers := jf.Add('MARKERS', nkArray);
+  for i := 0 to 1 do
+  begin
+    jn := jmarkers.Add();
+    jn.Add('VISIBLE', marker[i].Visible);
+    jn.Add('MTIME',   marker[i].mtime);
+  end;
 
   jwarr := jf.Add('WAVES', nkArray);
   for w in waves do

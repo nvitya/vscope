@@ -44,7 +44,7 @@ type
 
   TfrmMain = class(TForm)
     mainmenu : TMainMenu;
-    miFile : TMenuItem;
+    menuFile : TMenuItem;
     miOpen : TMenuItem;
     miExit : TMenuItem;
     Separator1 : TMenuItem;
@@ -91,6 +91,20 @@ type
     Bevel1 : TBevel;
     Bevel3 : TBevel;
     Bevel4 : TBevel;
+    menuMarkers : TMenuItem;
+    miMarkerA : TMenuItem;
+    miMarkerB : TMenuItem;
+    miClearMarkers : TMenuItem;
+    Separator3 : TMenuItem;
+    Separator4 : TMenuItem;
+    miScalePlus : TMenuItem;
+    miScaleMinus : TMenuItem;
+    miOffsetUp : TMenuItem;
+    miOffsetDown : TMenuItem;
+    dlgFileOpen : TOpenDialog;
+    dlgFileSave : TSaveDialog;
+    tbZoomAll : TToolButton;
+    miZoomAll : TMenuItem;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -117,12 +131,18 @@ type
     procedure miDrawStepsClick(Sender : TObject);
     procedure tbZoomInClick(Sender : TObject);
     procedure tbZoomOutClick(Sender : TObject);
-    procedure Bevel3ChangeBounds(Sender : TObject);
     procedure tbMarkerAClick(Sender : TObject);
     procedure tbMarkerClearClick(Sender : TObject);
     procedure tbMarkerBClick(Sender : TObject);
-
+    procedure tbOpenClick(Sender : TObject);
+    procedure tbSaveAsClick(Sender : TObject);
+    procedure FormDropFiles(Sender : TObject; const FileNames : array of string
+      );
+    procedure tbZoomAllClick(Sender : TObject);
   private
+
+  public
+    exe_dir : string;
 
   public
     scope : TScopeDisplay;
@@ -149,6 +169,8 @@ type
 
     procedure UpdateChGrid;
 
+    procedure LoadScopeFile(afilename : string);
+
     procedure SelectWave(awidx : integer); overload;
     procedure SelectWave(wd : TWaveDisplay); overload;
 
@@ -163,29 +185,57 @@ var
 
 implementation
 
+
 {$R *.lfm}
 
 { TfrmMain }
 
 procedure TfrmMain.FormCreate(Sender : TObject);
-//var
-//  w : TWaveDisplay;
 begin
+
+  exe_dir := ExtractFileDir(ParamStr(0));
+  default_font_path :=  IncludeTrailingBackslash(exe_dir) + 'vscope_font.ttf';
 
   marker_placing := 0;
 
-  filename := 'vscope.json';
-
-  scope := TScopeDisplay.Create(self, pnlScopeView);
+  try
+    scope := TScopeDisplay.Create(self, pnlScopeView);
+  except
+    on e : Exception do
+    begin
+      MessageDlg('Exception', e.ToString, mtError, [mbAbort], 0);
+      halt(1);
+    end;
+  end;
   scope.ViewStart := 0;
-  scope.ViewRange := 5;
+  scope.ViewRange := 10;
   scope.ViewStart := 0; //-2;
+  scope.UpdateTimeDivInfo;
+
+  scope.valgrp.visible := false;
 
   scope.draw_steps := true;
   miDrawSteps.Checked := scope.draw_steps;
   tbDrawSteps.Down := scope.draw_steps;
 
-  scope.LoadScopeFile(filename);
+  scope.OnMouseMove := @pnlScopeViewMouseMove;
+  scope.OnMouseDown := @pnlScopeViewMouseDown;
+  scope.OnMouseUp   := @pnlScopeViewMouseUp;
+
+
+  if (ParamCount >= 1) and FileExists(ParamStr(1)) then
+  begin
+    try
+      LoadScopeFile(ParamStr(1));
+    except
+      on e : Exception do
+      begin
+        MessageDlg('Error Loading File', e.ToString, mtError, [mbOK], 0);
+      end;
+    end;
+  end;
+
+  //scope.LoadScopeFile(filename);
   //scope.AutoScale;
 
   //scope.SetMarker(0, scope.TimeRange / 3);
@@ -194,14 +244,9 @@ begin
   UpdateScrollBar;
   UpdateTimeDiv;
 
-  scope.OnMouseMove := @pnlScopeViewMouseMove;
-  scope.OnMouseDown := @pnlScopeViewMouseDown;
-  scope.OnMouseUp   := @pnlScopeViewMouseUp;
-
   UpdateChGrid;
   SelectWave(0);
 
-  scope.valgrp.visible := false;
 end;
 
 procedure TfrmMain.chgridDrawCell(Sender : TObject; aCol, aRow : Integer; aRect : TRect; aState : TGridDrawState);
@@ -258,7 +303,7 @@ begin
   scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, -1), scope.ViewStart + scope.ViewRange / 2);
   UpdateTimeDiv;
   UpdateScrollBar;
-  scope.DoOnPaint;
+  scope.Repaint;
 end;
 
 procedure TfrmMain.btnTdPlusClick(Sender : TObject);
@@ -266,7 +311,7 @@ begin
   scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, 1), scope.ViewStart + scope.ViewRange / 2);
   UpdateTimeDiv;
   UpdateScrollBar;
-  scope.DoOnPaint;
+  scope.Repaint;
 end;
 
 procedure TfrmMain.sbScopeScroll(Sender : TObject; ScrollCode : TScrollCode; var ScrollPos : Integer);
@@ -289,7 +334,7 @@ begin
     scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, pm), scope.ConvertXToTime(MousePos.x));
     UpdateTimeDiv;
     UpdateScrollBar;
-    scope.DoOnPaint;
+    scope.Repaint;
   end
   else if ssCtrl in Shift then
   begin
@@ -362,11 +407,12 @@ var
   t : double;
   st : double;
   wd : TWaveDisplay;
+  instantupdate : boolean = False;
 begin
-
   if time_dragging then
   begin
     scope.ViewStart := td_viewstart + (scope.ConvertXToTime(drag_start_x) - scope.ConvertXToTime(x));
+    instantupdate := True;
     UpdateTimeDiv;
     UpdateScrollBar;
   end
@@ -394,7 +440,12 @@ begin
   wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, st);
   scope.ShowSampleMarker(wd, st);
 
-  scope.Repaint;
+  if instantupdate
+  then
+      scope.DoOnPaint  // less lag, but delays other refreshes on linux
+  else
+      scope.Repaint;   // better for the other GUI elements
+
   //chgrid.Repaint;
 end;
 
@@ -413,7 +464,7 @@ begin
   scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, -1), scope.ViewStart + scope.ViewRange / 2);
   UpdateTimeDiv;
   UpdateScrollBar;
-  scope.DoOnPaint;
+  scope.Repaint;
 end;
 
 procedure TfrmMain.tbZoomOutClick(Sender : TObject);
@@ -422,11 +473,6 @@ begin
   UpdateTimeDiv;
   UpdateScrollBar;
   scope.Repaint;
-end;
-
-procedure TfrmMain.Bevel3ChangeBounds(Sender : TObject);
-begin
-
 end;
 
 procedure TfrmMain.tbMarkerAClick(Sender : TObject);
@@ -445,9 +491,42 @@ begin
   marker_placing := 2;
 end;
 
+procedure TfrmMain.tbOpenClick(Sender : TObject);
+begin
+  if dlgFileOpen.Execute then
+  begin
+    LoadScopeFile(dlgFileOpen.FileName);
+  end;
+end;
+
+procedure TfrmMain.tbSaveAsClick(Sender : TObject);
+begin
+  dlgFileSave.FileName := filename;
+  if dlgFileSave.Execute then
+  begin
+    scope.SaveScopeFile(dlgFileSave.FileName);
+    filename := dlgFileSave.FileName;
+
+    Application.Title := ExtractFileName(filename) + ' - VScope';
+    Caption := Application.Title;
+  end;
+end;
+
+procedure TfrmMain.FormDropFiles(Sender : TObject; const FileNames : array of string);
+begin
+  LoadScopeFile(FileNames[0]);
+end;
+
+procedure TfrmMain.tbZoomAllClick(Sender : TObject);
+begin
+  scope.ViewRange := scope.TimeRange;
+  scope.ViewStart := 0;
+  scope.Repaint;
+end;
+
 procedure TfrmMain.btnChScalePlusMinusClick(Sender : TObject);
 begin
-  if Sender = tbScalePlus
+  if (Sender = tbScalePlus) or (Sender = miScalePlus)
   then
       ChangeWaveScale(2)
   else
@@ -461,7 +540,7 @@ begin
   wd := SelectedWave;
   if wd = nil then EXIT;
 
-  if Sender = tbOffsetUp
+  if (Sender = tbOffsetUp) or (Sender = miOffsetUp)
   then
       wd.viewoffset += 0.25
   else
@@ -524,6 +603,28 @@ begin
   //UpdateChGrid2;
 end;
 
+procedure TfrmMain.LoadScopeFile(afilename : string);
+begin
+  filename := afilename;
+  try
+    scope.LoadScopeFile(filename);
+  except
+    on e : Exception do
+    begin
+      MessageDlg('Error Loading Scope File', e.ToString, mtError, [mbOK], 0);
+    end;
+  end;
+
+  UpdateScrollBar;
+  UpdateTimeDiv;
+
+  UpdateChGrid;
+  SelectWave(0);
+
+  Application.Title := ExtractFileName(filename) + ' - VScope';
+  Caption := Application.Title;
+end;
+
 procedure TfrmMain.SelectWave(awidx : integer);
 var
   wd : TWaveDisplay;
@@ -545,8 +646,6 @@ begin
       wd.wshp.alpha := 0.5;
     end;
   end;
-
-  wd := scope.waves[awidx];
 
   scope.Repaint;
 end;

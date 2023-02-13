@@ -404,9 +404,6 @@ const
   ddcolor_green : TddColorGL = (r:0; g:1; b:0; a:1);
   ddcolor_blue  : TddColorGL = (r:0; g:0; b:1; a:1);
 
-  default_font_size : single = 9.0;
-  default_font_name : string = 'LiberationSans-Regular.ttf';
-
 procedure ddmat_identity(out mat : TMatrix);
 procedure ddmat_mul(out mat : TMatrix; const mat1, mat2 : TMatrix); overload; // ensure that mat <> mat1 !!!
 procedure ddmat_mul(var mat : TMatrix; const mat2 : TMatrix); overload;
