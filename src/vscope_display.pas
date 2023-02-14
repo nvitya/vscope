@@ -31,7 +31,8 @@ unit vscope_display;
 interface
 
 uses
-  Classes, SysUtils, Controls, fgl, math, jsontools, dglOpenGL, ddgfx, ddgfx_font, vscope_data;
+  Classes, SysUtils, Controls, Dialogs, fgl, math, jsontools, dglOpenGL,
+  ddgfx, ddgfx_font, vscope_data, util_nstime;
 
 const
   vscope_timedivs : array of double =
@@ -437,7 +438,7 @@ begin
   // search min and max every 32 points
   lrdi := 0;
   lores_samplt := samplt * 16;
-  SetLength(lores_data, (length(data) + 15) shr 4);
+  SetLength(lores_data, length(data) div 8);
   maxdi := length(data) - 1;
   minval := 0;
   maxval := 0;
@@ -473,6 +474,7 @@ begin
     lores_data[lrdi] := maxval;
     inc(lrdi);
   end;
+  SetLength(lores_data, lrdi);
 end;
 
 procedure TWaveDisplay.InvalidateLoresData;
@@ -504,7 +506,7 @@ begin
 
   pixeltime := scope.ViewRange / scope.GridWidthPixels;
   samples_per_pixel := pixeltime / samplt;
-  if samples_per_pixel >= 128 then
+  if (samples_per_pixel >= 128) and (length(data) > 100000) then
   begin
     if length(lores_data) <= 0 then MakeLoresData;
 
@@ -1076,10 +1078,21 @@ var
   jmarkers : TJsonNode;
   i : integer;
   wd : TWaveDisplay;
+
+  t0, t1, t2 : int64;
+
 begin
+  t0 := nstime();
+
   jf := TJsonNode.Create();
   try
     jf.LoadFromFile(afilename);
+
+    t2 := nstime();
+
+    {$ifdef TRACES}
+    writeln('JSON parsing time: ', (t2 - t0) / 1000 :0:3, ' us');
+    {$endif}
 
     ClearWaves;
     ClearMarkers;
@@ -1122,6 +1135,11 @@ begin
     jf.Free;
   end;
 
+  t1 := nstime();
+
+  {$ifdef TRACES}
+  writeln('Total loading time: ', (t1 - t0) / 1000000 :0:3, ' ms');
+  {$endif}
 end;
 
 procedure TScopeDisplay.SaveScopeFile(afilename : string);
@@ -1132,7 +1150,12 @@ var
   jmarkers : TJsonNode;
   jwarr, jn : TJSonNode;
   i : integer;
+
+  t0, t1, t2 : int64;
 begin
+
+  t0 := nstime();
+
   jf := TJsonNode.Create();
 
   jview := jf.Add('VIEW', nkObject);
@@ -1154,11 +1177,22 @@ begin
     w.SaveToJsonNode(jn);
   end;
 
+  t1 := nstime();
+  {$ifdef TRACES}
+  writeln('JSON Prepare time: ', (t1 - t0) / 1000000 :0:3, ' ms');
+  {$endif}
+
   try
     jf.SaveToFile(afilename);
   finally
     jf.Free;
   end;
+
+  t2 := nstime();
+  {$ifdef TRACES}
+  writeln('Full Save time: ', (t2 - t0) / 1000000 :0:3, ' ms');
+  {$endif}
+
 end;
 
 function TScopeDisplay.ConvertXToTime(x : integer) : double;

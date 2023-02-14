@@ -347,7 +347,6 @@ end;
 procedure TfrmMain.pnlScopeViewMouseDown(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
 var
   wd : TWaveDisplay;
-  st : double;
   tm : TScopeMarker;
   di : integer;
 begin
@@ -406,7 +405,6 @@ end;
 procedure TfrmMain.pnlScopeViewMouseMove(Sender : TObject; Shift : TShiftState; X, Y : Integer);
 var
   t : double;
-  st : double;
   di : integer;
   wd : TWaveDisplay;
   instantupdate : boolean = False;

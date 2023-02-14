@@ -2,6 +2,10 @@ program vscope;
 
 {$mode objfpc}{$H+}
 
+{$ifdef TRACES}
+  {$APPTYPE CONSOLE}
+{$endif}
+
 uses
   {$IFDEF UNIX}
   cthreads,

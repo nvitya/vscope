@@ -31,7 +31,7 @@ unit vscope_data;
 interface
 
 uses
-  Classes, SysUtils, fgl, math, jsontools;
+  Classes, SysUtils, fgl, math, jsontools, util_nstime;
 
 type
 
@@ -67,7 +67,8 @@ type
     property StartTime : double read startt;
     function EndTime : double;
 
-    procedure LoadFloatArray(astr : string);
+    procedure LoadFloatArray(astr : string);  // for data load
+    function  GetFloatArrayStr : string;      // for data save
 
     procedure DoOnDataUpdate; virtual;
 
@@ -209,21 +210,12 @@ begin
 end;
 
 procedure TWaveData.SaveToJsonNode(jnode : TJsonNode);
-var
-  s : string;
-  i : integer;
 begin
   jnode := jnode.AsObject;  // forces the type of object
   jnode.Add('NAME', name);
   jnode.Add('SAMPLT', samplt);
 
-  s := '';
-  for i := 0 to length(data) - 1 do
-  begin
-    if i > 0 then s += '|';
-    s += FloatToStr(data[i], float_number_format);  // uses always "." as decimal separator
-  end;
-  jnode.Add('VALUES', s);
+  jnode.Add('VALUES', GetFloatArrayStr());
 
   jnode.Add('STARTT', startt);
   jnode.Add('DATAUNIT', dataunit);
@@ -302,11 +294,182 @@ begin
   result := startt + length(data) * samplt;
 end;
 
+{$if 1}
+
+procedure TWaveData.LoadFloatArray(astr : string);
+var
+  di : integer;
+  s : string[48];
+  c : char;
+  pc, pend : PChar;
+  hasvalue : boolean;
+
+  nsign, esign : double;
+
+  digit : double;
+  fracmul : double;
+  nv, ev : double;
+
+  mode : integer;  // 0 = integer part, 1 = fractional part, 2 = exponent
+
+  t0, t1 : int64;
+
+  procedure AppendToData;
+  var
+    v : double;
+  begin
+    if s <> '' then
+    begin
+      v := StrToFloatDef(s, 0, float_number_format);
+      if di >= length(data) then SetLength(data, length(data) * 2);
+      data[di] := v;
+      inc(di);
+    end;
+  end;
+
+  procedure Reset;
+  begin
+    nsign := 1;
+    esign := 1;
+    fracmul := 1;
+    nv := 0;
+    ev := 0;
+    mode := 0;
+    hasvalue := false;
+  end;
+
+begin
+
+  if length(astr) < 1 then
+  begin
+    data := [];
+    EXIT;
+  end;
+
+  // optimized parser for huge amount of floating point numbers
+
+  t0 := nstime();
+
+  SetLength(data, 1024 * 1024); // preallocate some bigger array
+  di := 0;
+
+  pc := @astr[1];
+  pend := pc + length(astr);
+
+  Reset;
+
+  hasvalue := false;
+  s := '';
+  while pc < pend do
+  begin
+    c := pc^;
+    if '-' = c then
+    begin
+      if 2 = mode then esign := -1
+                  else nsign := -1;
+    end
+    else if (c >= '0') and (c <= '9') then
+    begin
+      digit := ord(c) - ord('0');
+      if 1 = mode then // fractional part
+      begin
+        fracmul := fracmul * 0.1;
+        nv := nv + digit * fracmul;
+      end
+      else if 2 = mode then  // exponential integer
+      begin
+        ev := ev * 10 + digit;
+      end
+      else  // integer part
+      begin
+        nv := nv * 10 + digit;
+      end;
+      hasvalue := true;
+    end
+    else if '.' = c then
+    begin
+      mode := 1; // change to fractional mode
+    end
+    else if ('e' = c) or ('E' = c) then
+    begin
+      mode := 2; // change to exponential mode
+    end
+    else
+    begin
+      // close the number
+      if di >= length(data) then SetLength(data, length(data) * 2);
+      data[di] := nsign * nv * Power(10, esign * ev);
+      inc(di);
+      Reset;
+    end;
+
+    inc(pc);
+  end;
+
+  if hasvalue then
+  begin
+    if di >= length(data) then SetLength(data, length(data) * 2);
+    data[di] := nsign * nv * Power(10, esign * ev);
+    inc(di);
+  end;
+
+  SetLength(data, di);
+
+  t1 := nstime();
+  {$ifdef TRACES}
+  writeln('Wave data parsing time: ',(t1 - t0)/1000 :0:3, ' us');
+  {$endif}
+end;
+
+function TWaveData.GetFloatArrayStr : string;
+var
+  s : string;
+  sv : string[48];
+  i, si : integer;
+  t0, t1 : int64;
+begin
+  // somewhat optimizied for memory allocations,
+  // but still using the FloatToStr() which is relative slow for huge amount of numbers
+
+  t0 := nstime();
+  s := '';
+  SetLength(s, 1024 * 1024);
+  si := 1;
+  for i := 0 to length(data) - 1 do
+  begin
+    if si + 48 > length(s) then
+    begin
+      SetLength(s, length(s) * 2);
+    end;
+    if i > 0 then
+    begin
+      s[si] := '|';
+      inc(si);
+    end;
+    sv := FloatToStr(data[i], float_number_format);  // uses always "." as decimal separator
+    move(sv[1], s[si], length(sv));
+    inc(si, length(sv));
+  end;
+
+  SetLength(s, si - 1);
+
+  t1 := nstime();
+  {$ifdef TRACES}
+  writeln('Wave VALUES String gererate time: ', (t1 - t0) / 1000 :0:0, ' us');
+  {$endif}
+
+  result := s;
+end;
+
+{$else}
+
 procedure TWaveData.LoadFloatArray(astr : string);
 var
   si, di : integer;
   s : string;
   c : char;
+
+  t0, t1 : int64;
 
   procedure AppendToData(dstr : string);
   var
@@ -322,6 +485,9 @@ var
   end;
 
 begin
+
+  t0 := nstime();
+
   SetLength(data, 16384); // preallocate some bigger array
   di := 0;
 
@@ -345,7 +511,14 @@ begin
   AppendToData(s);
 
   SetLength(data, di);
+
+  t1 := nstime();
+  {$ifdef TRACES}
+  writeln('Wave data parsing time: ',(t1 - t0)/1000 :0:3, ' us');
+  {$endif}
 end;
+
+{$endif}
 
 procedure TWaveData.DoOnDataUpdate;
 begin
@@ -383,7 +556,7 @@ var
   ddi : double;
 begin
   ddi := (t - startt) / samplt;
-  di := trunc(ddi); // TODO: make interpolation
+  di := round(ddi); // TODO: make interpolation
   if (di < 0) or (di >= length(data))
   then
       result := 0
