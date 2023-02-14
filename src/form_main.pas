@@ -420,6 +420,7 @@ begin
   begin
     wdr_wave.viewoffset := wdr_start_offs + (scope.ConvertYToGrid(y) - scope.ConvertYToGrid(drag_start_y));
     wdr_wave.ReDrawWave;
+    instantupdate := True;
   end;
 
   t := scope.ConvertXToTime(x);
