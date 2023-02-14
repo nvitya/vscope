@@ -74,6 +74,13 @@ type
 
   TWaveDisplay = class(TWaveData)
   public
+    lores_data : array of double;
+    lores_samplt : double;
+
+    procedure MakeLoresData;
+    procedure InvalidateLoresData;
+
+  public
     wshp : TShape;
     zeroline : TShape;
     scope : TScopeDisplay;
@@ -236,6 +243,8 @@ type
     function ViewEnd   : double;
     property TimeDiv   : double read GetTimeDiv;
 
+    function GridWidthPixels : integer;
+
     procedure SetTimeDiv(AValue : double; fixtimepos : double);
 
     procedure UpdateTimeDivInfo;
@@ -389,12 +398,16 @@ begin
   zeroline.y := 5;
   zeroline.AddPrimitive(GL_LINES, 2, @zeroline_vertices);
   zeroline.alpha := 0.8;
+
+  lores_data := [];
 end;
 
 destructor TWaveDisplay.Destroy;
 begin
   wshp.Free;
   zeroline.Free;
+
+  lores_data := [];
 
   inherited Destroy;
 end;
@@ -413,6 +426,60 @@ begin
   zeroline.color := wshp.color;
 end;
 
+procedure TWaveDisplay.MakeLoresData;
+var
+  di, maxdi : integer;
+  minval, maxval : double;
+  modidx : integer;
+  v : double;
+  lrdi : integer;
+begin
+  // search min and max every 32 points
+  lrdi := 0;
+  lores_samplt := samplt * 16;
+  SetLength(lores_data, (length(data) + 15) shr 4);
+  maxdi := length(data) - 1;
+  minval := 0;
+  maxval := 0;
+  modidx := 31;
+  for di := 0 to maxdi do
+  begin
+    v := data[di];
+    modidx := (di and $1F);
+    if 0 = modidx then
+    begin
+      minval := v;
+      maxval := v;
+    end
+    else
+    begin
+      if v < minval then minval := v;
+      if v > maxval then maxval := v;
+      if 31 = modidx then
+      begin
+        lores_data[lrdi] := minval;
+        inc(lrdi);
+        lores_data[lrdi] := maxval;
+        inc(lrdi);
+      end;
+    end;
+  end;
+
+  // add the last not complete sample
+  if modidx <> 31 then
+  begin
+    lores_data[lrdi] := minval;
+    inc(lrdi);
+    lores_data[lrdi] := maxval;
+    inc(lrdi);
+  end;
+end;
+
+procedure TWaveDisplay.InvalidateLoresData;
+begin
+  lores_data := [];
+end;
+
 procedure TWaveDisplay.ReDrawWave;
 var
   i : integer;
@@ -424,17 +491,42 @@ var
   vcnt : integer;
   t : double;
   y, x, dx : double;
+  pixeltime : double;
+  samples_per_pixel : double;
+
+  disp_samplt : double;
+  disp_data   : array of double;
+  steps : boolean;
+
 begin
   vi := 0;
-  dx := samplt / scope.TimeDiv;
+  steps := scope.draw_steps;
 
-  di := trunc((scope.ViewStart - startt) / samplt);
+  pixeltime := scope.ViewRange / scope.GridWidthPixels;
+  samples_per_pixel := pixeltime / samplt;
+  if samples_per_pixel >= 128 then
+  begin
+    if length(lores_data) <= 0 then MakeLoresData;
+
+    disp_data := lores_data;
+    disp_samplt := lores_samplt;
+    steps := false;
+  end
+  else
+  begin
+    disp_data := data;
+    disp_samplt := samplt;
+    if samples_per_pixel >= 2 then steps := false;  // step drawing does not make sense
+  end;
+
+  di := trunc((scope.ViewStart - startt) / disp_samplt);
   if di < 0 then
   begin
     di := 0;
   end;
 
-  t := startt + di * samplt;
+  dx := disp_samplt / scope.TimeDiv;
+  t := startt + di * disp_samplt;
   x := (t - scope.ViewStart) / scope.TimeDiv;
   if x < 0 then
   begin
@@ -443,24 +535,23 @@ begin
     x += dx * i;
   end;
 
-  maxdi := length(data);
+  maxdi := length(disp_data);
   if maxdi < 0 then maxdi := 0;
 
   varr := [];
   vcnt := maxdi - di;
-  if scope.draw_steps then vcnt *= 2;
+  if steps then vcnt *= 2;
   SetLength(varr, vcnt);
 
   while (di < maxdi) and (x < 10) do
   begin
     v[0] := x;
-
-    v[1] := data[di] * viewscale + viewoffset;
+    v[1] := disp_data[di] * viewscale + viewoffset;
     // clamping the Y:
     if v[1] > 5 then v[1] := 5
     else if v[1] < -5 then v[1] := -5;
 
-    if scope.draw_steps and (vi > 0) then
+    if steps and (vi > 0) then
     begin
       varr[vi][0] := x;
       varr[vi][1] := varr[vi-1][1];
@@ -1254,6 +1345,11 @@ end;
 function TScopeDisplay.ViewEnd : double;
 begin
   result := ViewStart + ViewRange;
+end;
+
+function TScopeDisplay.GridWidthPixels : integer;
+begin
+  result := Width - 2 * fmargin_pixels;
 end;
 
 end.
