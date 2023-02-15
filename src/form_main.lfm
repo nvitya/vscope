@@ -34,13 +34,6 @@ object frmMain: TfrmMain
       ImageIndex = 1
       OnClick = miSaveClick
     end
-    object ToolButton1: TToolButton
-      Left = 70
-      Height = 22
-      Top = 2
-      Caption = 'ToolButton1'
-      Style = tbsSeparator
-    end
     object tbSaveAs: TToolButton
       Left = 47
       Top = 2
@@ -62,13 +55,6 @@ object frmMain: TfrmMain
       ImageIndex = 5
       OnClick = miDrawStepsClick
       Style = tbsCheck
-    end
-    object ToolButton3: TToolButton
-      Left = 178
-      Height = 22
-      Top = 2
-      Caption = 'ToolButton3'
-      Style = tbsSeparator
     end
     object tbZoomIn: TToolButton
       Left = 109
@@ -111,13 +97,6 @@ object frmMain: TfrmMain
       Caption = 'tbOffsetDown'
       ImageIndex = 11
       OnClick = btnChOffsPlusMinusClick
-    end
-    object ToolButton5: TToolButton
-      Left = 309
-      Height = 22
-      Top = 2
-      Caption = 'ToolButton5'
-      Style = tbsSeparator
     end
     object tbMarkerA: TToolButton
       Left = 325
@@ -167,6 +146,27 @@ object frmMain: TfrmMain
       Caption = 'tbZoomAll'
       ImageIndex = 15
       OnClick = tbZoomAllClick
+    end
+    object Bevel5: TBevel
+      Left = 309
+      Height = 22
+      Top = 2
+      Width = 8
+      Shape = bsSpacer
+    end
+    object Bevel6: TBevel
+      Left = 178
+      Height = 22
+      Top = 2
+      Width = 8
+      Shape = bsSpacer
+    end
+    object Bevel7: TBevel
+      Left = 70
+      Height = 22
+      Top = 2
+      Width = 8
+      Shape = bsSpacer
     end
   end
   object pnlScopeGroup: TPanel
@@ -652,5 +652,12 @@ object frmMain: TfrmMain
     FilterIndex = 0
     Left = 244
     Top = 232
+  end
+  object imglist32: TImageList
+    Height = 32
+    Scaled = True
+    Width = 32
+    Left = 320
+    Top = 84
   end
 end

@@ -43,6 +43,10 @@ type
   { TfrmMain }
 
   TfrmMain = class(TForm)
+    Bevel5 : TBevel;
+    Bevel6 : TBevel;
+    Bevel7 : TBevel;
+    imglist32 : TImageList;
     mainmenu : TMainMenu;
     menuFile : TMenuItem;
     miOpen : TMenuItem;
@@ -63,14 +67,12 @@ type
     miAutoscale : TMenuItem;
     tbOpen : TToolButton;
     tbSave : TToolButton;
-    ToolButton1 : TToolButton;
     tbSaveAs : TToolButton;
     imglist : TImageList;
     ToolButton2 : TToolButton;
     tbDrawSteps : TToolButton;
     menuView : TMenuItem;
     miDrawSteps : TMenuItem;
-    ToolButton3 : TToolButton;
     tbZoomIn : TToolButton;
     tbZoomOut : TToolButton;
     Separator2 : TMenuItem;
@@ -84,7 +86,6 @@ type
     txtViewStart : TStaticText;
     Label3 : TLabel;
     txtCursorTime : TStaticText;
-    ToolButton5 : TToolButton;
     tbMarkerA : TToolButton;
     tbMarkerB : TToolButton;
     tbMarkerClear : TToolButton;
