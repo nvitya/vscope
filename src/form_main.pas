@@ -139,6 +139,7 @@ type
     procedure tbSaveAsClick(Sender : TObject);
     procedure FormDropFiles(Sender : TObject; const FileNames : array of string);
     procedure tbZoomAllClick(Sender : TObject);
+    procedure chgridDblClick(Sender : TObject);
   private
 
   public
@@ -185,6 +186,8 @@ var
 
 implementation
 
+uses
+  form_wave_props;
 
 {$R *.lfm}
 
@@ -528,6 +531,24 @@ begin
   scope.Repaint;
 end;
 
+procedure TfrmMain.chgridDblClick(Sender : TObject);
+var
+  gpos : TPoint;
+begin
+  if frmWaveProps = nil then
+  begin
+    Application.CreateForm(TfrmWaveProps, frmWaveProps);
+    frmWaveProps.scope := self.scope;
+    gpos := chgrid.ClientToScreen( Point(0,0) );
+    frmWaveProps.Left := gpos.x;
+    frmWaveProps.Top  := gpos.y + chgrid.Height - frmWaveProps.Height;
+  end;
+
+  frmWaveProps.wave := SelectedWave;
+  frmWaveProps.UpdateWaveInfo;
+  frmWaveProps.Show;
+end;
+
 procedure TfrmMain.btnChScalePlusMinusClick(Sender : TObject);
 begin
   if (Sender = tbScalePlus) or (Sender = miScalePlus)
@@ -631,27 +652,34 @@ end;
 
 procedure TfrmMain.SelectWave(awidx : integer);
 var
-  wd : TWaveDisplay;
+  wd, selw : TWaveDisplay;
   i : integer;
 begin
   chgrid.Row := awidx + 1;
-
+  selw := nil;
   for i := 0 to scope.waves.Count - 1 do
   begin
     wd := scope.waves[i];
     if i = awidx then
     begin
-      wd.wshp.alpha := 0.8;
+      selw := wd;
+      wd.wshp.alpha := 0.75 * wd.basealpha * 1.3333;
       wd.wshp.parent.MoveTop(wd.wshp);
       wd.zeroline.parent.MoveTop(wd.zeroline);
     end
     else
     begin
-      wd.wshp.alpha := 0.5;
+      wd.wshp.alpha := 0.75 * wd.basealpha;
     end;
   end;
 
   scope.Repaint;
+
+  if (selw <> nil) and (frmWaveProps <> nil) then
+  begin
+    frmWaveProps.wave := selw;
+    frmWaveProps.UpdateWaveInfo;
+  end;
 end;
 
 procedure TfrmMain.SelectWave(wd : TWaveDisplay);

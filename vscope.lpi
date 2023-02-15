@@ -43,6 +43,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="src/form_wave_props.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmWaveProps"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

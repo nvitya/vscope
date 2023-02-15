@@ -249,6 +249,7 @@ object frmMain: TfrmMain
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goSmoothScroll]
         ScrollBars = ssNone
         TabOrder = 0
+        OnDblClick = chgridDblClick
         OnDrawCell = chgridDrawCell
         OnSelection = chgridSelection
       end

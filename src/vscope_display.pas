@@ -396,7 +396,7 @@ begin
   wshp := scope.grp_waves.NewShape();
   wshp.scaley := -1;
   wshp.y := 5;
-  wshp.alpha := 0.5;
+  wshp.alpha := basealpha;
 
   zeroline := scope.grp_zeroes.NewShape();
   zeroline.scaley := -1;

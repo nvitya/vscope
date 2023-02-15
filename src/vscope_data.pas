@@ -52,6 +52,7 @@ type
     viewoffset  : double;  // display offset
 
     color  : cardinal;
+    basealpha : single;
 
     constructor Create(aname: string; asamplt: double);
     destructor Destroy; override;
@@ -191,6 +192,7 @@ begin
   dataunit := '';
   viewscale := 1;
   viewoffset := 0;
+  basealpha := 0.5;
   color := $FFFFFFFF;
 end;
 
@@ -220,6 +222,7 @@ begin
   jnode.Add('STARTT', startt);
   jnode.Add('DATAUNIT', dataunit);
   jnode.Add('COLOR', color);
+  jnode.Add('ALPHA', basealpha);
 
   jnode.Add('VIEWSCALE', viewscale);
   jnode.Add('VIEWOFFSET', viewoffset);
@@ -246,11 +249,13 @@ begin
   dataunit := '';
   viewscale := 1;
   viewoffset := 0;
+  basealpha := 0.5;
   color := $FFFFFFFF;
 
   if jnode.Find('STARTT', jv)   then startt   := jv.AsNumber;
   if jnode.Find('DATAUNIT', jv) then dataunit := jv.AsString;
   if jnode.Find('COLOR', jv)    then color    := trunc(jv.AsNumber);
+  if jnode.Find('ALPHA', jv)    then basealpha:= jv.AsNumber;
 
   // deprecated:
   if jnode.Find('DSCALE', jv)   then viewscale   := jv.AsNumber;
