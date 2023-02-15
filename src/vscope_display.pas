@@ -31,7 +31,7 @@ unit vscope_display;
 interface
 
 uses
-  Classes, SysUtils, Controls, Dialogs, fgl, math, jsontools, dglOpenGL,
+  Classes, SysUtils, Controls, Dialogs, Forms, fgl, math, jsontools, dglOpenGL,
   ddgfx, ddgfx_font, vscope_data, util_nstime;
 
 const
@@ -207,6 +207,9 @@ type
 
     draw_steps : boolean;
 
+    scale_ratio : double;
+    txt_font_size : double;
+
     constructor Create(aowner : TComponent; aparent : TWinControl); override;
     destructor Destroy; override;
 
@@ -340,7 +343,7 @@ begin
   end;
 
   //letterbg := grp.NewShape;
-  letter := TTextBox.Create(scope.grp_top_icons, scope.vfont.GetSizedFont(8), scope_marker_letters[index]);
+  letter := TTextBox.Create(scope.grp_top_icons, scope.vfont.GetSizedFont(8 * scope.scale_ratio), scope_marker_letters[index]);
   letter.y := -letter.Height;
   letter.color := vline.color;
 end;
@@ -658,14 +661,17 @@ constructor TScopeDisplay.Create(aowner : TComponent; aparent : TWinControl);
 begin
   inherited Create(aowner, aparent);
 
+  scale_ratio := Forms.Screen.PixelsPerInch / 96;
+  //scale_ratio := 2;
+
   data := TScopeData.Create;
   waves := TWaveDisplayList.Create;
-
 
   InitFontManager;
   vfont := fontmanager.GetFont(default_font_path);
 
-  fmargin_pixels := 32;
+  fmargin_pixels := round(32 * scale_ratio);
+  txt_font_size := 9 * scale_ratio;
 
   grid := root.NewGroup;
   grid.x := fmargin_pixels;
@@ -863,7 +869,7 @@ begin
   valframe.SetColor(0.0, 0.0, 0.0);
   valframe.alpha := 0.8;
 
-  valtxt := TTextBox.Create(valgrp, vfont.GetSizedFont(9), 'Value Sample Text');
+  valtxt := TTextBox.Create(valgrp, vfont.GetSizedFont(txt_font_size), 'Value Sample Text');
   valgrp.x := 50;
   valgrp.y := 150;
   valframe.x := -4;
@@ -873,10 +879,10 @@ begin
 
   valgrp.visible := false;
 
-  txt_timediv := TTextBox.Create(root, vfont.GetSizedFont(9), 'Time Div Info');
+  txt_timediv := TTextBox.Create(root, vfont.GetSizedFont(txt_font_size), 'Time Div Info');
   txt_timediv.SetColor(0.7, 0.7, 0.7);
 
-  txt_abinfo := TTextBox.Create(root, vfont.GetSizedFont(9), 'A-B Marker Info Text');;
+  txt_abinfo := TTextBox.Create(root, vfont.GetSizedFont(txt_font_size), 'A-B Marker Info Text');;
   txt_abinfo.SetColor(0.7, 0.7, 0.7);
 end;
 
