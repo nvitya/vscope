@@ -136,8 +136,7 @@ type
     procedure tbMarkerBClick(Sender : TObject);
     procedure tbOpenClick(Sender : TObject);
     procedure tbSaveAsClick(Sender : TObject);
-    procedure FormDropFiles(Sender : TObject; const FileNames : array of string
-      );
+    procedure FormDropFiles(Sender : TObject; const FileNames : array of string);
     procedure tbZoomAllClick(Sender : TObject);
   private
 
@@ -364,7 +363,7 @@ begin
       td_viewstart := scope.ViewStart;
 
       wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, di);
-      SelectWave(wd);
+      if wd <> nil then SelectWave(wd);
     end;
   end
   else if mbRight = Button then
@@ -522,6 +521,9 @@ procedure TfrmMain.tbZoomAllClick(Sender : TObject);
 begin
   scope.ViewRange := scope.TimeRange;
   scope.ViewStart := 0;
+  scope.UpdateTimeDivInfo;
+  UpdateTimeDiv;
+  UpdateScrollBar;
   scope.Repaint;
 end;
 

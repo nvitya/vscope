@@ -219,6 +219,7 @@ begin
 
   jnode.Add('STARTT', startt);
   jnode.Add('DATAUNIT', dataunit);
+  jnode.Add('COLOR', color);
 
   jnode.Add('VIEWSCALE', viewscale);
   jnode.Add('VIEWOFFSET', viewoffset);
@@ -245,9 +246,11 @@ begin
   dataunit := '';
   viewscale := 1;
   viewoffset := 0;
+  color := $FFFFFFFF;
 
   if jnode.Find('STARTT', jv)   then startt   := jv.AsNumber;
   if jnode.Find('DATAUNIT', jv) then dataunit := jv.AsString;
+  if jnode.Find('COLOR', jv)    then color    := trunc(jv.AsNumber);
 
   // deprecated:
   if jnode.Find('DSCALE', jv)   then viewscale   := jv.AsNumber;
@@ -567,6 +570,7 @@ end;
 function TWaveData.GetValueStr(t : double) : string;
 begin
   result := FloatToStr(GetValueAt(t), float_number_format);
+  if dataunit <> '' then result += ' ' + dataunit;
 end;
 
 procedure TWaveData.CalcMinMax(fromtime, totime : double; out data_min : double; out data_max : double; out scnt : integer);

@@ -393,6 +393,7 @@ begin
   wshp := scope.grp_waves.NewShape();
   wshp.scaley := -1;
   wshp.y := 5;
+  wshp.alpha := 0.5;
 
   zeroline := scope.grp_zeroes.NewShape();
   zeroline.scaley := -1;
@@ -422,7 +423,6 @@ begin
     ((color shr 16) and $FF) / 255,
     ((color shr 24) and $FF) / 255
   );
-  wshp.alpha := 0.5;
 
   zeroline.color := wshp.color;
 end;
@@ -617,6 +617,10 @@ begin
   begin
     ci := (scope.waves.Count - 1) mod 8;
     SetColor(default_wave_colors[ci]);
+  end
+  else
+  begin
+    SetColor(color);
   end;
 end;
 
@@ -749,6 +753,8 @@ begin
 
   txt_abinfo.x := fmargin_pixels;
   txt_abinfo.y := round(gh + fmargin_pixels + fmargin_pixels / 2 - txt_abinfo.Height / 2);
+
+  RenderWaves; // resolution might change
 end;
 
 procedure TScopeDisplay.UpdateTimeDivPos;
