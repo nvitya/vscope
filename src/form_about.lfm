@@ -1,0 +1,53 @@
+object frmAbout: TfrmAbout
+  Left = 1139
+  Height = 192
+  Top = 420
+  Width = 345
+  BorderStyle = bsDialog
+  Caption = 'About VScope'
+  ClientHeight = 192
+  ClientWidth = 345
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '2.2.4.0'
+  object txtVersion: TStaticText
+    Left = 8
+    Height = 17
+    Top = 12
+    Width = 328
+    Alignment = taCenter
+    Anchors = [akTop, akLeft, akRight]
+    Caption = 'txtVersion'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+  end
+  object BitBtn1: TBitBtn
+    Left = 140
+    Height = 30
+    Top = 156
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    TabOrder = 1
+  end
+  object memoInfo: TMemo
+    Left = 8
+    Height = 108
+    Top = 40
+    Width = 328
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Lines.Strings = (
+      'Copyright: Viktor Nagy (nvitya) 2023'
+      'Free, Open-Source Software. (BSD License)'
+      'Project Website: https://github.com/nvitya/vscope'
+      ''
+      'Developed with Lazarus: https://www.lazarus-ide.org'
+      'The icons are used from the Oxigen Icon set.'
+    )
+    ReadOnly = True
+    TabOrder = 2
+  end
+end

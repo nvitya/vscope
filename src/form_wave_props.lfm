@@ -1,7 +1,7 @@
 object frmWaveProps: TfrmWaveProps
-  Left = 1650
+  Left = 1678
   Height = 183
-  Top = 655
+  Top = 645
   Width = 314
   Caption = 'Wave Properties'
   ClientHeight = 183
@@ -28,20 +28,11 @@ object frmWaveProps: TfrmWaveProps
     TabOrder = 0
     Text = 'edName'
   end
-  object btnRevert: TBitBtn
-    Left = 4
-    Height = 30
-    Top = 148
-    Width = 114
-    Caption = 'Revert Updates'
-    TabOrder = 1
-  end
   object gridi: TStringGrid
     Left = 127
-    Height = 183
-    Top = 0
+    Height = 86
+    Top = 25
     Width = 187
-    Align = alRight
     ColCount = 2
     Columns = <    
       item
@@ -52,58 +43,79 @@ object frmWaveProps: TfrmWaveProps
         Width = 90
       end>
     FixedRows = 0
+    RowCount = 4
     ScrollBars = ssNone
-    TabOrder = 2
+    TabOrder = 1
     ColWidths = (
       95
       90
     )
     Cells = (
-      7
+      5
       0
       0
-      'Data Unit'
-      0
-      1
       'Samping Time'
       0
-      2
+      1
       'Sample Count'
       0
-      3
+      2
       'Total Length'
       0
-      4
+      3
       'Start Time'
       1
       0
-      'A'
-      1
-      1
       '0.000250'
     )
   end
   object tbAlpha: TTrackBar
     Left = 4
     Height = 38
-    Top = 92
+    Top = 136
     Width = 112
     Frequency = 10
     Max = 100
     OnChange = tbAlphaChange
     Position = 0
-    TabOrder = 3
+    TabOrder = 2
   end
   object btnColor: TColorButton
     Left = 5
     Height = 25
-    Top = 60
+    Top = 104
     Width = 113
     BorderWidth = 2
     ButtonColorSize = 16
     ButtonColor = clBlack
     ColorDialog = dlgColors
     OnColorChanged = btnColorColorChanged
+  end
+  object Label2: TLabel
+    Left = 4
+    Height = 14
+    Top = 56
+    Width = 54
+    Caption = 'Data Unit:'
+    ParentColor = False
+  end
+  object edDataUnit: TEdit
+    Left = 4
+    Height = 25
+    Top = 73
+    Width = 62
+    OnChange = edDataUnitChange
+    TabOrder = 3
+    Text = 'edDataUnit'
+  end
+  object btnRescale: TBitBtn
+    Left = 232
+    Height = 30
+    Top = 132
+    Width = 75
+    Caption = 'Rescale'
+    OnClick = btnRescaleClick
+    TabOrder = 4
   end
   object dlgColors: TColorDialog
     Color = clBlack
@@ -116,20 +128,13 @@ object frmWaveProps: TfrmWaveProps
       'ColorF=FF4040'
       'ColorG=208020'
       'ColorH=802080'
-      'ColorI=C0C0C0'
-      'ColorJ=0000FF'
-      'ColorK=00FF00'
-      'ColorL=00FFFF'
-      'ColorM=FF0000'
-      'ColorN=FF00FF'
-      'ColorO=FFFF00'
-      'ColorP=FFFFFF'
-      'ColorQ=C0DCC0'
-      'ColorR=F0CAA6'
-      'ColorS=F0FBFF'
-      'ColorT=A4A0A0'
+      'ColorI=808080'
+      'ColorJ=4040FF'
+      'ColorK=C0DCC0'
+      'ColorL=F0CAA6'
+      'ColorM=FFFF00'
     )
-    Left = 232
-    Top = 116
+    Left = 148
+    Top = 124
   end
 end

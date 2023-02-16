@@ -14,7 +14,8 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, lazopenglcontext, form_main, form_wave_props
+  Forms, lazopenglcontext, form_main, form_wave_props, form_wave_rescale, 
+  version_vscope, form_about
   { you can add units after this };
 
 {$R *.res}

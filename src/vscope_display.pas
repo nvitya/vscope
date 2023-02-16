@@ -219,6 +219,7 @@ type
 
     function AddWave(aname: string; asamplt: double): TWaveDisplay;
     function DeleteWave(awave : TWaveDisplay) : boolean;
+    function WaveIndex(awave : TWaveDisplay) : integer;
 
     function LoadWave(afilename : string) : TWaveDisplay;
 
@@ -1056,6 +1057,11 @@ begin
     result := True;
   end
   else result := False;
+end;
+
+function TScopeDisplay.WaveIndex(awave : TWaveDisplay) : integer;
+begin
+  result := waves.IndexOf(awave);
 end;
 
 function TScopeDisplay.LoadWave(afilename: string) : TWaveDisplay;

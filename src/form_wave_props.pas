@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
-  Grids, ColorBox, ComCtrls, vscope_data, vscope_display;
+  Grids, ComCtrls, vscope_data, vscope_display;
 
 type
 
@@ -15,17 +15,21 @@ type
   TfrmWaveProps = class(TForm)
     Label1 : TLabel;
     edName : TEdit;
-    btnRevert : TBitBtn;
     gridi : TStringGrid;
     tbAlpha : TTrackBar;
     btnColor : TColorButton;
     dlgColors : TColorDialog;
+    Label2 : TLabel;
+    edDataUnit : TEdit;
+    btnRescale : TBitBtn;
     procedure FormClose(Sender : TObject; var CloseAction : TCloseAction);
     procedure btnColorDialogClick(Sender : TObject);
     procedure FormShow(Sender : TObject);
     procedure btnColorColorChanged(Sender : TObject);
     procedure edNameChange(Sender : TObject);
     procedure tbAlphaChange(Sender : TObject);
+    procedure edDataUnitChange(Sender : TObject);
+    procedure btnRescaleClick(Sender : TObject);
   private
 
   public
@@ -42,7 +46,7 @@ var
 implementation
 
 uses
-  form_main;
+  form_main, form_wave_rescale;
 
 {$R *.lfm}
 
@@ -77,11 +81,24 @@ begin
   frmMain.chgrid.Repaint;
 end;
 
+procedure TfrmWaveProps.edDataUnitChange(Sender : TObject);
+begin
+  wave.dataunit := edDataUnit.Text;
+  //frmMain.chgrid.Repaint;
+end;
+
+procedure TfrmWaveProps.btnRescaleClick(Sender : TObject);
+begin
+  Application.CreateForm(TfrmWaveRescale, frmWaveRescale);
+  frmWaveRescale.ShowModal;
+end;
+
 procedure TfrmWaveProps.tbAlphaChange(Sender : TObject);
 begin
   wave.basealpha := tbAlpha.Position / 100;
   frmMain.SelectWave(wave);
 end;
+
 
 procedure TfrmWaveProps.UpdateWaveInfo;
 var
@@ -89,16 +106,16 @@ var
 begin
   if wave = nil then EXIT; // unexpected call
 
-  gridi.Cells[1, 0] := wave.dataunit;
-  gridi.Cells[1, 1] := FloatToStrF(wave.samplt, ffFixed, 0, 6, float_number_format);
-  gridi.Cells[1, 2] := IntToStr(length(wave.data));
-  gridi.Cells[1, 3] := FloatToStrF(wave.EndTime - wave.StartTime, ffFixed, 0, 6, float_number_format);
-  gridi.Cells[1, 4] := FloatToStrF(wave.StartTime, ffFixed, 0, 6, float_number_format);
+  gridi.Cells[1, 0] := FloatToStrF(wave.samplt, ffFixed, 0, 6, float_number_format);
+  gridi.Cells[1, 1] := IntToStr(length(wave.data));
+  gridi.Cells[1, 2] := FloatToStrF(wave.EndTime - wave.StartTime, ffFixed, 0, 6, float_number_format);
+  gridi.Cells[1, 3] := FloatToStrF(wave.StartTime, ffFixed, 0, 6, float_number_format);
 
   i := scope.waves.IndexOf(wave);
   Caption := 'Wave '+IntToStr(i + 1)+' Properties';
 
   edName.Text := wave.name;
+  edDataUnit.Text := wave.dataunit;
   btnColor.ButtonColor := (wave.color and $00FFFFFF);
   tbAlpha.Position := round(wave.basealpha * 100);
 end;

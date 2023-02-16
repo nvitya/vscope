@@ -50,6 +50,22 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="src/form_wave_rescale.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmWaveRescale"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/version_vscope.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/form_about.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAbout"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

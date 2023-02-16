@@ -1,0 +1,99 @@
+object frmWaveRescale: TfrmWaveRescale
+  Left = 1833
+  Height = 170
+  Top = 684
+  Width = 303
+  Anchors = [akLeft, akBottom]
+  BorderStyle = bsDialog
+  Caption = 'Rescale Wave Data'
+  ClientHeight = 170
+  ClientWidth = 303
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  LCLVersion = '2.2.4.0'
+  object Label1: TLabel
+    Left = 4
+    Height = 14
+    Top = 68
+    Width = 45
+    Caption = 'Multiply:'
+    ParentColor = False
+  end
+  object edMul: TEdit
+    Left = 4
+    Height = 25
+    Top = 88
+    Width = 100
+    TabOrder = 0
+    Text = '1'
+  end
+  object Label2: TLabel
+    Left = 132
+    Height = 14
+    Top = 68
+    Width = 38
+    Caption = 'Divide:'
+    ParentColor = False
+  end
+  object edDiv: TEdit
+    Left = 132
+    Height = 25
+    Top = 88
+    Width = 100
+    TabOrder = 1
+    Text = '1'
+  end
+  object btnOk: TBitBtn
+    Left = 4
+    Height = 30
+    Top = 131
+    Width = 80
+    Anchors = [akLeft, akBottom]
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    OnClick = btnOkClick
+    TabOrder = 2
+  end
+  object btnCancel: TBitBtn
+    Left = 215
+    Height = 30
+    Top = 131
+    Width = 80
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    DefaultCaption = True
+    Kind = bkCancel
+    ModalResult = 2
+    TabOrder = 3
+  end
+  object Label3: TLabel
+    Left = 4
+    Height = 14
+    Top = 8
+    Width = 33
+    Caption = 'Wave:'
+    ParentColor = False
+  end
+  object pnlWaveNum: TPanel
+    Left = 4
+    Height = 26
+    Top = 28
+    Width = 32
+    Caption = '?'
+    TabOrder = 4
+  end
+  object txtName: TStaticText
+    Left = 44
+    Height = 21
+    Top = 32
+    Width = 251
+    Anchors = [akTop, akLeft, akRight]
+    BorderStyle = sbsSunken
+    Caption = 'txtName'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 5
+  end
+end

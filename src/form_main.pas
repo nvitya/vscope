@@ -106,6 +106,11 @@ type
     dlgFileSave : TSaveDialog;
     tbZoomAll : TToolButton;
     miZoomAll : TMenuItem;
+    Separator5 : TMenuItem;
+    miWaveProps : TMenuItem;
+    tbWaveProps : TToolButton;
+    menuHelp : TMenuItem;
+    miAboutBox : TMenuItem;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -139,7 +144,10 @@ type
     procedure tbSaveAsClick(Sender : TObject);
     procedure FormDropFiles(Sender : TObject; const FileNames : array of string);
     procedure tbZoomAllClick(Sender : TObject);
-    procedure chgridDblClick(Sender : TObject);
+    procedure tbWavePropsClick(Sender : TObject);
+    procedure pnlScopeViewDblClick(Sender : TObject);
+    procedure miWavePropsClick(Sender : TObject);
+    procedure miAboutBoxClick(Sender : TObject);
   private
 
   public
@@ -187,7 +195,7 @@ var
 implementation
 
 uses
-  form_wave_props;
+  form_wave_props, version_vscope, form_about;
 
 {$R *.lfm}
 
@@ -224,6 +232,7 @@ begin
   scope.OnMouseMove := @pnlScopeViewMouseMove;
   scope.OnMouseDown := @pnlScopeViewMouseDown;
   scope.OnMouseUp   := @pnlScopeViewMouseUp;
+  scope.OnDblClick  := @pnlScopeViewDblClick;
 
 
   if (ParamCount >= 1) and FileExists(ParamStr(1)) then
@@ -531,7 +540,7 @@ begin
   scope.Repaint;
 end;
 
-procedure TfrmMain.chgridDblClick(Sender : TObject);
+procedure TfrmMain.tbWavePropsClick(Sender : TObject);
 var
   gpos : TPoint;
 begin
@@ -544,9 +553,26 @@ begin
     frmWaveProps.Top  := gpos.y + chgrid.Height - frmWaveProps.Height;
   end;
 
+  if SelectedWave = nil then SelectWave(0);
   frmWaveProps.wave := SelectedWave;
   frmWaveProps.UpdateWaveInfo;
   frmWaveProps.Show;
+end;
+
+procedure TfrmMain.pnlScopeViewDblClick(Sender : TObject);
+begin
+  tbWavePropsClick(Sender);
+end;
+
+procedure TfrmMain.miWavePropsClick(Sender : TObject);
+begin
+
+end;
+
+procedure TfrmMain.miAboutBoxClick(Sender : TObject);
+begin
+  Application.CreateForm(TfrmAbout, frmAbout);
+  frmAbout.ShowModal;
 end;
 
 procedure TfrmMain.btnChScalePlusMinusClick(Sender : TObject);
@@ -646,7 +672,7 @@ begin
   UpdateChGrid;
   SelectWave(0);
 
-  Application.Title := ExtractFileName(filename) + ' - VScope';
+  Application.Title := ExtractFileName(filename) + ' - VScope v'+VSCOPE_VERSION;
   Caption := Application.Title;
 end;
 
