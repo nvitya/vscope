@@ -2,6 +2,8 @@
 
 This GUI Application can be used to visualize multiple Waveforms that can contain high amount of samples. OpenGL is used for the waveform visualization with extensive alpha blending. It still works nice when displaying 10 Millions of sample points.
 
+The program is developed in Lazarus (modern Pascal), releases available for Windows and Linux.
+
 ## Screenshot
 ![VSCope Screenshot](doc/vscope_screenshot.png)
 
