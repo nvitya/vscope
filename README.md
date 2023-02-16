@@ -1,6 +1,6 @@
 # VScope: Multi-Wave Oscilloscope Data Visualiser
 
-This GUI Application can be used to visualize multiple Waveforms that can contain high amount of samples. For the waveform visualization OpenGL drawing is used with strong usage of alpha blending. It still works nice when displaying 10 Million sample points.
+This GUI Application can be used to visualize multiple Waveforms that can contain high amount of samples. OpenGL is used for the waveform visualization with extensive alpha blending. It still works nice when displaying 10 Millions of sample points.
 
 ## Screenshot
 ![VSCope Screenshot](doc/vscope_screenshot.png)
