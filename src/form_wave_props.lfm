@@ -3,25 +3,26 @@ object frmWaveProps: TfrmWaveProps
   Height = 183
   Top = 645
   Width = 314
+  BorderStyle = bsDialog
   Caption = 'Wave Properties'
   ClientHeight = 183
   ClientWidth = 314
   OnClose = FormClose
   OnShow = FormShow
   PopupMode = pmAuto
-  Position = poDefault
+  Position = poDefaultSizeOnly
   LCLVersion = '2.2.4.0'
   object Label1: TLabel
     Left = 4
-    Height = 14
+    Height = 15
     Top = 8
-    Width = 36
+    Width = 35
     Caption = 'Name:'
     ParentColor = False
   end
   object edName: TEdit
     Left = 4
-    Height = 25
+    Height = 23
     Top = 25
     Width = 114
     OnChange = edNameChange
@@ -93,15 +94,15 @@ object frmWaveProps: TfrmWaveProps
   end
   object Label2: TLabel
     Left = 4
-    Height = 14
+    Height = 15
     Top = 56
-    Width = 54
+    Width = 52
     Caption = 'Data Unit:'
     ParentColor = False
   end
   object edDataUnit: TEdit
     Left = 4
-    Height = 25
+    Height = 23
     Top = 73
     Width = 62
     OnChange = edDataUnitChange
