@@ -19,11 +19,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="692"/>
-        <CursorPos X="29" Y="782"/>
+        <TopLine Value="697"/>
+        <CursorPos X="29" Y="787"/>
         <UsageCount Value="94"/>
         <Bookmarks Count="1">
-          <Item0 Y="661" ID="3"/>
+          <Item0 Y="666" ID="3"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -87,7 +87,6 @@
         <Filename Value="src/vscope_display.pas"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="184"/>
         <UsageCount Value="46"/>
         <Loaded Value="True"/>
       </Unit>
@@ -153,26 +152,6 @@
       <Define0 Value="TRACES"/>
     </OtherDefines>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="575" Column="22" TopLine="572"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="198" Column="46" TopLine="150"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="199" Column="46" TopLine="151"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="198" Column="46" TopLine="150"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="197" Column="46" TopLine="149"/>
-      </Position>
       <Position>
         <Filename Value="src/form_main.pas"/>
         <Caret Line="196" Column="46" TopLine="148"/>
@@ -272,6 +251,26 @@
       <Position>
         <Filename Value="src/form_main.pas"/>
         <Caret Line="762" Column="60" TopLine="673"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="782" Column="29" TopLine="692"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="783" Column="29" TopLine="693"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="784" Column="29" TopLine="694"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="785" Column="29" TopLine="695"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="786" Column="29" TopLine="696"/>
       </Position>
     </JumpHistory>
     <RunParams>

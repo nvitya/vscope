@@ -118,6 +118,11 @@ type
     txtTotalLength : TStaticText;
     Label6 : TLabel;
     txtCursorToB : TStaticText;
+    Bevel2 : TBevel;
+    Bevel8 : TBevel;
+    Bevel9 : TBevel;
+    Bevel10 : TBevel;
+    Bevel11 : TBevel;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);

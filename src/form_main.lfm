@@ -311,7 +311,6 @@ object frmMain: TfrmMain
         Top = 52
         Width = 89
         Alignment = taRightJustify
-        BorderStyle = sbsSunken
         Caption = '123'
         Font.Style = [fsBold]
         ParentFont = False
@@ -323,7 +322,6 @@ object frmMain: TfrmMain
         Top = 76
         Width = 89
         Alignment = taRightJustify
-        BorderStyle = sbsSunken
         Caption = '123'
         Font.Style = [fsBold]
         ParentFont = False
@@ -335,7 +333,6 @@ object frmMain: TfrmMain
         Top = 28
         Width = 89
         Alignment = taRightJustify
-        BorderStyle = sbsSunken
         Caption = '123'
         Font.Style = [fsBold]
         ParentFont = False
@@ -347,7 +344,6 @@ object frmMain: TfrmMain
         Top = 4
         Width = 89
         Alignment = taRightJustify
-        BorderStyle = sbsSunken
         Caption = '123'
         Font.Style = [fsBold]
         ParentFont = False
@@ -367,11 +363,38 @@ object frmMain: TfrmMain
         Top = 100
         Width = 89
         Alignment = taRightJustify
-        BorderStyle = sbsSunken
         Caption = '123'
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 4
+      end
+      object Bevel2: TBevel
+        Left = 8
+        Height = 6
+        Top = 24
+        Width = 175
+        Shape = bsTopLine
+      end
+      object Bevel8: TBevel
+        Left = 8
+        Height = 6
+        Top = 48
+        Width = 175
+        Shape = bsTopLine
+      end
+      object Bevel10: TBevel
+        Left = 8
+        Height = 6
+        Top = 72
+        Width = 175
+        Shape = bsTopLine
+      end
+      object Bevel11: TBevel
+        Left = 9
+        Height = 6
+        Top = 96
+        Width = 175
+        Shape = bsTopLine
       end
     end
   end
@@ -382,6 +405,13 @@ object frmMain: TfrmMain
     Width = 69
     Caption = 'Cursor Time:'
     ParentColor = False
+  end
+  object Bevel9: TBevel
+    Left = 8
+    Height = 6
+    Top = 24
+    Width = 175
+    Shape = bsTopLine
   end
   object mainmenu: TMainMenu
     Images = imglist
