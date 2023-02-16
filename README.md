@@ -30,7 +30,12 @@ A minimal VScope JSON file look like this:
 ```
 
 All time units are given in seconds.
+
 The single VALUES field stores all the wave data in string format, where the samples are floating point values separated by the "|" (pipe) character. This format was chosen in order not to overload the JSON parsers creating huge amount of data nodes. (The VSCope uses a special, optimized parser to parse the VALUE field). In python you can use ```'|'.join(value_array)``` to have a better performance creating the VALUES field.
+
+The SAMPLT field contains the sampling time of the wave data (in seconds). 
+
+The STARTT field contains the wave start time (in seconds).
 
 ## Additional Data Fields
 There are some more additional data in the VSCope data files. A more complete file looks like this: 
@@ -76,4 +81,5 @@ There are some more additional data in the VSCope data files. A more complete fi
 	]
 }
 ```
-
+The COLOR field is a 32-bit integer value. The highest 8 bits are 255 usually (this is the alpha value, which is usually ignored).
+The bits[0..7] = red, bits[8..15] = green, bits[16..25] = blue values.
