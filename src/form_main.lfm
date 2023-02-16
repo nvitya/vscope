@@ -225,16 +225,16 @@ object frmMain: TfrmMain
     TabOrder = 2
     object pnlWaves: TPanel
       Left = 1
-      Height = 423
+      Height = 427
       Top = 1
       Width = 186
       Align = alClient
-      ClientHeight = 423
+      ClientHeight = 427
       ClientWidth = 186
       TabOrder = 0
       object chgrid: TDrawGrid
         Left = 1
-        Height = 421
+        Height = 425
         Top = 1
         Width = 184
         Align = alClient
@@ -264,53 +264,124 @@ object frmMain: TfrmMain
     end
     object pnlInfo: TPanel
       Left = 1
-      Height = 125
-      Top = 424
+      Height = 121
+      Top = 428
       Width = 186
       Align = alBottom
-      ClientHeight = 125
+      BevelOuter = bvNone
+      ClientHeight = 121
       ClientWidth = 186
       ParentColor = False
       TabOrder = 1
-      object Label2: TLabel
-        Left = 8
+      object Label1: TLabel
+        Left = 9
         Height = 14
-        Top = 12
-        Width = 55
-        Caption = 'View Start'
+        Top = 54
+        Width = 69
+        Caption = 'Cursor Time:'
         ParentColor = False
       end
-      object txtViewStart: TStaticText
+      object Label2: TLabel
+        Left = 9
+        Height = 14
+        Top = 78
+        Width = 64
+        Caption = 'Cursor to A:'
+        ParentColor = False
+      end
+      object Label4: TLabel
+        Left = 9
+        Height = 14
+        Top = 30
+        Width = 71
+        Caption = 'View Length:'
+        ParentColor = False
+      end
+      object Label5: TLabel
         Left = 8
-        Height = 21
-        Top = 32
-        Width = 81
+        Height = 14
+        Top = 6
+        Width = 70
+        Caption = 'Total Length:'
+        ParentColor = False
+      end
+      object txtCursorTime: TStaticText
+        Left = 95
+        Height = 20
+        Top = 52
+        Width = 89
+        Alignment = taRightJustify
         BorderStyle = sbsSunken
-        Caption = 'txtViewStart'
+        Caption = '123'
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
       end
-      object Label3: TLabel
-        Left = 8
-        Height = 14
-        Top = 64
-        Width = 49
-        Caption = 'Cursor t.:'
-        ParentColor = False
-      end
-      object txtCursorTime: TStaticText
-        Left = 8
-        Height = 21
-        Top = 84
-        Width = 81
+      object txtCursorToA: TStaticText
+        Left = 95
+        Height = 20
+        Top = 76
+        Width = 89
+        Alignment = taRightJustify
         BorderStyle = sbsSunken
-        Caption = '0.001'
+        Caption = '123'
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
       end
+      object txtViewLength: TStaticText
+        Left = 95
+        Height = 20
+        Top = 28
+        Width = 89
+        Alignment = taRightJustify
+        BorderStyle = sbsSunken
+        Caption = '123'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+      end
+      object txtTotalLength: TStaticText
+        Left = 95
+        Height = 20
+        Top = 4
+        Width = 89
+        Alignment = taRightJustify
+        BorderStyle = sbsSunken
+        Caption = '123'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 3
+      end
+      object Label6: TLabel
+        Left = 9
+        Height = 14
+        Top = 102
+        Width = 64
+        Caption = 'Cursor to B:'
+        ParentColor = False
+      end
+      object txtCursorToB: TStaticText
+        Left = 95
+        Height = 20
+        Top = 100
+        Width = 89
+        Alignment = taRightJustify
+        BorderStyle = sbsSunken
+        Caption = '123'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 4
+      end
     end
+  end
+  object Label3: TLabel
+    Left = 9
+    Height = 14
+    Top = 16
+    Width = 69
+    Caption = 'Cursor Time:'
+    ParentColor = False
   end
   object mainmenu: TMainMenu
     Images = imglist

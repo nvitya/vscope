@@ -32,8 +32,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ComCtrls,
-  ExtCtrls, StdCtrls, Grids, Buttons, math, ddgfx, dglOpenGL, vscope_data,
-  vscope_display, Types;
+  ExtCtrls, StdCtrls, Grids, Buttons, ValEdit, math, ddgfx, dglOpenGL,
+  vscope_data, vscope_display, Types;
 
 const
   c_value_snap_range = 10;
@@ -82,10 +82,6 @@ type
     tbScaleMinus : TToolButton;
     tbOffsetUp : TToolButton;
     tbOffsetDown : TToolButton;
-    Label2 : TLabel;
-    txtViewStart : TStaticText;
-    Label3 : TLabel;
-    txtCursorTime : TStaticText;
     tbMarkerA : TToolButton;
     tbMarkerB : TToolButton;
     tbMarkerClear : TToolButton;
@@ -111,6 +107,17 @@ type
     tbWaveProps : TToolButton;
     menuHelp : TMenuItem;
     miAboutBox : TMenuItem;
+    Label1 : TLabel;
+    Label2 : TLabel;
+    Label3 : TLabel;
+    Label4 : TLabel;
+    Label5 : TLabel;
+    txtCursorTime : TStaticText;
+    txtCursorToA : TStaticText;
+    txtViewLength : TStaticText;
+    txtTotalLength : TStaticText;
+    Label6 : TLabel;
+    txtCursorToB : TStaticText;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -146,7 +153,6 @@ type
     procedure tbZoomAllClick(Sender : TObject);
     procedure tbWavePropsClick(Sender : TObject);
     procedure pnlScopeViewDblClick(Sender : TObject);
-    procedure miWavePropsClick(Sender : TObject);
     procedure miAboutBoxClick(Sender : TObject);
   private
 
@@ -186,6 +192,8 @@ type
     function SelectedWave : TWaveDisplay;
 
     procedure ChangeWaveScale(amul : double);
+
+    procedure UpdateInfoGrid;
 
   end;
 
@@ -329,8 +337,8 @@ end;
 procedure TfrmMain.sbScopeScroll(Sender : TObject; ScrollCode : TScrollCode; var ScrollPos : Integer);
 begin
   scope.ViewStart := scope.TimeDiv * ScrollPos;
-  txtViewStart.Caption := format('%.6f', [scope.ViewStart]);
   scope.Repaint;
+  UpdateInfoGrid;
 end;
 
 procedure TfrmMain.pnlScopeViewMouseWheel(Sender : TObject;
@@ -437,7 +445,6 @@ begin
 
   t := scope.ConvertXToTime(x);
   cursor_time := t;
-  txtCursorTime.Caption := format('%.6f', [t]);
 
   if marker_placing > 0 then
   begin
@@ -460,6 +467,7 @@ begin
       scope.Repaint;   // better for the other GUI elements
 
   //chgrid.Repaint;
+  UpdateInfoGrid;
 end;
 
 procedure TfrmMain.miDrawStepsClick(Sender : TObject);
@@ -564,11 +572,6 @@ begin
   tbWavePropsClick(Sender);
 end;
 
-procedure TfrmMain.miWavePropsClick(Sender : TObject);
-begin
-
-end;
-
 procedure TfrmMain.miAboutBoxClick(Sender : TObject);
 begin
   Application.CreateForm(TfrmAbout, frmAbout);
@@ -643,7 +646,7 @@ end;
 
 procedure TfrmMain.UpdateTimeDiv;
 begin
-  txtViewStart.Caption := format('%.6f', [scope.ViewStart]);
+  UpdateInfoGrid;
 end;
 
 procedure TfrmMain.UpdateChGrid;
@@ -751,6 +754,32 @@ begin
   scope.RenderWaves;
   scope.Repaint;
   chgrid.Refresh;
+end;
+
+procedure TfrmMain.UpdateInfoGrid;
+var
+  s : string;
+  sm : TScopeMarker;
+begin
+  txtTotalLength.Caption := format('%.6f', [scope.TimeRange]);
+  txtViewLength.Caption := format('%.6f', [scope.ViewRange]);
+  txtCursorTime.Caption := format('%.6f', [cursor_time]);
+
+  sm := scope.marker[0];
+  if sm.Visible
+  then
+      s := format('%.6f', [cursor_time - sm.mtime])
+  else
+      s := '-';
+  txtCursorToA.Caption := s;
+
+  sm := scope.marker[1];
+  if sm.Visible
+  then
+      s := format('%.6f', [cursor_time - sm.mtime])
+  else
+      s := '-';
+  txtCursorToB.Caption := s;
 end;
 
 procedure TfrmMain.miExitClick(Sender : TObject);
