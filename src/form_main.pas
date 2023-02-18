@@ -32,11 +32,12 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ComCtrls,
-  ExtCtrls, StdCtrls, Grids, Buttons, ValEdit, math, ddgfx, dglOpenGL,
+  ExtCtrls, StdCtrls, Grids, Buttons, LCLType, math, ddgfx, dglOpenGL,
   vscope_data, vscope_display, Types;
 
 const
   c_value_snap_range = 10;
+  c_ydrag_grid_snap_range = 8;
 
 type
 
@@ -159,6 +160,7 @@ type
     procedure tbWavePropsClick(Sender : TObject);
     procedure pnlScopeViewDblClick(Sender : TObject);
     procedure miAboutBoxClick(Sender : TObject);
+    procedure FormKeyDown(Sender : TObject; var Key : Word; Shift : TShiftState);
   private
 
   public
@@ -433,6 +435,9 @@ var
   di : integer;
   wd : TWaveDisplay;
   instantupdate : boolean = False;
+  ysnapping : boolean = True;
+  ysnapgridrange : double; // in grid coordinates;
+  newwoffs : double;
 begin
   if time_dragging then
   begin
@@ -443,7 +448,19 @@ begin
   end
   else if wave_dragging then
   begin
-    wdr_wave.viewoffset := wdr_start_offs + (scope.ConvertYToGrid(y) - scope.ConvertYToGrid(drag_start_y));
+    newwoffs := wdr_start_offs + (scope.ConvertYToGrid(y) - scope.ConvertYToGrid(drag_start_y));
+
+    if ssShift in Shift then ysnapping := False;
+    if ysnapping then
+    begin
+      ysnapgridrange := scope.ConvertYToGrid(Height div 2 - c_ydrag_grid_snap_range) - scope.ConvertYToGrid(Height div 2);
+      if (round(newwoffs) - ysnapgridrange <= newwoffs) and (round(newwoffs) + ysnapgridrange >= newwoffs) then
+      begin
+        newwoffs := round(newwoffs);
+      end;
+    end;
+
+    wdr_wave.viewoffset := newwoffs;
     wdr_wave.ReDrawWave;
     instantupdate := True;
   end;
@@ -583,6 +600,42 @@ begin
   frmAbout.ShowModal;
 end;
 
+procedure TfrmMain.FormKeyDown(Sender : TObject; var Key : Word; Shift : TShiftState);
+var
+  scpos : TPoint;
+begin
+  if chgrid.Focused
+  then
+      EXIT;
+
+  scpos := scope.ScreenToClient(Mouse.CursorPos);
+  if (scpos.x < 0) or (scpos.x > scope.Width)
+     or (scpos.y < 0) or (scpos.y > scope.Height)
+  then
+      EXIT;
+
+  if key = VK_A then
+  begin
+    //marker_placing := 1;
+    scope.SetMarker(0, cursor_time);
+    scope.DoOnPaint;
+  end
+  else if key = VK_B then
+  begin
+    //marker_placing := 2;
+    scope.SetMarker(1, cursor_time);
+    scope.DoOnPaint;
+  end
+  else if key = VK_UP then
+  begin
+    tbOffsetUp.Click;
+  end
+  else if key = VK_DOWN then
+  begin
+    tbOffsetDown.Click;
+  end;
+end;
+
 procedure TfrmMain.btnChScalePlusMinusClick(Sender : TObject);
 begin
   if (Sender = tbScalePlus) or (Sender = miScalePlus)
@@ -601,9 +654,9 @@ begin
 
   if (Sender = tbOffsetUp) or (Sender = miOffsetUp)
   then
-      wd.viewoffset += 0.25
+      wd.viewoffset := round(wd.viewoffset * 2) / 2 + 0.5
   else
-      wd.viewoffset -= 0.25;
+      wd.viewoffset := round(wd.viewoffset * 2) / 2 - 0.5;
 
   scope.RenderWaves;
   scope.Repaint;

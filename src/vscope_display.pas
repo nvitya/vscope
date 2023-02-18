@@ -1158,6 +1158,8 @@ begin
   {$ifdef TRACES}
   writeln('Total loading time: ', (t1 - t0) / 1000000 :0:3, ' ms');
   {$endif}
+
+  if t0 + t1 + t2 > 0 then ; // to supress unused warnings
 end;
 
 procedure TScopeDisplay.SaveScopeFile(afilename : string);
@@ -1210,6 +1212,8 @@ begin
   {$ifdef TRACES}
   writeln('Full Save time: ', (t2 - t0) / 1000000 :0:3, ' ms');
   {$endif}
+
+  if t0 + t1 + t2 > 0 then ; // to supress unused warnings
 
 end;
 

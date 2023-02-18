@@ -5,10 +5,13 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '1.0.1';
+  VSCOPE_VERSION = '1.0.2';
 
 (* Version Log
 
+v1.0.2:
+  Y drag snapping to grid
+  handling some key events: "A", "B", UP, DOWN
 v1.0.1:
   Changed to full black background
 v1.0.0:

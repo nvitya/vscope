@@ -1,5 +1,5 @@
 object frmMain: TfrmMain
-  Left = 1336
+  Left = 1326
   Height = 600
   Top = 0
   Width = 800
@@ -7,9 +7,11 @@ object frmMain: TfrmMain
   Caption = 'VScope'
   ClientHeight = 576
   ClientWidth = 800
+  KeyPreview = True
   Menu = mainmenu
   OnCreate = FormCreate
   OnDropFiles = FormDropFiles
+  OnKeyDown = FormKeyDown
   Position = poScreenCenter
   LCLVersion = '2.2.4.0'
   object tbMain: TToolBar
