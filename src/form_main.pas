@@ -47,7 +47,6 @@ type
     Bevel5 : TBevel;
     Bevel6 : TBevel;
     Bevel7 : TBevel;
-    imglist32 : TImageList;
     mainmenu : TMainMenu;
     menuFile : TMenuItem;
     miOpen : TMenuItem;
@@ -93,7 +92,6 @@ type
     miMarkerA : TMenuItem;
     miMarkerB : TMenuItem;
     miClearMarkers : TMenuItem;
-    Separator3 : TMenuItem;
     Separator4 : TMenuItem;
     miScalePlus : TMenuItem;
     miScaleMinus : TMenuItem;
@@ -124,6 +122,8 @@ type
     Bevel9 : TBevel;
     Bevel10 : TBevel;
     Bevel11 : TBevel;
+    tbABMeasure : TToolButton;
+    miABMeasure : TMenuItem;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -161,6 +161,7 @@ type
     procedure pnlScopeViewDblClick(Sender : TObject);
     procedure miAboutBoxClick(Sender : TObject);
     procedure FormKeyDown(Sender : TObject; var Key : Word; Shift : TShiftState);
+    procedure tbABMeasureClick(Sender : TObject);
   private
 
   public
@@ -202,6 +203,8 @@ type
 
     procedure UpdateInfoGrid;
 
+    procedure UpdateWavePopupWins;
+
   end;
 
 var
@@ -210,7 +213,7 @@ var
 implementation
 
 uses
-  form_wave_props, version_vscope, form_about;
+  form_wave_props, form_measure_ab, version_vscope, form_about;
 
 {$R *.lfm}
 
@@ -438,6 +441,7 @@ var
   ysnapping : boolean = True;
   ysnapgridrange : double; // in grid coordinates;
   newwoffs : double;
+  selw : TWaveDisplay;
 begin
   if time_dragging then
   begin
@@ -473,6 +477,13 @@ begin
     scope.SetMarker(marker_placing - 1, t);
     scope.timecursor.visible := false;
     marker_was_moved := true;
+
+    selw := SelectedWave;
+    if (selw <> nil) and (frmMeasureAB <> nil) then
+    begin
+      frmMeasureAB.wave := selw;
+      frmMeasureAB.UpdateWaveInfo;
+    end;
   end
   else
   begin
@@ -574,6 +585,9 @@ procedure TfrmMain.tbWavePropsClick(Sender : TObject);
 var
   gpos : TPoint;
 begin
+  if SelectedWave = nil then SelectWave(0);
+  if SelectedWave = nil then EXIT;
+
   if frmWaveProps = nil then
   begin
     Application.CreateForm(TfrmWaveProps, frmWaveProps);
@@ -583,7 +597,6 @@ begin
     frmWaveProps.Top  := gpos.y + chgrid.Height - frmWaveProps.Height;
   end;
 
-  if SelectedWave = nil then SelectWave(0);
   frmWaveProps.wave := SelectedWave;
   frmWaveProps.UpdateWaveInfo;
   frmWaveProps.Show;
@@ -619,12 +632,14 @@ begin
     //marker_placing := 1;
     scope.SetMarker(0, cursor_time);
     scope.DoOnPaint;
+    UpdateWavePopupWins;
   end
   else if key = VK_B then
   begin
     //marker_placing := 2;
     scope.SetMarker(1, cursor_time);
     scope.DoOnPaint;
+    UpdateWavePopupWins;
   end
   else if key = VK_UP then
   begin
@@ -634,6 +649,20 @@ begin
   begin
     tbOffsetDown.Click;
   end;
+end;
+
+procedure TfrmMain.tbABMeasureClick(Sender : TObject);
+begin
+  if frmMeasureAB = nil then
+  begin
+    Application.CreateForm(TfrmMeasureAB, frmMeasureAB);
+    frmMeasureAB.scope := self.scope;
+  end;
+
+  if SelectedWave = nil then SelectWave(0);
+  frmMeasureAB.wave := SelectedWave;
+  frmMeasureAB.UpdateWaveInfo;
+  frmMeasureAB.Show;
 end;
 
 procedure TfrmMain.btnChScalePlusMinusClick(Sender : TObject);
@@ -739,17 +768,15 @@ end;
 
 procedure TfrmMain.SelectWave(awidx : integer);
 var
-  wd, selw : TWaveDisplay;
+  wd : TWaveDisplay;
   i : integer;
 begin
   chgrid.Row := awidx + 1;
-  selw := nil;
   for i := 0 to scope.waves.Count - 1 do
   begin
     wd := scope.waves[i];
     if i = awidx then
     begin
-      selw := wd;
       wd.wshp.alpha := 0.75 * wd.basealpha * 1.3333;
       wd.wshp.parent.MoveTop(wd.wshp);
       wd.zeroline.parent.MoveTop(wd.zeroline);
@@ -762,11 +789,7 @@ begin
 
   scope.Repaint;
 
-  if (selw <> nil) and (frmWaveProps <> nil) then
-  begin
-    frmWaveProps.wave := selw;
-    frmWaveProps.UpdateWaveInfo;
-  end;
+  UpdateWavePopupWins;
 end;
 
 procedure TfrmMain.SelectWave(wd : TWaveDisplay);
@@ -838,6 +861,25 @@ begin
   else
       s := '-';
   txtCursorToB.Caption := s;
+end;
+
+procedure TfrmMain.UpdateWavePopupWins;
+var
+  selw : TWaveDisplay;
+begin
+  selw := SelectedWave;
+  if selw = nil then EXIT;
+  if frmWaveProps <> nil then
+  begin
+    frmWaveProps.wave := selw;
+    frmWaveProps.UpdateWaveInfo;
+  end;
+
+  if frmMeasureAB <> nil then
+  begin
+    frmMeasureAB.wave := selw;
+    frmMeasureAB.UpdateWaveInfo;
+  end;
 end;
 
 procedure TfrmMain.miExitClick(Sender : TObject);

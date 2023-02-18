@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
-  Grids, ComCtrls, vscope_data, vscope_display;
+  Grids, ComCtrls, ExtCtrls, vscope_data, vscope_display;
 
 type
 
@@ -15,15 +15,25 @@ type
   TfrmWaveProps = class(TForm)
     Label1 : TLabel;
     edName : TEdit;
-    gridi : TStringGrid;
     tbAlpha : TTrackBar;
     btnColor : TColorButton;
     dlgColors : TColorDialog;
     Label2 : TLabel;
     edDataUnit : TEdit;
     btnRescale : TBitBtn;
+    pnlInfo : TPanel;
+    Label3 : TLabel;
+    Label4 : TLabel;
+    Label5 : TLabel;
+    Label6 : TLabel;
+    txtTotalTime : TStaticText;
+    txtStartTime : TStaticText;
+    txtSampleCount : TStaticText;
+    txtSamplingTime : TStaticText;
+    Bevel2 : TBevel;
+    Bevel8 : TBevel;
+    Bevel10 : TBevel;
     procedure FormClose(Sender : TObject; var CloseAction : TCloseAction);
-    procedure btnColorDialogClick(Sender : TObject);
     procedure FormShow(Sender : TObject);
     procedure btnColorColorChanged(Sender : TObject);
     procedure edNameChange(Sender : TObject);
@@ -56,11 +66,6 @@ procedure TfrmWaveProps.FormClose(Sender : TObject; var CloseAction : TCloseActi
 begin
   CloseAction := caFree;
   frmWaveProps := nil;
-end;
-
-procedure TfrmWaveProps.btnColorDialogClick(Sender : TObject);
-begin
-
 end;
 
 procedure TfrmWaveProps.FormShow(Sender : TObject);
@@ -106,10 +111,10 @@ var
 begin
   if wave = nil then EXIT; // unexpected call
 
-  gridi.Cells[1, 0] := FloatToStrF(wave.samplt, ffFixed, 0, 6, float_number_format);
-  gridi.Cells[1, 1] := IntToStr(length(wave.data));
-  gridi.Cells[1, 2] := FloatToStrF(wave.EndTime - wave.StartTime, ffFixed, 0, 6, float_number_format);
-  gridi.Cells[1, 3] := FloatToStrF(wave.StartTime, ffFixed, 0, 6, float_number_format);
+  txtSamplingTime.Caption := FloatToStrF(wave.samplt, ffFixed, 0, 6, float_number_format);
+  txtSampleCount.Caption  := IntToStr(length(wave.data));
+  txtTotalTime.Caption := FloatToStrF(wave.EndTime - wave.StartTime, ffFixed, 0, 6, float_number_format);
+  txtStartTime.Caption := FloatToStrF(wave.StartTime, ffFixed, 0, 6, float_number_format);
 
   i := scope.waves.IndexOf(wave);
   Caption := 'Wave '+IntToStr(i + 1)+' Properties';

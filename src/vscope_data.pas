@@ -78,6 +78,7 @@ type
     function GetDataIndexTime(di : integer) : double;
     function GetValueAt(t : double) : double;
     function GetValueStr(t : double) : string;
+    function FormatValue(v : double) : string;
 
     procedure CalcMinMax(fromtime, totime : double; out data_min : double; out data_max : double; out scnt : integer);
 
@@ -110,6 +111,8 @@ type
 procedure HexStrToBuffer(const astr : string; pbuf : pointer; buflen : cardinal);
 function  BufferToHexStr(pbuf : pointer; len : cardinal) : string;
 
+function FormatTime(t : double) : string;
+
 var
   float_number_format : TFormatSettings;
 
@@ -139,6 +142,11 @@ begin
     inc(pc);
     inc(pb);
   end;
+end;
+
+function FormatTime(t : double) : string;
+begin
+  result := FloatToStrF(t, ffFixed, 0, 6, float_number_format);
 end;
 
 
@@ -427,6 +435,8 @@ begin
   {$ifdef TRACES}
   writeln('Wave data parsing time: ',(t1 - t0)/1000 :0:3, ' us');
   {$endif}
+
+  if t0 + t1 <> 0 then ; // to suppress unused warning
 end;
 
 function TWaveData.GetFloatArrayStr : string;
@@ -465,6 +475,8 @@ begin
   {$ifdef TRACES}
   writeln('Wave VALUES String gererate time: ', (t1 - t0) / 1000 :0:0, ' us');
   {$endif}
+
+  if t0 + t1 <> 0 then ; // to suppress unused warning
 
   result := s;
 end;
@@ -574,7 +586,12 @@ end;
 
 function TWaveData.GetValueStr(t : double) : string;
 begin
-  result := FloatToStr(GetValueAt(t), float_number_format);
+  result := FormatValue(GetValueAt(t));
+end;
+
+function TWaveData.FormatValue(v : double) : string;
+begin
+  result := FloatToStrF(v, ffFixed, 0, 8, float_number_format);
   if dataunit <> '' then result += ' ' + dataunit;
 end;
 
