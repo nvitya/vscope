@@ -248,11 +248,11 @@ object frmMain: TfrmMain
           end        
           item
             Title.Caption = 'Wave'
-            Width = 70
+            Width = 90
           end        
           item
             Title.Caption = 'Units / Div'
-            Width = 70
+            Width = 65
           end>
         ExtendedSelect = False
         FixedCols = 0

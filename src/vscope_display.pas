@@ -34,39 +34,6 @@ uses
   Classes, SysUtils, Controls, Dialogs, Forms, fgl, math, jsontools, dglOpenGL,
   ddgfx, ddgfx_font, vscope_data, util_nstime;
 
-const
-  vscope_timedivs : array of double =
-  (
-    0.000001,  // 1 us
-    0.000002,
-    0.000005,
-    0.000010,
-    0.000020,
-    0.000050,
-    0.000100,
-    0.000200,
-    0.000500,
-    0.001000,  // 1 ms
-    0.002000,
-    0.005000,
-    0.010000,
-    0.020000,
-    0.050000,
-    0.100000,
-    0.200000,
-    0.500000,
-    1.000000,  // 1 s
-    2.000000,
-    5.000000,
-    10.000000,
-    20.000000,
-    50.000000,
-    100.000000,
-    200.000000,
-    500.000000,
-    1000.000000  // 1000 s
-  );
-
 type
 
   TScopeDisplay = class;
@@ -248,6 +215,8 @@ type
     function ViewEnd   : double;
     property TimeDiv   : double read GetTimeDiv;
 
+    function GetSmallestSampleTime : double;
+
     function GridWidthPixels : integer;
 
     procedure SetTimeDiv(AValue : double; fixtimepos : double);
@@ -281,34 +250,39 @@ implementation
 
 function FindNextTimeDiv(adiv : double; adir : integer) : double;
 var
-  tdi : integer;
+  log10_div : double;
+  log10_int_div : double;
+  smul : double;
+  newres : double;
 begin
-  if adir > 0 then
-  begin
-    tdi := 0;
-    while tdi < length(vscope_timedivs) do
-    begin
-      result := vscope_timedivs[tdi];
-      if result > adiv
-      then
-          EXIT;
+  newres := adiv;
+  repeat
+    if adir > 0 then newres := newres * 2
+                else newres := newres / 2;
 
-      Inc(tdi);
-    end;
-  end
-  else
-  begin
-    tdi := length(vscope_timedivs) - 1;
-    while tdi >= 0 do
+    log10_div := log10(newres);
+    log10_int_div := trunc(log10_div);
+    if log10_div < 0 then  // 0 < adiv < 1
     begin
-      result := vscope_timedivs[tdi];
-      if result < adiv
-      then
-          EXIT;
+      smul := power(10, log10_int_div) / newres;
+      if      smul > 5 then smul := 10
+      else if smul > 2 then smul := 5
+      else if smul > 1 then smul := 2
+      else                  smul := 1;
 
-      Dec(tdi);
+      result := power(10, log10_int_div) / smul;
+    end
+    else  // adiv >= 1
+    begin
+      smul := newres / power(10, log10_int_div);
+      if      smul > 5 then smul := 10
+      else if smul > 2 then smul := 5
+      else if smul > 1 then smul := 2
+      else                  smul := 1;
+
+      result := power(10, log10_int_div) * smul;
     end;
-  end;
+  until result <> adiv;
 end;
 
 { TScopeMarker }
@@ -975,7 +949,14 @@ end;
 procedure TScopeDisplay.SetTimeDiv(AValue : double; fixtimepos : double);
 var
   ftimeratio : double;
+  fmintdiv, fmaxtdiv : double;
 begin
+  fmintdiv := FindNextTimeDiv(GetSmallestSampleTime * 2, -1);
+  fmaxtdiv := FindNextTimeDiv(TimeRange / 5, 1);
+
+  if avalue < fmintdiv then avalue := fmintdiv
+  else if avalue > fmaxtdiv then avalue := fmaxtdiv;
+
   ftimeratio := (fixtimepos - fviewstart) / fviewrange;
   fviewrange := AValue * 10;
   fviewstart := fixtimepos - fviewrange * ftimeratio;
@@ -1401,6 +1382,21 @@ end;
 function TScopeDisplay.ViewEnd : double;
 begin
   result := ViewStart + ViewRange;
+end;
+
+function TScopeDisplay.GetSmallestSampleTime : double;
+var
+  wd : TWaveDisplay;
+  cnt : integer;
+begin
+  result := 1;
+  cnt := 0;
+  for wd in waves do
+  begin
+    if cnt = 0 then result := wd.samplt
+    else if wd.samplt < result then result := wd.samplt;
+    inc(cnt);
+  end;
 end;
 
 function TScopeDisplay.GridWidthPixels : integer;
