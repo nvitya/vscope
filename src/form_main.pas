@@ -617,10 +617,6 @@ procedure TfrmMain.FormKeyDown(Sender : TObject; var Key : Word; Shift : TShiftS
 var
   scpos : TPoint;
 begin
-  if chgrid.Focused
-  then
-      EXIT;
-
   scpos := scope.ScreenToClient(Mouse.CursorPos);
   if (scpos.x < 0) or (scpos.x > scope.Width)
      or (scpos.y < 0) or (scpos.y > scope.Height)
@@ -649,6 +645,8 @@ begin
   begin
     tbOffsetDown.Click;
   end;
+
+  key := 0; // do not pass on the keypresses to other controls
 end;
 
 procedure TfrmMain.tbABMeasureClick(Sender : TObject);

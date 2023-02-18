@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
-  Grids, ComCtrls, ExtCtrls, vscope_data, vscope_display;
+  ComCtrls, ExtCtrls, vscope_data, vscope_display;
 
 type
 

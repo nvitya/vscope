@@ -5,8 +5,8 @@ unit form_wave_rescale;
 interface
 
 uses
-  Classes, SysUtils, Forms, Dialogs, Controls, Graphics, StdCtrls, ColorBox,
-  Grids, Buttons, ExtCtrls, vscope_data, vscope_display;
+  Classes, SysUtils, Forms, Dialogs, Controls, Graphics, StdCtrls,
+  Buttons, ExtCtrls, vscope_data, vscope_display;
 
 type
 
