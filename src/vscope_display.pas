@@ -702,9 +702,9 @@ begin
   fviewrange := 1;
   CalcTimeRange; // initialize the time range
 
-  bgcolor.r := 0.1;
-  bgcolor.g := 0.1;
-  bgcolor.b := 0.1;
+  bgcolor.r := 0.0;
+  bgcolor.g := 0.0;
+  bgcolor.b := 0.0;
 
   draw_steps := false;
 
@@ -829,7 +829,7 @@ begin
   hsh := grid_sub.NewShape();
   hsh.AddPrimitive(GL_LINES, 2, @hline_vertices);
   hsh.y := py;
-  hsh.SetColor(0.2, 0.2, 0.2);
+  hsh.SetColor(0.15, 0.15, 0.15);
 
   vsh := grid_sub.NewShape();
   vsh.AddPrimitive(GL_LINES, 2, @vline_vertices);

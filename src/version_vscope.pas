@@ -5,11 +5,13 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '1.0';
+  VSCOPE_VERSION = '1.0.1';
 
 (* Version Log
 
-v1.0:
+v1.0.1:
+  Changed to full black background
+v1.0.0:
   initial version
 
 *)

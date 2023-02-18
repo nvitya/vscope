@@ -31,7 +31,7 @@ object frmWaveProps: TfrmWaveProps
   end
   object gridi: TStringGrid
     Left = 127
-    Height = 86
+    Height = 95
     Top = 25
     Width = 187
     ColCount = 2
