@@ -44,9 +44,11 @@ type
   { TfrmMain }
 
   TfrmMain = class(TForm)
+    Bevel12 : TBevel;
     Bevel5 : TBevel;
     Bevel6 : TBevel;
     Bevel7 : TBevel;
+    Label7 : TLabel;
     mainmenu : TMainMenu;
     menuFile : TMenuItem;
     miOpen : TMenuItem;
@@ -113,6 +115,7 @@ type
     Label5 : TLabel;
     txtCursorTime : TStaticText;
     txtCursorToA : TStaticText;
+    txtTimeUnit : TStaticText;
     txtViewLength : TStaticText;
     txtTotalLength : TStaticText;
     Label6 : TLabel;
@@ -166,6 +169,8 @@ type
 
   public
     exe_dir : string;
+
+    procedure UpdateDrawSteps;
 
   public
     scope : TScopeDisplay;
@@ -244,8 +249,7 @@ begin
   scope.valgrp.visible := false;
 
   scope.draw_steps := true;
-  miDrawSteps.Checked := scope.draw_steps;
-  tbDrawSteps.Down := scope.draw_steps;
+  UpdateDrawSteps;
 
   scope.OnMouseMove := @pnlScopeViewMouseMove;
   scope.OnMouseDown := @pnlScopeViewMouseDown;
@@ -663,6 +667,12 @@ begin
   frmMeasureAB.Show;
 end;
 
+procedure TfrmMain.UpdateDrawSteps;
+begin
+  miDrawSteps.Checked := scope.draw_steps;
+  tbDrawSteps.Down := scope.draw_steps;
+end;
+
 procedure TfrmMain.btnChScalePlusMinusClick(Sender : TObject);
 begin
   if (Sender = tbScalePlus) or (Sender = miScalePlus)
@@ -756,6 +766,7 @@ begin
 
   UpdateScrollBar;
   UpdateTimeDiv;
+  UpdateDrawSteps;
 
   UpdateChGrid;
   SelectWave(0);
@@ -840,6 +851,7 @@ var
   s : string;
   sm : TScopeMarker;
 begin
+  txtTimeUnit.Caption := scope.time_unit;
   txtTotalLength.Caption := format('%.6f', [scope.TimeRange]);
   txtViewLength.Caption := format('%.6f', [scope.ViewRange]);
   txtCursorTime.Caption := format('%.6f', [cursor_time]);

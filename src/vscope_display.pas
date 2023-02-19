@@ -107,6 +107,7 @@ type
     function GetTimeDiv : double;
     procedure SetViewStart(AValue : double);
     procedure SetViewRange(AValue : double);
+
   protected
     fmargin_pixels : integer;
 
@@ -115,6 +116,9 @@ type
     ftimerange : double;
     fViewstart : double;
     fviewrange : double;
+
+    scale_ratio : double;
+    txt_font_size : double;
 
     procedure CalcTimeRange;
 
@@ -130,8 +134,7 @@ type
     procedure CleanupGrid;
 
   public
-    vfont : TFontFace;
-
+    vfont     : TFontFace;
     valtxt    : TTextBox;
     valgrp    : TDrawGroup;
     valframe  : TShape;
@@ -142,69 +145,45 @@ type
     procedure InitTexts;
 
   public
-
-    timecursor : TShape;
-
+    timecursor    : TShape;
     sample_marker : TShape;
-
     grp_top_icons : TDrawGroup;  // screen aligned
-
-    marker : array[0..1] of TScopeMarker;
+    grp_markers   : TDrawGroup;  // grid-scaled
+    marker        : array[0..1] of TScopeMarker;
 
     procedure InitMarkers;
     procedure UpdateMarkers;
 
     procedure SetMarker(aindex : integer; t : double);
     procedure ClearMarkers;
+    function  FindNearestMarker(x, range : integer) : TScopeMarker;
 
   public
-    procedure DoOnResize; override;
-    procedure UpdateTimeDivPos;
-
-    procedure RenderWaves;
-
-  public
-    data  : TScopeData;
-    grp_waves  : TDrawGroup;    // grid-scaled
-    grp_zeroes : TDrawGroup;    // grid-scaled
+    grp_waves   : TDrawGroup;    // grid-scaled
+    grp_zeroes  : TDrawGroup;    // grid-scaled
     grp_zeroes2 : TClonedGroup; // grid-scaled
 
-    grp_markers  : TDrawGroup;  // grid-scaled
-    waves : TWaveDisplayList;
+    procedure ClearWaves;
+    function AddWave(aname: string; asamplt: double): TWaveDisplay;
+    function DeleteWave(awave : TWaveDisplay) : boolean;
+    function WaveIndex(awave : TWaveDisplay) : integer;
+    procedure RenderWaves;
 
-    draw_steps : boolean;
+    function FindNearestWaveSample(x, y : integer; range : integer; out rdi : integer) : TWaveDisplay;
+    procedure ShowSampleMarker(wd : TWaveDisplay; di : integer); //t : double);
 
-    scale_ratio : double;
-    txt_font_size : double;
+  public
+    waves       : TWaveDisplayList;
+
+    draw_steps  : boolean;
+    time_unit   : string;
 
     constructor Create(aowner : TComponent; aparent : TWinControl); override;
     destructor Destroy; override;
 
-    procedure ClearWaves;
-
+    procedure DoOnResize; override;
+    procedure UpdateTimeDivPos;
     procedure AutoScale;
-
-    function AddWave(aname: string; asamplt: double): TWaveDisplay;
-    function DeleteWave(awave : TWaveDisplay) : boolean;
-    function WaveIndex(awave : TWaveDisplay) : integer;
-
-    function LoadWave(afilename : string) : TWaveDisplay;
-
-    procedure LoadScopeFile(afilename : string);
-    procedure SaveScopeFile(afilename : string);
-
-    function ConvertXToTime(x : integer) : double;
-    function ConvertTimeToX(t : double) : integer;
-    function ConvertTimeToGrid(t : double) : double;
-    function ConvertGridToY(gridvalue : double) : integer;
-    function ConvertYToGrid(y : integer) : double;
-
-    function FindNearestMarker(x, range : integer) : TScopeMarker;
-    function FindNearestWaveSample(x, y : integer; range : integer; out rdi : integer) : TWaveDisplay;
-
-    procedure SetTimeCursor(t : double);
-
-    procedure ShowSampleMarker(wd : TWaveDisplay; di : integer); //t : double);
 
     property TimeRange : double read ftimerange;
     property MinTime : double read fmintime;
@@ -215,13 +194,24 @@ type
     function ViewEnd   : double;
     property TimeDiv   : double read GetTimeDiv;
 
-    function GetSmallestSampleTime : double;
+    procedure SetTimeDiv(AValue : double; fixtimepos : double);
+    procedure UpdateTimeDivInfo;
+    procedure SetTimeCursor(t : double);
 
+  public
+    function ConvertXToTime(x : integer) : double;
+    function ConvertTimeToX(t : double) : integer;
+    function ConvertTimeToGrid(t : double) : double;
+    function ConvertGridToY(gridvalue : double) : integer;
+    function ConvertYToGrid(y : integer) : double;
+    function GetSmallestSampleTime : double;
     function GridWidthPixels : integer;
 
-    procedure SetTimeDiv(AValue : double; fixtimepos : double);
+  public
+    function  LoadWave(afilename : string) : TWaveDisplay;
+    procedure LoadScopeFile(afilename : string);
+    procedure SaveScopeFile(afilename : string);
 
-    procedure UpdateTimeDivInfo;
   end;
 
 
@@ -636,10 +626,11 @@ constructor TScopeDisplay.Create(aowner : TComponent; aparent : TWinControl);
 begin
   inherited Create(aowner, aparent);
 
-  scale_ratio := Forms.Screen.PixelsPerInch / 96;
-  //scale_ratio := 2;
+  draw_steps := false;
+  time_unit := 's';
 
-  data := TScopeData.Create;
+  scale_ratio := Forms.Screen.PixelsPerInch / 96;
+
   waves := TWaveDisplayList.Create;
 
   InitFontManager;
@@ -666,8 +657,6 @@ begin
   grp_waves.x := fmargin_pixels;
   grp_waves.y := fmargin_pixels;
 
-
-
   grp_markers := root.NewGroup;
   grp_markers.x := fmargin_pixels;
   grp_markers.y := fmargin_pixels;
@@ -679,8 +668,6 @@ begin
   bgcolor.r := 0.0;
   bgcolor.g := 0.0;
   bgcolor.b := 0.0;
-
-  draw_steps := false;
 
   grp_top_icons := root.NewGroup;
   grp_top_icons.x := fmargin_pixels;
@@ -699,7 +686,6 @@ begin
 
   ClearWaves;
 
-  data.Free;
   inherited;
 end;
 
@@ -910,7 +896,7 @@ begin
     dt := marker[1].mtime - marker[0].mtime;
     hz := 1 / dt;
     txt_abinfo.Text := 'B-A: '
-       + FloatToStrF(dt, ffFixed, 0, 6, float_number_format) + ' s'
+       + FloatToStrF(dt, ffFixed, 0, 6, float_number_format) + ' ' + time_unit
        + ', ' + FloatToStrF(hz, ffFixed, 0, 3, float_number_format) + ' Hz'
     ;
     txt_abinfo.Visible := true;
@@ -967,7 +953,7 @@ end;
 
 procedure TScopeDisplay.UpdateTimeDivInfo;
 begin
-  txt_timediv.Text := FloatToStrF(TimeDiv, ffFixed, 0, 6, float_number_format) + ' s / div';
+  txt_timediv.Text := FloatToStrF(TimeDiv, ffFixed, 0, 6, float_number_format) + ' '+time_unit+' / div';
 
   UpdateTimeDivPos;
 end;
@@ -1079,6 +1065,7 @@ var
   wd : TWaveDisplay;
 
   t0, t1, t2 : int64;
+  tdiv, vstart : double;
 
 begin
   t0 := nstime();
@@ -1109,13 +1096,29 @@ begin
       end;
     end;
 
+    CalcTimeRange;
+
+    draw_steps := true;
+    tdiv := -1;
+    vstart := 0;
+    time_unit := 's';
+
     if jf.Find('VIEW', jview) then
     begin
-      if jview.Find('VIEWSTART', jv) then ViewStart := jv.AsNumber;
-      if jview.Find('TIMEDIV', jv)   then SetTimeDiv(jv.AsNumber, ViewStart);
+      if jview.Find('TIMEUNIT', jv) then time_unit := jv.AsString;
+      if jview.Find('VIEWSTART', jv) then vstart := jv.AsNumber;
+      if jview.Find('TIMEDIV', jv)   then tdiv := jv.AsNumber;
+      if jview.Find('DRAWSTEPS', jv) then draw_steps := jv.AsBoolean;
     end;
 
-    CalcTimeRange;
+    if tdiv <= 0 then  // auto-range
+    begin
+      tdiv := TimeRange / 10;
+      vstart := 0;
+    end;
+
+    ViewStart := vstart;
+    SetTimeDiv(tdiv, ViewStart);
 
     if jf.Find('MARKERS', jmarkers) then
     begin
@@ -1160,8 +1163,10 @@ begin
   jf := TJsonNode.Create();
 
   jview := jf.Add('VIEW', nkObject);
+  jview.Add('TIMEUNIT', time_unit);
   jview.Add('TIMEDIV', TimeDiv);
   jview.Add('VIEWSTART', ViewStart);
+  jview.Add('DRAWSTEPS', draw_steps);
 
   jmarkers := jf.Add('MARKERS', nkArray);
   for i := 0 to 1 do

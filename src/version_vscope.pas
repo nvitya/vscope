@@ -5,10 +5,15 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '1.1.0';
+  VSCOPE_VERSION = '1.1.1';
 
 (* Version Log
 
+v1.1.1:
+  Show Full Time Range by default
+  Save draw_steps
+  Time Unit support
+  Number Formatting improvements
 v1.1.0:
   A-B Measurements
 v1.0.3:

@@ -590,8 +590,20 @@ begin
 end;
 
 function TWaveData.FormatValue(v : double) : string;
+var
+  sarr : array of string;
 begin
-  result := FloatToStrF(v, ffFixed, 0, 8, float_number_format);
+
+  result := FloatToStr(v, float_number_format);
+  if pos(UpperCase(result), 'E') = 0 then
+  begin
+    // limit the precision to 8 digits
+    sarr := result.split('.');
+    if (length(sarr) > 1) and (length(sarr[1]) > 8)
+    then
+        result := FloatToStrF(v, ffFixed, 0, 8, float_number_format);
+  end;
+
   if dataunit <> '' then result += ' ' + dataunit;
 end;
 
@@ -673,6 +685,8 @@ begin
   begin
     result := format('%.'+IntToStr(Ceil(-log10_scale))+'f', [invsc]);
   end;
+
+  if dataunit <> '' then result := result + ' ' + dataunit;
 end;
 
 { TScopeData }

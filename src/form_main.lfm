@@ -235,16 +235,16 @@ object frmMain: TfrmMain
     TabOrder = 2
     object pnlWaves: TPanel
       Left = 1
-      Height = 431
+      Height = 402
       Top = 1
       Width = 186
       Align = alClient
-      ClientHeight = 431
+      ClientHeight = 402
       ClientWidth = 186
       TabOrder = 0
       object chgrid: TDrawGrid
         Left = 1
-        Height = 429
+        Height = 400
         Top = 1
         Width = 184
         Align = alClient
@@ -274,51 +274,51 @@ object frmMain: TfrmMain
     end
     object pnlInfo: TPanel
       Left = 1
-      Height = 121
-      Top = 432
+      Height = 150
+      Top = 403
       Width = 186
       Align = alBottom
       BevelOuter = bvNone
-      ClientHeight = 121
+      ClientHeight = 150
       ClientWidth = 186
       ParentColor = False
       TabOrder = 1
       object Label1: TLabel
-        Left = 9
+        Left = 7
         Height = 15
-        Top = 54
+        Top = 80
         Width = 67
         Caption = 'Cursor Time:'
         ParentColor = False
       end
       object Label2: TLabel
-        Left = 9
+        Left = 7
         Height = 15
-        Top = 78
+        Top = 104
         Width = 63
         Caption = 'Cursor to A:'
         ParentColor = False
       end
       object Label4: TLabel
-        Left = 9
+        Left = 7
         Height = 15
-        Top = 30
+        Top = 56
         Width = 68
         Caption = 'View Length:'
         ParentColor = False
       end
       object Label5: TLabel
-        Left = 8
+        Left = 6
         Height = 15
-        Top = 6
+        Top = 32
         Width = 68
         Caption = 'Total Length:'
         ParentColor = False
       end
       object txtCursorTime: TStaticText
-        Left = 95
+        Left = 93
         Height = 20
-        Top = 52
+        Top = 78
         Width = 89
         Alignment = taRightJustify
         Caption = '123'
@@ -327,9 +327,9 @@ object frmMain: TfrmMain
         TabOrder = 0
       end
       object txtCursorToA: TStaticText
-        Left = 95
+        Left = 93
         Height = 20
-        Top = 76
+        Top = 102
         Width = 89
         Alignment = taRightJustify
         Caption = '123'
@@ -338,9 +338,9 @@ object frmMain: TfrmMain
         TabOrder = 1
       end
       object txtViewLength: TStaticText
-        Left = 95
+        Left = 93
         Height = 20
-        Top = 28
+        Top = 54
         Width = 89
         Alignment = taRightJustify
         Caption = '123'
@@ -349,9 +349,9 @@ object frmMain: TfrmMain
         TabOrder = 2
       end
       object txtTotalLength: TStaticText
-        Left = 95
+        Left = 93
         Height = 20
-        Top = 4
+        Top = 30
         Width = 89
         Alignment = taRightJustify
         Caption = '123'
@@ -360,17 +360,17 @@ object frmMain: TfrmMain
         TabOrder = 3
       end
       object Label6: TLabel
-        Left = 9
+        Left = 7
         Height = 15
-        Top = 102
+        Top = 128
         Width = 62
         Caption = 'Cursor to B:'
         ParentColor = False
       end
       object txtCursorToB: TStaticText
-        Left = 95
+        Left = 93
         Height = 20
-        Top = 100
+        Top = 126
         Width = 89
         Alignment = taRightJustify
         Caption = '123'
@@ -379,32 +379,58 @@ object frmMain: TfrmMain
         TabOrder = 4
       end
       object Bevel2: TBevel
-        Left = 8
+        Left = 7
         Height = 6
-        Top = 24
+        Top = 50
         Width = 175
         Shape = bsTopLine
       end
       object Bevel8: TBevel
-        Left = 8
+        Left = 7
         Height = 6
-        Top = 48
+        Top = 74
         Width = 175
         Shape = bsTopLine
       end
       object Bevel10: TBevel
-        Left = 8
+        Left = 7
         Height = 6
-        Top = 72
+        Top = 98
         Width = 175
         Shape = bsTopLine
       end
       object Bevel11: TBevel
-        Left = 9
+        Left = 8
         Height = 6
-        Top = 96
+        Top = 122
         Width = 175
         Shape = bsTopLine
+      end
+      object Label7: TLabel
+        Left = 7
+        Height = 15
+        Top = 8
+        Width = 54
+        Caption = 'Time Unit:'
+        ParentColor = False
+      end
+      object Bevel12: TBevel
+        Left = 7
+        Height = 6
+        Top = 26
+        Width = 175
+        Shape = bsTopLine
+      end
+      object txtTimeUnit: TStaticText
+        Left = 92
+        Height = 20
+        Top = 6
+        Width = 89
+        Alignment = taRightJustify
+        Caption = 's'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 5
       end
     end
   end
