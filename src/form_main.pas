@@ -648,6 +648,14 @@ begin
   else if key = VK_DOWN then
   begin
     tbOffsetDown.Click;
+  end
+  else if key = VK_NEXT then
+  begin
+    tbScaleMinus.Click;
+  end
+  else if key = VK_PRIOR then
+  begin
+    tbScalePlus.Click;
   end;
 
   key := 0; // do not pass on the keypresses to other controls

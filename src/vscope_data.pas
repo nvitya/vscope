@@ -200,7 +200,7 @@ begin
   dataunit := '';
   viewscale := 1;
   viewoffset := 0;
-  basealpha := 0.5;
+  basealpha := 0.8;
   color := $FFFFFFFF;
 end;
 
@@ -755,6 +755,7 @@ var
   i  : integer;
   jwarr, jn : TJSonNode;
 begin
+  ClearWaves;
   jf := TJsonNode.Create();
   try
     jf.LoadFromFile(afilename);

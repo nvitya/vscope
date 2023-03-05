@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '1.1.1';
+  VSCOPE_VERSION = '1.1.2';
 
 (* Version Log
 
+v1.1.2:
+  Scaling with PGUP + PGDN
 v1.1.1:
   Show Full Time Range by default
   Save draw_steps
