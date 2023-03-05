@@ -11,6 +11,7 @@ const
 
 v1.1.2:
   Scaling with PGUP + PGDN
+  base wave alpha changed from 0.5 to 0.8
 v1.1.1:
   Show Full Time Range by default
   Save draw_steps
