@@ -15,7 +15,7 @@ uses
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, lazopenglcontext, form_main, form_wave_props, form_wave_rescale, 
-  version_vscope, form_about, form_measure_ab
+  version_vscope, form_about, form_measure_ab, form_sync_wave
   { you can add units after this };
 
 {$R *.res}

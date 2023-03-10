@@ -54,6 +54,7 @@
         <Filename Value="src/form_wave_rescale.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmWaveRescale"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
@@ -71,6 +72,12 @@
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmMeasureAB"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/form_sync_wave.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSyncWave"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>

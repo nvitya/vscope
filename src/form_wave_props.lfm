@@ -14,15 +14,15 @@ object frmWaveProps: TfrmWaveProps
   LCLVersion = '2.2.4.0'
   object Label1: TLabel
     Left = 4
-    Height = 15
+    Height = 14
     Top = 8
-    Width = 35
+    Width = 36
     Caption = 'Name:'
     ParentColor = False
   end
   object edName: TEdit
     Left = 4
-    Height = 23
+    Height = 26
     Top = 25
     Width = 114
     OnChange = edNameChange
@@ -53,15 +53,15 @@ object frmWaveProps: TfrmWaveProps
   end
   object Label2: TLabel
     Left = 4
-    Height = 15
+    Height = 14
     Top = 56
-    Width = 52
+    Width = 54
     Caption = 'Data Unit:'
     ParentColor = False
   end
   object edDataUnit: TEdit
     Left = 4
-    Height = 23
+    Height = 26
     Top = 73
     Width = 62
     OnChange = edDataUnitChange
@@ -88,33 +88,33 @@ object frmWaveProps: TfrmWaveProps
     TabOrder = 4
     object Label3: TLabel
       Left = 5
-      Height = 15
+      Height = 14
       Top = 78
-      Width = 57
+      Width = 58
       Caption = 'Total Time:'
       ParentColor = False
     end
     object Label4: TLabel
       Left = 5
-      Height = 15
+      Height = 14
       Top = 54
-      Width = 56
+      Width = 57
       Caption = 'Start Time:'
       ParentColor = False
     end
     object Label5: TLabel
       Left = 5
-      Height = 15
+      Height = 14
       Top = 30
-      Width = 78
+      Width = 81
       Caption = 'Sample Count:'
       ParentColor = False
     end
     object Label6: TLabel
       Left = 5
-      Height = 15
+      Height = 14
       Top = 6
-      Width = 82
+      Width = 84
       Caption = 'Sampling Time:'
       ParentColor = False
     end
@@ -183,6 +183,15 @@ object frmWaveProps: TfrmWaveProps
       Width = 175
       Shape = bsTopLine
     end
+  end
+  object btnSyncWave: TBitBtn
+    Left = 136
+    Height = 30
+    Top = 148
+    Width = 80
+    Caption = 'Sync'
+    OnClick = btnSyncWaveClick
+    TabOrder = 5
   end
   object dlgColors: TColorDialog
     Color = clBlack

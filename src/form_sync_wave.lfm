@@ -1,0 +1,152 @@
+object frmSyncWave: TfrmSyncWave
+  Left = 1815
+  Height = 177
+  Top = 677
+  Width = 321
+  BorderStyle = bsDialog
+  Caption = 'Wave Synchronization'
+  ClientHeight = 177
+  ClientWidth = 321
+  OnActivate = FormActivate
+  OnClose = FormClose
+  PopupMode = pmAuto
+  Position = poOwnerFormCenter
+  LCLVersion = '2.2.4.0'
+  object pnlWaveColor: TPanel
+    Left = 4
+    Height = 26
+    Top = 8
+    Width = 314
+    Anchors = [akTop, akLeft, akRight]
+    Caption = '-'
+    TabOrder = 0
+  end
+  object Label1: TLabel
+    Left = 6
+    Height = 14
+    Top = 88
+    Width = 57
+    Caption = 'Start Time:'
+    ParentColor = False
+  end
+  object speStartTime: TFloatSpinEdit
+    Left = 6
+    Height = 24
+    Top = 108
+    Width = 102
+    DecimalPlaces = 6
+    MaxValue = 1000000000
+    MinValue = -1000000000
+    OnChange = speStartTimeChange
+    TabOrder = 1
+  end
+  object speSamplingTime: TFloatSpinEdit
+    Left = 122
+    Height = 24
+    Top = 108
+    Width = 90
+    DecimalPlaces = 6
+    Increment = 1E-6
+    MaxValue = 1000000000
+    MinValue = -1000000000
+    OnChange = speStartTimeChange
+    TabOrder = 2
+  end
+  object Label2: TLabel
+    Left = 122
+    Height = 14
+    Top = 88
+    Width = 84
+    Caption = 'Sampling Time:'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 6
+    Height = 14
+    Top = 43
+    Width = 74
+    Caption = 'Original Start:'
+    ParentColor = False
+  end
+  object txtOrigStart: TStaticText
+    Left = 6
+    Height = 20
+    Top = 60
+    Width = 89
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = '123'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 3
+  end
+  object Label4: TLabel
+    Left = 120
+    Height = 14
+    Top = 43
+    Width = 90
+    Caption = 'Original Smp. T.:'
+    ParentColor = False
+  end
+  object txtOrigSmpt: TStaticText
+    Left = 120
+    Height = 20
+    Top = 60
+    Width = 89
+    Alignment = taRightJustify
+    BorderStyle = sbsSunken
+    Caption = '123'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 4
+  end
+  object rbShifting: TRadioButton
+    Left = 224
+    Height = 21
+    Top = 60
+    Width = 48
+    Caption = 'Shift'
+    Checked = True
+    TabOrder = 5
+  end
+  object rbStrechToA: TRadioButton
+    Left = 224
+    Height = 21
+    Top = 84
+    Width = 86
+    Caption = 'Stretch to A'
+    TabOrder = 6
+  end
+  object btnReset: TBitBtn
+    Left = 122
+    Height = 30
+    Top = 140
+    Width = 88
+    Cancel = True
+    Caption = 'Reset'
+    Kind = bkCancel
+    ModalResult = 2
+    OnClick = btnResetClick
+    TabOrder = 7
+  end
+  object btnClose: TBitBtn
+    Left = 6
+    Height = 30
+    Top = 140
+    Width = 90
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    OnClick = btnCloseClick
+    TabOrder = 8
+  end
+  object rbStrechToB: TRadioButton
+    Left = 224
+    Height = 21
+    Top = 108
+    Width = 86
+    Caption = 'Stretch to B'
+    TabOrder = 9
+  end
+end

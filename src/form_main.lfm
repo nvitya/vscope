@@ -547,6 +547,13 @@ object frmMain: TfrmMain
         ImageIndex = 16
         OnClick = tbWavePropsClick
       end
+      object Separator6: TMenuItem
+        Caption = '-'
+      end
+      object miSyncWave: TMenuItem
+        Caption = 'Wave Synchronization'
+        OnClick = miSyncWaveClick
+      end
     end
     object menuMarkers: TMenuItem
       Caption = 'Markers'

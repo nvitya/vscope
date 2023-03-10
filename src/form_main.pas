@@ -130,6 +130,8 @@ type
     Separator3 : TMenuItem;
     miCutWaves : TMenuItem;
     miCutCurWave : TMenuItem;
+    Separator6 : TMenuItem;
+    miSyncWave : TMenuItem;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -170,6 +172,7 @@ type
     procedure tbABMeasureClick(Sender : TObject);
     procedure miCutWavesClick(Sender : TObject);
     procedure miCutCurWaveClick(Sender : TObject);
+    procedure miSyncWaveClick(Sender : TObject);
   private
 
   public
@@ -189,6 +192,14 @@ type
 
     time_dragging : boolean;
     td_viewstart : double;
+
+    wave_shifting   : boolean;
+    wshift_startt : double;
+
+    wave_stretching : boolean;
+    wstretch_fixdi   : integer;
+    wstretch_smpcnt  : double; // double here !
+    wstretch_fixtime : double;
 
     wave_dragging : boolean; // wave offset change
     wdr_wave : TWaveDisplay;
@@ -223,7 +234,7 @@ var
 implementation
 
 uses
-  form_wave_props, form_measure_ab, version_vscope, form_about;
+  form_wave_props, form_measure_ab, version_vscope, form_about, form_sync_wave;
 
 {$R *.lfm}
 
@@ -383,6 +394,29 @@ begin
 
 end;
 
+procedure TfrmMain.pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
+begin
+  if mbLeft = Button then
+  begin
+    if (marker_placing > 0) and not marker_was_moved then
+    begin
+      // keep the marker placing mode
+    end
+    else
+    begin
+      wave_shifting := false;
+      wave_stretching := false;
+      time_dragging := false;
+      marker_placing := 0;
+      marker_was_moved := false;
+    end;
+  end
+  else if mbRight = Button then
+  begin
+    wave_dragging := false;
+  end;
+end;
+
 procedure TfrmMain.pnlScopeViewMouseDown(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
 var
   wd : TWaveDisplay;
@@ -398,12 +432,39 @@ begin
     end
     else
     begin
-      time_dragging := true;
-      drag_start_x := x;
-      td_viewstart := scope.ViewStart;
-
       wd := scope.FindNearestWaveSample(x, y, c_value_snap_range, di);
       if wd <> nil then SelectWave(wd);
+
+      drag_start_x := x;
+
+      if (frmSyncWave <> nil) and (frmSyncWave.wave = wd) then
+      begin
+        if frmSyncWave.rbStrechToA.Checked and scope.marker[0].Visible then
+        begin
+          wave_stretching := true;
+          wstretch_fixtime := scope.marker[0].mtime;
+          wstretch_fixdi := trunc((wstretch_fixtime - wd.startt) / wd.samplt);  // might be out of range !
+          wstretch_smpcnt := (scope.ConvertXToTime(x) - wstretch_fixtime) / wd.samplt;
+        end
+        else if frmSyncWave.rbStrechToB.Checked and scope.marker[1].Visible then
+        begin
+          wave_stretching := true;
+          wstretch_fixtime := scope.marker[1].mtime;
+          wstretch_fixdi := trunc((wstretch_fixtime - wd.startt) / wd.samplt);  // might be out of range !
+          wstretch_smpcnt := (scope.ConvertXToTime(x) - wstretch_fixtime) / wd.samplt;
+        end
+        else
+        begin
+          wave_shifting := true;
+          wshift_startt := wd.startt;
+        end;
+        wdr_wave := wd;
+      end
+      else   // view dragging
+      begin
+        time_dragging := true;
+        td_viewstart := scope.ViewStart;
+      end;
     end;
   end
   else if mbRight = Button then
@@ -420,30 +481,9 @@ begin
   end;
 end;
 
-procedure TfrmMain.pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
-begin
-  if mbLeft = Button then
-  begin
-    if (marker_placing > 0) and not marker_was_moved then
-    begin
-      // keep the marker placing mode
-    end
-    else
-    begin
-      time_dragging := false;
-      marker_placing := 0;
-      marker_was_moved := false;
-    end;
-  end
-  else if mbRight = Button then
-  begin
-    wave_dragging := false;
-  end;
-end;
-
 procedure TfrmMain.pnlScopeViewMouseMove(Sender : TObject; Shift : TShiftState; X, Y : Integer);
 var
-  t : double;
+  t, tdiff : double;
   di : integer;
   wd : TWaveDisplay;
   instantupdate : boolean = False;
@@ -458,6 +498,30 @@ begin
     instantupdate := True;
     UpdateTimeDiv;
     UpdateScrollBar;
+  end
+  else if wave_shifting then
+  begin
+    wdr_wave.startt := wshift_startt + (scope.ConvertXToTime(x) - scope.ConvertXToTime(drag_start_x));
+
+    wdr_wave.ReDrawWave;
+    instantupdate := True;
+    if frmSyncWave <> nil then
+    begin
+      frmSyncWave.UpdateWaveInfo;
+    end;
+  end
+  else if wave_stretching then
+  begin
+    tdiff := scope.ConvertXToTime(x) - wstretch_fixtime;
+    wdr_wave.samplt := tdiff / wstretch_smpcnt;
+    wdr_wave.startt := wstretch_fixtime - wstretch_fixdi * wdr_wave.samplt;
+
+    wdr_wave.ReDrawWave;
+    instantupdate := True;
+    if frmSyncWave <> nil then
+    begin
+      frmSyncWave.UpdateWaveInfo;
+    end;
   end
   else if wave_dragging then
   begin
@@ -511,6 +575,7 @@ begin
   //chgrid.Repaint;
   UpdateInfoGrid;
 end;
+
 
 procedure TfrmMain.miDrawStepsClick(Sender : TObject);
 begin
@@ -716,7 +781,6 @@ end;
 procedure TfrmMain.miCutCurWaveClick(Sender : TObject);
 var
   wd : TWaveDisplay;
-  minst, stcorr : double;
 begin
   if scope.waves.Count <= 1 then
   begin
@@ -730,12 +794,24 @@ begin
   then
       EXIT;
 
-
-  minst := scope.MaxTime;
   wd.CutData(scope.marker[0].mtime, scope.marker[1].mtime);
 
   scope.CalcTimeRange;  // re-calculate the time ranges
   scope.Repaint;
+end;
+
+procedure TfrmMain.miSyncWaveClick(Sender : TObject);
+begin
+  if frmSyncWave = nil then
+  begin
+    Application.CreateForm(TfrmSyncWave, frmSyncWave);
+    frmSyncWave.scope := self.scope;
+  end;
+
+  if SelectedWave = nil then SelectWave(0);
+  frmSyncWave.wave := SelectedWave;
+  frmSyncWave.SetupWave;
+  frmSyncWave.Show;
 end;
 
 procedure TfrmMain.UpdateDrawSteps;

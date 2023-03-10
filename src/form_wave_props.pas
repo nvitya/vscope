@@ -33,6 +33,7 @@ type
     Bevel2 : TBevel;
     Bevel8 : TBevel;
     Bevel10 : TBevel;
+    btnSyncWave : TBitBtn;
     procedure FormClose(Sender : TObject; var CloseAction : TCloseAction);
     procedure FormShow(Sender : TObject);
     procedure btnColorColorChanged(Sender : TObject);
@@ -40,6 +41,7 @@ type
     procedure tbAlphaChange(Sender : TObject);
     procedure edDataUnitChange(Sender : TObject);
     procedure btnRescaleClick(Sender : TObject);
+    procedure btnSyncWaveClick(Sender : TObject);
   private
 
   public
@@ -96,6 +98,11 @@ procedure TfrmWaveProps.btnRescaleClick(Sender : TObject);
 begin
   Application.CreateForm(TfrmWaveRescale, frmWaveRescale);
   frmWaveRescale.ShowModal;
+end;
+
+procedure TfrmWaveProps.btnSyncWaveClick(Sender : TObject);
+begin
+  frmMain.miSyncWave.Click;
 end;
 
 procedure TfrmWaveProps.tbAlphaChange(Sender : TObject);
