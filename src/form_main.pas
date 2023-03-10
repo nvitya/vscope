@@ -127,6 +127,9 @@ type
     Bevel11 : TBevel;
     tbABMeasure : TToolButton;
     miABMeasure : TMenuItem;
+    Separator3 : TMenuItem;
+    miCutWaves : TMenuItem;
+    miCutCurWave : TMenuItem;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -165,6 +168,8 @@ type
     procedure miAboutBoxClick(Sender : TObject);
     procedure FormKeyDown(Sender : TObject; var Key : Word; Shift : TShiftState);
     procedure tbABMeasureClick(Sender : TObject);
+    procedure miCutWavesClick(Sender : TObject);
+    procedure miCutCurWaveClick(Sender : TObject);
   private
 
   public
@@ -673,6 +678,64 @@ begin
   frmMeasureAB.wave := SelectedWave;
   frmMeasureAB.UpdateWaveInfo;
   frmMeasureAB.Show;
+end;
+
+procedure TfrmMain.miCutWavesClick(Sender : TObject);
+var
+  wd : TWaveDisplay;
+  minst, stcorr : double;
+begin
+  if (scope.waves.Count < 1) or (not scope.marker[0].Visible) or (not scope.marker[1].Visible)
+  then
+      EXIT;
+
+  minst := scope.MaxTime;
+  for wd in scope.waves do
+  begin
+    wd.CutData(scope.marker[0].mtime, scope.marker[1].mtime);
+    if wd.startt < minst then minst := wd.startt;
+  end;
+
+  // adjust the start times
+  stcorr := minst - scope.MinTime;
+  if stcorr > 0 then
+  begin
+    for wd in scope.waves do
+    begin
+      wd.startt -= stcorr;
+    end;
+  end;
+
+  scope.CalcTimeRange;  // re-calculate the time ranges
+  scope.marker[0].mtime -= stcorr;
+  scope.marker[1].mtime -= stcorr;
+
+  tbZoomAllClick(nil);
+end;
+
+procedure TfrmMain.miCutCurWaveClick(Sender : TObject);
+var
+  wd : TWaveDisplay;
+  minst, stcorr : double;
+begin
+  if scope.waves.Count <= 1 then
+  begin
+    miCutWavesClick(Sender);
+    EXIT;
+  end;
+
+  wd := SelectedWave;
+
+  if (wd = nil) or (not scope.marker[0].Visible) or (not scope.marker[1].Visible)
+  then
+      EXIT;
+
+
+  minst := scope.MaxTime;
+  wd.CutData(scope.marker[0].mtime, scope.marker[1].mtime);
+
+  scope.CalcTimeRange;  // re-calculate the time ranges
+  scope.Repaint;
 end;
 
 procedure TfrmMain.UpdateDrawSteps;

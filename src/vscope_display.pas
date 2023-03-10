@@ -120,8 +120,6 @@ type
     scale_ratio : double;
     txt_font_size : double;
 
-    procedure CalcTimeRange;
-
   protected
     grid_frame : TShape;
     grid_vline : TShape;
@@ -184,6 +182,8 @@ type
     procedure DoOnResize; override;
     procedure UpdateTimeDivPos;
     procedure AutoScale;
+
+    procedure CalcTimeRange;  // necessary when the scope data changed
 
     property TimeRange : double read ftimerange;
     property MinTime : double read fmintime;
@@ -467,8 +467,10 @@ var
   disp_samplt : double;
   disp_data   : array of double;
   steps : boolean;
-
 begin
+
+  wshp.Clear; // removes all primitives
+
   vi := 0;
   steps := scope.draw_steps;
 
@@ -507,41 +509,42 @@ begin
 
   maxdi := length(disp_data);
   if maxdi < 0 then maxdi := 0;
-
-  varr := [];
   vcnt := maxdi - di;
   if steps then vcnt *= 2;
-  SetLength(varr, vcnt);
-
-  while (di < maxdi) and (x < 10) do
-  begin
-    v[0] := x;
-    v[1] := disp_data[di] * viewscale + viewoffset;
-    // clamping the Y:
-    if v[1] > 5 then v[1] := 5
-    else if v[1] < -5 then v[1] := -5;
-
-    if steps and (vi > 0) then
-    begin
-      varr[vi][0] := x;
-      varr[vi][1] := varr[vi-1][1];
-      Inc(vi);
-    end;
-
-    varr[vi] := v;
-
-    inc(di);
-    inc(vi);
-    x += dx;
-  end;
-
-  wshp.Clear; // removes all primitives
-  wshp.AddPrimitive(GL_LINE_STRIP, vi, @varr[0]);
 
   varr := [];
+  if vcnt > 0 then
+  begin
+    SetLength(varr, vcnt);
+
+    while (di < maxdi) and (x < 10) do
+    begin
+      v[0] := x;
+      v[1] := disp_data[di] * viewscale + viewoffset;
+      // clamping the Y:
+      if v[1] > 5 then v[1] := 5
+      else if v[1] < -5 then v[1] := -5;
+
+      if steps and (vi > 0) then
+      begin
+        varr[vi][0] := x;
+        varr[vi][1] := varr[vi-1][1];
+        Inc(vi);
+      end;
+
+      varr[vi] := v;
+
+      inc(di);
+      inc(vi);
+      x += dx;
+    end;
+
+    if vi > 0 then wshp.AddPrimitive(GL_LINE_STRIP, vi, @varr[0]);
+
+    varr := [];
+  end;
 
   // adjust the zero line
-
   y := 5-viewoffset;
   if y < 0 then y := 0
   else if y > 10 then y := 10;
@@ -579,6 +582,7 @@ procedure TWaveDisplay.DoOnDataUpdate;
 var
   ci : integer;
 begin
+  InvalidateLoresData;
   ReDrawWave;
 
   if color = $FFFFFFFF then // if no color was set
@@ -739,8 +743,7 @@ procedure TScopeDisplay.RenderWaves;
 var
   w : TWaveDisplay;
 begin
-  for w in waves do w.DoOnDataUpdate;
-
+  for w in waves do w.ReDrawWave;
   UpdateMarkers;
 end;
 

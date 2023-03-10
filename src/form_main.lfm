@@ -570,6 +570,17 @@ object frmMain: TfrmMain
         ImageIndex = 17
         OnClick = tbABMeasureClick
       end
+      object Separator3: TMenuItem
+        Caption = '-'
+      end
+      object miCutCurWave: TMenuItem
+        Caption = 'Cut Current Wave to A..B'
+        OnClick = miCutCurWaveClick
+      end
+      object miCutWaves: TMenuItem
+        Caption = 'Cut All Waves to A..B'
+        OnClick = miCutWavesClick
+      end
     end
     object menuHelp: TMenuItem
       Caption = 'Help'

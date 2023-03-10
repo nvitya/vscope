@@ -85,6 +85,8 @@ type
     function FindNearestScale(ascale : double) : double;
     function ScalingStr : string;
 
+    procedure CutData(fromtime, totime : double);
+
   end;
 
   TWaveDataList = specialize TFPGList<TWaveData>;
@@ -687,6 +689,40 @@ begin
   end;
 
   if dataunit <> '' then result := result + ' ' + dataunit;
+end;
+
+procedure TWaveData.CutData(fromtime, totime : double);
+var
+  d : double;
+  fromdi, todi, cnt : integer;
+begin
+  if fromtime > totime then  // swap them
+  begin
+    d := fromtime;
+    fromtime := totime;
+    totime := d;
+  end;
+
+  fromdi := trunc((fromtime - startt) / samplt);
+  if fromdi < 0 then fromdi := 0;
+  todi := trunc((totime - startt) / samplt);
+  if todi > length(data) then todi := length(data);
+  if todi < 0 then todi := 0;
+  cnt := todi - fromdi;
+
+  if cnt <= 0 then EXIT;
+
+  // delete from the end first
+  if todi < length(data) then SetLength(data, todi);
+
+  // then from the beginning
+  if fromdi > 0 then
+  begin
+    delete(data, 0, fromdi);
+    startt += fromdi * samplt;  // maintain the time position
+  end;
+
+  DoOnDataUpdate;
 end;
 
 { TScopeData }

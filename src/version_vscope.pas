@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '1.1.2';
+  VSCOPE_VERSION = '1.2.0';
 
 (* Version Log
 
+v1.2.0:
+  Cutting waves
 v1.1.2:
   Scaling with PGUP + PGDN
   base wave alpha changed from 0.5 to 0.8
