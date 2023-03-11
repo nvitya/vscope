@@ -11,6 +11,9 @@ const
 
 v1.2.0:
   Cutting waves
+  Synchronizing waves
+  Duplicating waves
+  Deleting waves
 v1.1.2:
   Scaling with PGUP + PGDN
   base wave alpha changed from 0.5 to 0.8

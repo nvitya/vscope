@@ -163,6 +163,7 @@ type
 
     procedure ClearWaves;
     function AddWave(aname: string; asamplt: double): TWaveDisplay;
+    function DuplicateWave(sw : TWaveDisplay) : TWaveDisplay;
     function DeleteWave(awave : TWaveDisplay) : boolean;
     function WaveIndex(awave : TWaveDisplay) : integer;
     procedure RenderWaves;
@@ -1017,6 +1018,16 @@ function TScopeDisplay.AddWave(aname: string; asamplt: double) : TWaveDisplay;
 begin
   result := TWaveDisplay.Create(self, aname, asamplt);
   waves.Add(result);
+end;
+
+function TScopeDisplay.DuplicateWave(sw : TWaveDisplay) : TWaveDisplay;
+begin
+  result := AddWave(sw.name+'_2', sw.samplt);
+  result.CopyFrom(sw);
+
+  result.color := $FFFFFFFF; // let autoselect the color
+  result.viewoffset := sw.viewoffset - 1;
+  result.DoOnDataUpdate;
 end;
 
 function TScopeDisplay.DeleteWave(awave : TWaveDisplay) : boolean;

@@ -460,6 +460,10 @@ object frmMain: TfrmMain
         ImageIndex = 0
         OnClick = tbOpenClick
       end
+      object miFileMerge: TMenuItem
+        Caption = 'Merge Vscope...'
+        OnClick = miFileMergeClick
+      end
       object miSave: TMenuItem
         Caption = 'Save'
         ImageIndex = 1
@@ -547,12 +551,20 @@ object frmMain: TfrmMain
         ImageIndex = 16
         OnClick = tbWavePropsClick
       end
-      object Separator6: TMenuItem
-        Caption = '-'
-      end
       object miSyncWave: TMenuItem
         Caption = 'Wave Synchronization'
         OnClick = miSyncWaveClick
+      end
+      object Separator6: TMenuItem
+        Caption = '-'
+      end
+      object miWaveDuplicate: TMenuItem
+        Caption = 'Duplicate Wave'
+        OnClick = miWaveDuplicateClick
+      end
+      object miWaveDelete: TMenuItem
+        Caption = 'Delete Wave'
+        OnClick = miWaveDeleteClick
       end
     end
     object menuMarkers: TMenuItem
@@ -581,11 +593,11 @@ object frmMain: TfrmMain
         Caption = '-'
       end
       object miCutCurWave: TMenuItem
-        Caption = 'Cut Current Wave to A..B'
+        Caption = 'Cut Current Wave to A...B'
         OnClick = miCutCurWaveClick
       end
       object miCutWaves: TMenuItem
-        Caption = 'Cut All Waves to A..B'
+        Caption = 'Cut All Waves to A...B'
         OnClick = miCutWavesClick
       end
     end

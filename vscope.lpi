@@ -78,6 +78,7 @@
         <Filename Value="src/form_sync_wave.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmSyncWave"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>

@@ -27,6 +27,7 @@ type
     btnReset : TBitBtn;
     btnClose : TBitBtn;
     rbStrechToB : TRadioButton;
+    Label5 : TLabel;
     procedure FormClose(Sender : TObject; var CloseAction : TCloseAction);
     procedure btnCloseClick(Sender : TObject);
     procedure btnResetClick(Sender : TObject);
@@ -63,6 +64,8 @@ procedure TfrmSyncWave.FormClose(Sender : TObject; var CloseAction : TCloseActio
 begin
   CloseAction := caFree;
   frmSyncWave := nil;
+
+  frmMain.UpdateAfterSync;
 end;
 
 procedure TfrmSyncWave.btnCloseClick(Sender : TObject);

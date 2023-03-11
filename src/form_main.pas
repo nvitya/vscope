@@ -132,6 +132,9 @@ type
     miCutCurWave : TMenuItem;
     Separator6 : TMenuItem;
     miSyncWave : TMenuItem;
+    miWaveDuplicate : TMenuItem;
+    miWaveDelete : TMenuItem;
+    miFileMerge : TMenuItem;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -173,6 +176,9 @@ type
     procedure miCutWavesClick(Sender : TObject);
     procedure miCutCurWaveClick(Sender : TObject);
     procedure miSyncWaveClick(Sender : TObject);
+    procedure miWaveDuplicateClick(Sender : TObject);
+    procedure miWaveDeleteClick(Sender : TObject);
+    procedure miFileMergeClick(Sender : TObject);
   private
 
   public
@@ -214,6 +220,7 @@ type
     procedure UpdateChGrid;
 
     procedure LoadScopeFile(afilename : string);
+    procedure MergeScopeFile(afilename : string);
 
     procedure SelectWave(awidx : integer); overload;
     procedure SelectWave(wd : TWaveDisplay); overload;
@@ -225,6 +232,8 @@ type
     procedure UpdateInfoGrid;
 
     procedure UpdateWavePopupWins;
+
+    procedure UpdateAfterSync;
 
   end;
 
@@ -801,17 +810,65 @@ begin
 end;
 
 procedure TfrmMain.miSyncWaveClick(Sender : TObject);
+var
+  gpos : TPoint;
 begin
   if frmSyncWave = nil then
   begin
     Application.CreateForm(TfrmSyncWave, frmSyncWave);
     frmSyncWave.scope := self.scope;
+
+    gpos := scope.ClientToScreen( Point(0,0) );
+    frmSyncWave.Left := gpos.x + scope.Width div 2 - frmSyncWave.Width div 2;
+    frmSyncWave.Top  := gpos.y + scope.Height - frmSyncWave.Height;
   end;
 
   if SelectedWave = nil then SelectWave(0);
   frmSyncWave.wave := SelectedWave;
   frmSyncWave.SetupWave;
   frmSyncWave.Show;
+end;
+
+procedure TfrmMain.miWaveDuplicateClick(Sender : TObject);
+var
+  sw, dw : TWaveDisplay;
+begin
+  sw := SelectedWave;
+  if sw = nil then EXIT;
+
+  dw := scope.DuplicateWave(sw);
+  UpdateChGrid;
+
+  SelectWave(dw);
+  scope.RenderWaves;
+  scope.Repaint;
+end;
+
+procedure TfrmMain.miWaveDeleteClick(Sender : TObject);
+var
+  sw : TWaveDisplay;
+begin
+  sw := SelectedWave;
+  if sw = nil then EXIT;
+
+  if mrNo = MessageDlg('Delete Wave',
+     'Are you sure you want to delete the following wave:'#13
+     +'"'+sw.name+'" ?',
+     mtConfirmation, mbYesNo, 0)
+  then
+      EXIT;
+
+  scope.DeleteWave(sw);
+  scope.Repaint;
+  UpdateChGrid;
+end;
+
+procedure TfrmMain.miFileMergeClick(Sender : TObject);
+begin
+  if dlgFileOpen.Execute then
+  begin
+    MergeScopeFile(dlgFileOpen.FileName);
+  end;
 end;
 
 procedure TfrmMain.UpdateDrawSteps;
@@ -920,6 +977,42 @@ begin
 
   Application.Title := ExtractFileName(filename) + ' - VScope v'+VSCOPE_VERSION;
   Caption := Application.Title;
+end;
+
+procedure TfrmMain.MergeScopeFile(afilename : string);
+var
+  mscope : TScopeData;
+  sw : TWaveData;
+  dw : TWaveDisplay;
+begin
+  mscope := TScopeData.Create;
+  try
+    mscope.LoadFromJsonFile(afilename);
+  except
+    on e : Exception do
+    begin
+      MessageDlg('Error Loading Scope File', e.ToString, mtError, [mbOK], 0);
+      mscope.Free;
+      EXIT;
+    end;
+  end;
+
+  for sw in mscope.waves do
+  begin
+    dw := scope.AddWave(sw.name, sw.samplt);
+    dw.CopyFrom(sw);
+  end;
+
+  mscope.Free;
+
+  scope.CalcTimeRange;
+
+  UpdateScrollBar;
+  UpdateTimeDiv;
+  UpdateChGrid;
+
+  scope.RenderWaves;
+  scope.Repaint;
 end;
 
 procedure TfrmMain.SelectWave(awidx : integer);
@@ -1037,6 +1130,13 @@ begin
     frmMeasureAB.wave := selw;
     frmMeasureAB.UpdateWaveInfo;
   end;
+end;
+
+procedure TfrmMain.UpdateAfterSync;
+begin
+  scope.CalcTimeRange;
+  UpdateScrollBar;
+  UpdateTimeDiv;
 end;
 
 procedure TfrmMain.miExitClick(Sender : TObject);

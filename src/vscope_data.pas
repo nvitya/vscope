@@ -58,6 +58,8 @@ type
     destructor Destroy; override;
     function DataCount : integer;
 
+    procedure CopyFrom(srcwave : TWaveData);
+
     procedure AllocateData(asamples : cardinal);
 
     procedure SaveToJsonNode(jnode : TJsonNode);
@@ -214,6 +216,19 @@ end;
 function TWaveData.DataCount: integer;
 begin
   result := length(data);
+end;
+
+procedure TWaveData.CopyFrom(srcwave : TWaveData);
+begin
+  self.startt     := srcwave.startt;
+  self.dataunit   := srcwave.dataunit;
+  self.viewscale  := srcwave.viewscale;
+  self.viewoffset := srcwave.viewoffset;
+  self.basealpha  := srcwave.basealpha;
+  self.color      := srcwave.color;
+  self.data       := copy(srcwave.data);
+
+  self.DoOnDataUpdate;
 end;
 
 procedure TWaveData.AllocateData(asamples: cardinal);
