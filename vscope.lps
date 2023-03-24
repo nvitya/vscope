@@ -56,8 +56,9 @@
       <Unit>
         <Filename Value="src/version_vscope.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <CursorPos X="17" Y="16"/>
+        <CursorPos X="22" Y="13"/>
         <UsageCount Value="52"/>
         <Loaded Value="True"/>
       </Unit>
@@ -79,7 +80,7 @@
         <EditorIndex Value="2"/>
         <WindowIndex Value="1"/>
         <TopLine Value="44"/>
-        <CursorPos X="16" Y="62"/>
+        <CursorPos X="23" Y="79"/>
         <UsageCount Value="46"/>
         <Loaded Value="True"/>
       </Unit>
@@ -89,10 +90,9 @@
         <ComponentName Value="frmSyncWave"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <TopLine Value="38"/>
-        <CursorPos X="3" Y="67"/>
+        <CursorPos X="61" Y="54"/>
         <UsageCount Value="34"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -124,8 +124,8 @@
       <Unit>
         <Filename Value="src/vscope_data.pas"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="221"/>
-        <CursorPos Y="231"/>
+        <TopLine Value="219"/>
+        <CursorPos X="37" Y="274"/>
         <UsageCount Value="61"/>
         <Loaded Value="True"/>
       </Unit>
@@ -197,14 +197,6 @@
       <Define0 Value="TRACES"/>
     </OtherDefines>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="src/vscope_data.pas"/>
-        <Caret Line="56"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_display.pas"/>
-        <Caret Line="1031" Column="15" TopLine="981"/>
-      </Position>
       <Position>
         <Filename Value="src/vscope_data.pas"/>
         <Caret Line="56"/>
@@ -316,6 +308,14 @@
       <Position>
         <Filename Value="src/form_sync_wave.pas"/>
         <Caret Line="66" Column="3" TopLine="37"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_data.pas"/>
+        <Caret Line="251" Column="43" TopLine="221"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_data.pas"/>
+        <Caret Line="57" Column="15" TopLine="23"/>
       </Position>
     </JumpHistory>
     <RunParams>

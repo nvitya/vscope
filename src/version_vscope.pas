@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '1.2.0';
+  VSCOPE_VERSION = '1.2.1';
 
 (* Version Log
 
+v1.2.1:
+  Fixed default alpha
 v1.2.0:
   Cutting waves
   Synchronizing waves

@@ -274,7 +274,6 @@ begin
   dataunit := '';
   viewscale := 1;
   viewoffset := 0;
-  basealpha := 0.5;
   color := $FFFFFFFF;
 
   if jnode.Find('STARTT', jv)   then startt   := jv.AsNumber;
