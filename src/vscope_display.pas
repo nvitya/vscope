@@ -60,7 +60,7 @@ type
 
     procedure ReDrawWave;
 
-    procedure AutoScale;
+    procedure AutoScale(agridmin, agridmax : double);
     procedure CorrectOffset;
 
     procedure DoOnDataUpdate; override;
@@ -403,19 +403,25 @@ var
   modidx : integer;
   v : double;
   lrdi : integer;
+
+  loresmul : integer;
+  loresmask : integer;
 begin
-  // search min and max every 32 points
+  loresmul := 256;
+  loresmask := loresmul - 1;
+
+  // search min and max every loresmul / 2 points
   lrdi := 0;
-  lores_samplt := samplt * 16;
-  SetLength(lores_data, length(data) div 8);
+  lores_samplt := samplt * (loresmul shr 1);
+  SetLength(lores_data, length(data) div (loresmul shr 2));
   maxdi := length(data) - 1;
   minval := 0;
   maxval := 0;
-  modidx := 31;
+  modidx := loresmask;
   for di := 0 to maxdi do
   begin
     v := data[di];
-    modidx := (di and $1F);
+    modidx := (di and loresmask);
     if 0 = modidx then
     begin
       minval := v;
@@ -425,7 +431,7 @@ begin
     begin
       if v < minval then minval := v;
       if v > maxval then maxval := v;
-      if 31 = modidx then
+      if loresmask = modidx then
       begin
         lores_data[lrdi] := minval;
         inc(lrdi);
@@ -436,7 +442,7 @@ begin
   end;
 
   // add the last not complete sample
-  if modidx <> 31 then
+  if modidx <> loresmask then
   begin
     lores_data[lrdi] := minval;
     inc(lrdi);
@@ -477,7 +483,7 @@ begin
 
   pixeltime := scope.ViewRange / scope.GridWidthPixels;
   samples_per_pixel := pixeltime / samplt;
-  if (samples_per_pixel >= 128) and (length(data) > 100000) then
+  if (samples_per_pixel >= 256) and (length(data) > 100000) then
   begin
     if length(lores_data) <= 0 then MakeLoresData;
 
@@ -553,7 +559,7 @@ begin
 
 end;
 
-procedure TWaveDisplay.AutoScale;
+procedure TWaveDisplay.AutoScale(agridmin, agridmax: double);
 var
   ddiff : double;
   data_min, data_max : double;
@@ -562,10 +568,10 @@ begin
   CalcMinMax(startt, EndTime, data_min, data_max, scnt);
 
   ddiff := (data_max - data_min);
-  if ddiff < 0.001 then ddiff := 0.001;
+  if ddiff < 0.00000001 then ddiff := 0.00000001;
 
-  viewscale := FindNearestScale(10 / ddiff);
-  viewoffset := -5 - data_min * viewscale
+  viewscale := FindNearestScale((agridmax - agridmin) / ddiff);
+  viewoffset := agridmin - data_min * viewscale
 end;
 
 procedure TWaveDisplay.CorrectOffset;
@@ -1006,10 +1012,18 @@ end;
 procedure TScopeDisplay.AutoScale;
 var
   wd : TWaveDisplay;
+  gridstart : double;
+  gridstep  : double;
 begin
+  if waves.Count <= 4  then gridstep := 2
+  else if waves.Count <= 8 then gridstep := 1
+  else gridstep := 0.5;
+
+  gridstart := 5 - gridstep;
   for wd in waves do
   begin
-    wd.AutoScale;
+    wd.AutoScale(gridstart - gridstep, gridstart);
+    gridstart -= gridstep;
   end;
   RenderWaves;
 end;

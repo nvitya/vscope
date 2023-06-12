@@ -50,9 +50,10 @@ var
   avgval : double;
   sumval : double;
   tdiff : double;
+  sqrsum, effval : double;
   v : double;
 begin
-  igrid.RowCount := 11;
+  igrid.RowCount := 12;
 
   igrid.Cells[0, 0] := 'A Marker Time';
   igrid.Cells[0, 1] := 'B Marker Time';
@@ -65,6 +66,7 @@ begin
   igrid.Cells[0, 8] := 'Maximum value';
   igrid.Cells[0, 9] := 'Max-Min Diff.';
   igrid.Cells[0,10] := 'Average value';
+  igrid.Cells[0,11] := 'Effective val.';
 
   if wave = nil then EXIT;
 
@@ -136,6 +138,7 @@ begin
 
     scnt := 0;
     sumval := 0;
+    sqrsum := 0;
     while ia <= ib do
     begin
       v := wave.data[ia];
@@ -150,15 +153,26 @@ begin
         if v > maxval then maxval := v;
       end;
       sumval += v;
+      sqrsum += v * v;
       inc(scnt);
       inc(ia);
     end;
-    if scnt > 0 then avgval := sumval / scnt else avgval := 0;
+    if scnt > 0 then
+    begin
+      avgval := sumval / scnt;
+      effval := sqrt(sqrsum / scnt);
+    end
+    else
+    begin
+      avgval := 0;
+      effval := 0;
+    end;
     igrid.Cells[1, 4] := IntToStr(scnt);
     igrid.Cells[1, 7] := wave.FormatValue(minval);
     igrid.Cells[1, 8] := wave.FormatValue(maxval);
     igrid.Cells[1, 9] := wave.FormatValue(maxval-minval);
     igrid.Cells[1,10] := wave.FormatValue(avgval);
+    igrid.Cells[1,11] := wave.FormatValue(effval);
   end
   else
   begin
@@ -167,6 +181,7 @@ begin
     igrid.Cells[1, 8] := '-';
     igrid.Cells[1, 9] := '-';
     igrid.Cells[1,10] := '-';
+    igrid.Cells[1,11] := '-';
   end;
 
 end;

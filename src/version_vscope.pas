@@ -5,10 +5,14 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '1.2.1';
+  VSCOPE_VERSION = '1.2.2';
 
 (* Version Log
 
+v1.2.2:
+  - Effective value added to the measurement window
+  - Low-res waveform changed from /32 to /256 to support huge (>10M) waves
+  - data overindexing fix at min-max calculation
 v1.2.1:
   Fixed default alpha
 v1.2.0:

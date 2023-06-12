@@ -1,17 +1,17 @@
 object frmMeasureAB: TfrmMeasureAB
-  Left = 1868
-  Height = 294
-  Top = 572
+  Left = 1880
+  Height = 316
+  Top = 886
   Width = 226
   BorderStyle = bsDialog
   Caption = 'Measure A..B'
-  ClientHeight = 294
+  ClientHeight = 316
   ClientWidth = 226
   OnClose = FormClose
   PopupMode = pmExplicit
   PopupParent = frmMain.Owner
   Position = poOwnerFormCenter
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '2.2.6.0'
   object pnlWaveColor: TPanel
     Left = 4
     Height = 26
@@ -23,7 +23,7 @@ object frmMeasureAB: TfrmMeasureAB
   end
   object igrid: TStringGrid
     Left = 4
-    Height = 250
+    Height = 272
     Top = 40
     Width = 218
     Anchors = [akTop, akLeft, akRight, akBottom]
@@ -38,7 +38,7 @@ object frmMeasureAB: TfrmMeasureAB
     FixedRows = 0
     MouseWheelOption = mwGrid
     Options = [goFixedVertLine, goFixedHorzLine, goHorzLine, goRangeSelect, goSmoothScroll]
-    RowCount = 11
+    RowCount = 12
     ScrollBars = ssNone
     TabOrder = 1
     ColWidths = (

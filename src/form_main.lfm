@@ -1,11 +1,11 @@
 object frmMain: TfrmMain
-  Left = 1326
+  Left = 1609
   Height = 600
-  Top = 0
+  Top = 139
   Width = 800
   AllowDropFiles = True
   Caption = 'VScope'
-  ClientHeight = 576
+  ClientHeight = 580
   ClientWidth = 800
   KeyPreview = True
   Menu = mainmenu
@@ -13,7 +13,7 @@ object frmMain: TfrmMain
   OnDropFiles = FormDropFiles
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '2.2.6.0'
   object tbMain: TToolBar
     Left = 0
     Height = 26
@@ -187,18 +187,18 @@ object frmMain: TfrmMain
   end
   object pnlScopeGroup: TPanel
     Left = 0
-    Height = 550
+    Height = 554
     Top = 26
     Width = 612
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 550
+    ClientHeight = 554
     ClientWidth = 612
     TabOrder = 1
     object sbScope: TScrollBar
       Left = 0
       Height = 20
-      Top = 530
+      Top = 534
       Width = 612
       Align = alBottom
       PageSize = 0
@@ -208,7 +208,7 @@ object frmMain: TfrmMain
     end
     object pnlScopeView: TPanel
       Left = 0
-      Height = 530
+      Height = 534
       Top = 0
       Width = 612
       Align = alClient
@@ -225,26 +225,26 @@ object frmMain: TfrmMain
   end
   object pnlRight: TPanel
     Left = 612
-    Height = 550
+    Height = 554
     Top = 26
     Width = 188
     Align = alRight
     BevelOuter = bvLowered
-    ClientHeight = 550
+    ClientHeight = 554
     ClientWidth = 188
     TabOrder = 2
     object pnlWaves: TPanel
       Left = 1
-      Height = 398
+      Height = 402
       Top = 1
       Width = 186
       Align = alClient
-      ClientHeight = 398
+      ClientHeight = 402
       ClientWidth = 186
       TabOrder = 0
       object chgrid: TDrawGrid
         Left = 1
-        Height = 396
+        Height = 400
         Top = 1
         Width = 184
         Align = alClient
@@ -275,7 +275,7 @@ object frmMain: TfrmMain
     object pnlInfo: TPanel
       Left = 1
       Height = 150
-      Top = 399
+      Top = 403
       Width = 186
       Align = alBottom
       BevelOuter = bvNone
@@ -285,33 +285,33 @@ object frmMain: TfrmMain
       TabOrder = 1
       object Label1: TLabel
         Left = 7
-        Height = 14
+        Height = 15
         Top = 80
-        Width = 69
+        Width = 67
         Caption = 'Cursor Time:'
         ParentColor = False
       end
       object Label2: TLabel
         Left = 7
-        Height = 14
+        Height = 15
         Top = 104
-        Width = 64
+        Width = 63
         Caption = 'Cursor to A:'
         ParentColor = False
       end
       object Label4: TLabel
         Left = 7
-        Height = 14
+        Height = 15
         Top = 56
-        Width = 71
+        Width = 68
         Caption = 'View Length:'
         ParentColor = False
       end
       object Label5: TLabel
         Left = 6
-        Height = 14
+        Height = 15
         Top = 32
-        Width = 70
+        Width = 68
         Caption = 'Total Length:'
         ParentColor = False
       end
@@ -361,9 +361,9 @@ object frmMain: TfrmMain
       end
       object Label6: TLabel
         Left = 7
-        Height = 14
+        Height = 15
         Top = 128
-        Width = 64
+        Width = 62
         Caption = 'Cursor to B:'
         ParentColor = False
       end
@@ -408,7 +408,7 @@ object frmMain: TfrmMain
       end
       object Label7: TLabel
         Left = 7
-        Height = 14
+        Height = 15
         Top = 8
         Width = 54
         Caption = 'Time Unit:'
@@ -436,9 +436,9 @@ object frmMain: TfrmMain
   end
   object Label3: TLabel
     Left = 9
-    Height = 14
+    Height = 15
     Top = 16
-    Width = 69
+    Width = 67
     Caption = 'Cursor Time:'
     ParentColor = False
   end

@@ -916,7 +916,7 @@ begin
   wd := SelectedWave;
   if wd = nil then EXIT;
 
-  wd.AutoScale;
+  wd.AutoScale(-5, 5);
   scope.RenderWaves;
   scope.Repaint;
 end;

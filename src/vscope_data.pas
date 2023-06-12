@@ -637,6 +637,8 @@ begin
   data_max := 0;
 
   if di < 0 then di := 0;
+  if dito >= length(data) then dito := length(data) - 1;
+
   while di <= dito do
   begin
     d := data[di];

@@ -1,7 +1,7 @@
 object frmWaveProps: TfrmWaveProps
-  Left = 1678
+  Left = 1843
   Height = 185
-  Top = 645
+  Top = 630
   Width = 319
   BorderStyle = bsDialog
   Caption = 'Wave Properties'
@@ -11,18 +11,18 @@ object frmWaveProps: TfrmWaveProps
   OnShow = FormShow
   PopupMode = pmAuto
   Position = poDefaultSizeOnly
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '2.2.6.0'
   object Label1: TLabel
     Left = 4
-    Height = 14
+    Height = 15
     Top = 8
-    Width = 36
+    Width = 35
     Caption = 'Name:'
     ParentColor = False
   end
   object edName: TEdit
     Left = 4
-    Height = 26
+    Height = 23
     Top = 25
     Width = 114
     OnChange = edNameChange
@@ -53,15 +53,15 @@ object frmWaveProps: TfrmWaveProps
   end
   object Label2: TLabel
     Left = 4
-    Height = 14
+    Height = 15
     Top = 56
-    Width = 54
+    Width = 52
     Caption = 'Data Unit:'
     ParentColor = False
   end
   object edDataUnit: TEdit
     Left = 4
-    Height = 26
+    Height = 23
     Top = 73
     Width = 62
     OnChange = edDataUnitChange
@@ -88,33 +88,33 @@ object frmWaveProps: TfrmWaveProps
     TabOrder = 4
     object Label3: TLabel
       Left = 5
-      Height = 14
+      Height = 15
       Top = 78
-      Width = 58
+      Width = 57
       Caption = 'Total Time:'
       ParentColor = False
     end
     object Label4: TLabel
       Left = 5
-      Height = 14
+      Height = 15
       Top = 54
-      Width = 57
+      Width = 56
       Caption = 'Start Time:'
       ParentColor = False
     end
     object Label5: TLabel
       Left = 5
-      Height = 14
+      Height = 15
       Top = 30
-      Width = 81
+      Width = 78
       Caption = 'Sample Count:'
       ParentColor = False
     end
     object Label6: TLabel
       Left = 5
-      Height = 14
+      Height = 15
       Top = 6
-      Width = 84
+      Width = 82
       Caption = 'Sampling Time:'
       ParentColor = False
     end

@@ -7,8 +7,8 @@
       <Unit>
         <Filename Value="vscope.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="101" Y="29"/>
-        <UsageCount Value="124"/>
+        <CursorPos X="61" Y="13"/>
+        <UsageCount Value="129"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -18,9 +18,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="777"/>
-        <CursorPos X="75" Y="822"/>
-        <UsageCount Value="124"/>
+        <TopLine Value="508"/>
+        <CursorPos Y="580"/>
+        <UsageCount Value="129"/>
         <Bookmarks Count="3">
           <Item0 Y="960" ID="3"/>
           <Item1 Y="678" ID="2"/>
@@ -37,8 +37,8 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
         <TopLine Value="32"/>
-        <CursorPos X="50" Y="61"/>
-        <UsageCount Value="57"/>
+        <CursorPos X="76" Y="81"/>
+        <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -51,15 +51,15 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <CursorPos X="3" Y="9"/>
-        <UsageCount Value="54"/>
+        <UsageCount Value="59"/>
       </Unit>
       <Unit>
         <Filename Value="src/version_vscope.pas"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <CursorPos X="22" Y="13"/>
-        <UsageCount Value="52"/>
+        <CursorPos X="49" Y="15"/>
+        <UsageCount Value="57"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -69,7 +69,7 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="41"/>
-        <UsageCount Value="52"/>
+        <UsageCount Value="57"/>
       </Unit>
       <Unit>
         <Filename Value="src/form_measure_ab.pas"/>
@@ -79,10 +79,11 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="44"/>
-        <CursorPos X="23" Y="79"/>
-        <UsageCount Value="46"/>
+        <TopLine Value="105"/>
+        <CursorPos X="83" Y="151"/>
+        <UsageCount Value="51"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="src/form_sync_wave.pas"/>
@@ -93,16 +94,16 @@
         <EditorIndex Value="2"/>
         <TopLine Value="38"/>
         <CursorPos X="61" Y="54"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="39"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="extlib/ddgfx.pas"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="155"/>
-        <CursorPos X="74" Y="173"/>
-        <UsageCount Value="61"/>
+        <TopLine Value="1613"/>
+        <CursorPos X="3" Y="1672"/>
+        <UsageCount Value="62"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -116,17 +117,17 @@
         <Filename Value="src/vscope_display.pas"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="1023"/>
-        <CursorPos X="48" Y="1078"/>
-        <UsageCount Value="61"/>
+        <TopLine Value="1012"/>
+        <CursorPos X="3" Y="1021"/>
+        <UsageCount Value="62"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="src/vscope_data.pas"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="219"/>
-        <CursorPos X="37" Y="274"/>
-        <UsageCount Value="61"/>
+        <TopLine Value="600"/>
+        <CursorPos X="3" Y="641"/>
+        <UsageCount Value="62"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -190,132 +191,129 @@
         <UsageCount Value="13"/>
       </Unit>
     </Units>
-    <Debugger>
-      <Backend Value="{6DFF488A-B1E2-4DAB-A94F-2660F8E32547}"/>
-    </Debugger>
     <OtherDefines Count="1">
       <Define0 Value="TRACES"/>
     </OtherDefines>
     <JumpHistory HistoryIndex="29">
       <Position>
-        <Filename Value="src/vscope_data.pas"/>
-        <Caret Line="56"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="828" TopLine="820"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="830" TopLine="822"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="846" Column="12" TopLine="801"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="848" Column="12" TopLine="803"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="859" Column="5" TopLine="803"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="634" TopLine="630"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="861" Column="10" TopLine="814"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="222" Column="15" TopLine="181"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="952" Column="3" TopLine="950"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="223" Column="20" TopLine="177"/>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="63" Column="25" TopLine="21"/>
       </Position>
       <Position>
         <Filename Value="src/vscope_display.pas"/>
-        <Caret Line="1016" Column="28" TopLine="986"/>
+        <Caret Line="1018" Column="29" TopLine="970"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="1014" Column="17" TopLine="972"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="1023" Column="20" TopLine="984"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="63" Column="15" TopLine="21"/>
       </Position>
       <Position>
         <Filename Value="src/form_main.pas"/>
-        <Caret Line="1006" Column="23" TopLine="942"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_data.pas"/>
-        <Caret Line="61" Column="45"/>
+        <Caret Line="741" Column="71" TopLine="709"/>
       </Position>
       <Position>
         <Filename Value="src/form_main.pas"/>
-        <Caret Line="994" TopLine="937"/>
+        <Caret Line="159" Column="30" TopLine="126"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="61" Column="21" TopLine="13"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="480" Column="3" TopLine="454"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="48" Column="15" TopLine="6"/>
       </Position>
       <Position>
         <Filename Value="src/form_main.pas"/>
-        <Caret Line="830" Column="3" TopLine="826"/>
+        <Caret Line="580" TopLine="508"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="475" TopLine="441"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="480" TopLine="441"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="475" TopLine="441"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="480" TopLine="441"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="475" TopLine="441"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="480" TopLine="441"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="475" TopLine="441"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="480" TopLine="441"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="475" TopLine="441"/>
       </Position>
       <Position>
         <Filename Value="src/form_main.pas"/>
-        <Caret Line="854" Column="22" TopLine="826"/>
+        <Caret Line="580" TopLine="508"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="480" TopLine="441"/>
       </Position>
       <Position>
         <Filename Value="src/form_main.pas"/>
-        <Caret Line="837" Column="3" TopLine="826"/>
+        <Caret Line="580" TopLine="508"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="678" TopLine="667"/>
+        <Filename Value="extlib/ddgfx.pas"/>
+        <Caret Line="380" Column="15" TopLine="338"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="819" Column="5" TopLine="812"/>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="475" Column="26" TopLine="453"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="678" TopLine="633"/>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="395" Column="47" TopLine="354"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="819" Column="5" TopLine="774"/>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="63" Column="21"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="670" TopLine="633"/>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="572" Column="3" TopLine="562"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="820" TopLine="774"/>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="185" Column="20" TopLine="132"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="681" TopLine="633"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="823" Column="68" TopLine="776"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="822" Column="75" TopLine="777"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_sync_wave.pas"/>
-        <Caret Line="66" Column="3" TopLine="37"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_data.pas"/>
-        <Caret Line="251" Column="43" TopLine="221"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_data.pas"/>
-        <Caret Line="57" Column="15" TopLine="23"/>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="1021" Column="3" TopLine="1012"/>
       </Position>
     </JumpHistory>
     <RunParams>
@@ -323,7 +321,7 @@
       <Modes ActiveMode="default">
         <Mode Name="default">
           <local>
-            <CommandLineParams Value="test.vscope"/>
+            <CommandLineParams Value="sonic108_full.vscope"/>
           </local>
         </Mode>
       </Modes>
@@ -335,13 +333,15 @@
         <Item3 Value="/usr/bin/konsole -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
         <Item4 Value="C:\Windows\system32\cmd.exe /C ${TargetCmdLine}"/>
       </List>
-      <List Name="CommandLineParameters" Count="5">
-        <Item1 Value="test.vscope"/>
-        <Item2 Value="test.vscopex"/>
-        <Item3 Value="wdttest.vscope"/>
-        <Item4 Value="ni_onephase.vscope"/>
-        <Item5 Value="accelerometer_fullspeed.vscope"/>
+      <List Name="CommandLineParameters" Count="6">
+        <Item1 Value="sonic108_full.vscope"/>
+        <Item2 Value="test.vscope"/>
+        <Item3 Value="test.vscopex"/>
+        <Item4 Value="wdttest.vscope"/>
+        <Item5 Value="ni_onephase.vscope"/>
+        <Item6 Value="accelerometer_fullspeed.vscope"/>
       </List>
+      <List Name="WorkingDirectory" Type="File" Count="1"/>
     </HistoryLists>
   </ProjectSession>
   <Debugging>
