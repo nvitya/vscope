@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '1.2.2';
+  VSCOPE_VERSION = '1.2.3';
 
 (* Version Log
 
+v1.2.3:
+  - Setting wave color fix
 v1.2.2:
   - Effective value added to the measurement window
   - Low-res waveform changed from /32 to /256 to support huge (>10M) waves

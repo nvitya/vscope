@@ -77,7 +77,7 @@ end;
 
 procedure TfrmWaveProps.btnColorColorChanged(Sender : TObject);
 begin
-  wave.color := (wave.color and $FF000000) or (cardinal(btnColor.ButtonColor) and $00FFFFFF);
+  wave.SetColor((wave.color and $FF000000) or (cardinal(btnColor.ButtonColor) and $00FFFFFF));
   scope.RenderWaves;
   scope.DoOnPaint;
 end;
