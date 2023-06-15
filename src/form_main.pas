@@ -51,6 +51,7 @@ type
     Label7 : TLabel;
     mainmenu : TMainMenu;
     menuFile : TMenuItem;
+    miWaveLoop : TMenuItem;
     miOpen : TMenuItem;
     miExit : TMenuItem;
     Separator1 : TMenuItem;
@@ -142,6 +143,7 @@ type
     procedure chgridDrawCell(Sender : TObject; aCol, aRow : Integer; aRect : TRect; aState : TGridDrawState);
     procedure btnTdPlusClick(Sender : TObject);
     procedure btnTdMinusClick(Sender : TObject);
+    procedure miWaveLoopClick(Sender : TObject);
     procedure sbScopeScroll(Sender : TObject; ScrollCode : TScrollCode; var ScrollPos : Integer);
 
 
@@ -243,7 +245,7 @@ var
 implementation
 
 uses
-  form_wave_props, form_measure_ab, version_vscope, form_about, form_sync_wave;
+  form_wave_props, form_measure_ab, version_vscope, form_about, form_sync_wave, form_wave_loop;
 
 {$R *.lfm}
 
@@ -363,6 +365,28 @@ begin
   UpdateTimeDiv;
   UpdateScrollBar;
   scope.Repaint;
+end;
+
+procedure TfrmMain.miWaveLoopClick(Sender : TObject);
+var
+  gpos : TPoint;
+begin
+  if frmWaveLoop = nil then
+  begin
+    Application.CreateForm(TfrmWaveLoop, frmWaveLoop);
+    frmWaveLoop.scope := self.scope;
+
+    gpos := scope.ClientToScreen( Point(0,0) );
+    frmWaveLoop.Left := gpos.x + scope.Width div 2 - frmWaveLoop.Width div 2;
+    frmWaveLoop.Top  := gpos.y + scope.Height - frmWaveLoop.Height;
+  end;
+
+  if SelectedWave = nil then SelectWave(0);
+  frmWaveLoop.wave := SelectedWave;
+  frmWaveLoop.SetupWave;
+  frmWaveLoop.Show;
+  frmWaveLoop.MarkersChanged;
+  scope.RePaint;
 end;
 
 procedure TfrmMain.btnTdPlusClick(Sender : TObject);
@@ -566,6 +590,8 @@ begin
       frmMeasureAB.wave := selw;
       frmMeasureAB.UpdateWaveInfo;
     end;
+
+    if frmWaveLoop <> nil then frmWaveLoop.MarkersChanged;
   end
   else
   begin
@@ -1129,6 +1155,11 @@ begin
   begin
     frmMeasureAB.wave := selw;
     frmMeasureAB.UpdateWaveInfo;
+  end;
+
+  if frmWaveLoop <> nil then
+  begin
+    frmWaveLoop.MarkersChanged;
   end;
 end;
 

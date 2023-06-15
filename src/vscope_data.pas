@@ -75,7 +75,7 @@ type
 
     procedure DoOnDataUpdate; virtual;
 
-    function GetDataIndex(t : double) : integer;
+    function GetDataIndex(t : double) : integer;  // warning: it might be out of bounds !
     function NearestSampleTime(t : double) : double;
     function GetDataIndexTime(di : integer) : double;
     function GetValueAt(t : double) : double;
@@ -564,9 +564,6 @@ end;
 function TWaveData.GetDataIndex(t : double) : integer;
 begin
   result := trunc((t - startt) / samplt);
-  if (result < 0) or (result >= length(data))
-  then
-      result := -1;
 end;
 
 function TWaveData.NearestSampleTime(t : double) : double;
@@ -579,10 +576,11 @@ end;
 
 function TWaveData.GetDataIndexTime(di : integer) : double;
 begin
+{
   if (di < 0) or (di >= length(data))
   then
       EXIT(NaN);
-
+}
   result := startt + di * samplt;
 end;
 

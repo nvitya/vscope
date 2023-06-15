@@ -1,0 +1,85 @@
+object frmWaveLoop: TfrmWaveLoop
+  Left = 1682
+  Height = 141
+  Top = 96
+  Width = 222
+  BorderStyle = bsDialog
+  Caption = 'Loop Wave'
+  ClientHeight = 141
+  ClientWidth = 222
+  OnClose = FormClose
+  OnShow = FormShow
+  PopupMode = pmAuto
+  Position = poDefaultSizeOnly
+  LCLVersion = '2.2.6.0'
+  object pnlWaveColor: TPanel
+    Left = 4
+    Height = 26
+    Top = 8
+    Width = 210
+    Anchors = [akTop, akLeft, akRight]
+    Caption = '-'
+    TabOrder = 0
+  end
+  object sedLoopsBeforeA: TSpinEdit
+    Left = 8
+    Height = 24
+    Top = 64
+    Width = 88
+    Alignment = taRightJustify
+    MaxValue = 1000
+    OnChange = sedLoopsAfterBChange
+    TabOrder = 1
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 14
+    Top = 44
+    Width = 86
+    Caption = 'Loops before A:'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 128
+    Height = 14
+    Top = 44
+    Width = 75
+    Caption = 'Loops after B:'
+    ParentColor = False
+  end
+  object sedLoopsAfterB: TSpinEdit
+    Left = 124
+    Height = 24
+    Top = 64
+    Width = 88
+    Alignment = taRightJustify
+    MaxValue = 1000
+    OnChange = sedLoopsAfterBChange
+    TabOrder = 2
+    Value = 1
+  end
+  object btnOk: TBitBtn
+    Left = 8
+    Height = 32
+    Top = 96
+    Width = 90
+    Default = True
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    OnClick = btnOkClick
+    TabOrder = 3
+  end
+  object btnCancel: TBitBtn
+    Left = 124
+    Height = 32
+    Top = 96
+    Width = 88
+    Cancel = True
+    Caption = 'Cancel'
+    Kind = bkCancel
+    ModalResult = 2
+    OnClick = btnCancelClick
+    TabOrder = 4
+  end
+end

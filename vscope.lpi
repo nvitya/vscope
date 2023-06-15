@@ -81,6 +81,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="src/form_wave_loop.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmWaveLoop"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '1.2.3';
+  VSCOPE_VERSION = '1.2.4';
 
 (* Version Log
 
+v1.2.4:
+  - Wave looping
 v1.2.3:
   - Setting wave color fix
 v1.2.2:
