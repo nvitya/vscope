@@ -14,8 +14,9 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, lazopenglcontext, form_main, form_wave_props, form_wave_rescale, 
-  version_vscope, form_about, form_measure_ab, form_sync_wave, form_wave_loop
+  Forms, lazopenglcontext, form_main, form_wave_props, form_wave_rescale,
+  version_vscope, form_about, form_measure_ab, form_sync_wave, form_wave_loop,
+  vscope_bin_file
   { you can add units after this };
 
 {$R *.res}

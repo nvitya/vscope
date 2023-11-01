@@ -32,7 +32,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, Dialogs, Forms, fgl, math, jsontools, dglOpenGL,
-  ddgfx, ddgfx_font, vscope_data, util_nstime;
+  ddgfx, ddgfx_font, vscope_data, vscope_bin_file, util_nstime;
 
 type
 
@@ -177,6 +177,8 @@ type
     draw_steps  : boolean;
     time_unit   : string;
 
+    binary_file : boolean;
+
     constructor Create(aowner : TComponent; aparent : TWinControl); override;
     destructor Destroy; override;
 
@@ -212,6 +214,9 @@ type
     function  LoadWave(afilename : string) : TWaveDisplay;
     procedure LoadScopeFile(afilename : string);
     procedure SaveScopeFile(afilename : string);
+
+  private
+    fbfile    : TVscopeBinFile;
 
   end;
 
@@ -637,6 +642,8 @@ constructor TScopeDisplay.Create(aowner : TComponent; aparent : TWinControl);
 begin
   inherited Create(aowner, aparent);
 
+  fbfile := TVscopeBinFile.Create;
+
   draw_steps := false;
   time_unit := 's';
 
@@ -696,7 +703,7 @@ begin
   for m in marker do if m <> nil then m.Free;
 
   ClearWaves;
-
+  fbfile.Free;
   inherited;
 end;
 
@@ -1083,6 +1090,7 @@ begin
   end;
 end;
 
+
 procedure TScopeDisplay.LoadScopeFile(afilename : string);
 var
   jf, jwlist, jw : TJsonNode;
@@ -1094,13 +1102,40 @@ var
 
   t0, t1, t2 : int64;
   tdiv, vstart : double;
+  jstr : ansistring;
+
+  //rlen : integer;
+  brec : TVscopeBinRec; // to shorten some lines
 
 begin
   t0 := nstime();
-
   jf := TJsonNode.Create();
+
   try
-    jf.LoadFromFile(afilename);
+    binary_file := afilename.EndsWith('.bscope');
+    if binary_file then
+    begin
+      fbfile.Open(afilename);
+      brec := fbfile.currec;
+      if brec.marker <> 'J'
+      then
+          EScopeData.Create('J-Record is missing!');
+
+      if brec.addinfo > 64000 then
+      begin
+        EScopeData.Create('J-Record is too long: '+IntToStr(brec.addinfo));
+      end;
+
+      SetLength(jstr, brec.addinfo);
+      move(brec.dataptr^, jstr[1], brec.addinfo);
+
+      jf.Parse(jstr);
+
+    end
+    else
+    begin
+      jf.LoadFromFile(afilename);
+    end;
 
     t2 := nstime();
 
@@ -1122,6 +1157,14 @@ begin
       begin
         DeleteWave(wd);
       end;
+    end;
+
+    if binary_file then
+    begin
+      fbfile.ClearWaves();
+      for wd in waves do  fbfile.AddWave(wd);
+
+      fbfile.LoadWaveData();
     end;
 
     CalcTimeRange;
@@ -1230,6 +1273,7 @@ begin
   if t0 + t1 + t2 > 0 then ; // to supress unused warnings
 
 end;
+
 
 function TScopeDisplay.ConvertXToTime(x : integer) : double;
 var

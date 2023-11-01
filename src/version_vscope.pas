@@ -5,9 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '1.2.4';
+  VSCOPE_VERSION = '2.0.0';
 
 (* Version Log
+
+v2.0.0:
+  - Reading binary format (.bscope)
 
 v1.2.4:
   - Wave looping

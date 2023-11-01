@@ -109,6 +109,11 @@ type
 
     procedure SaveToJsonFile(afilename : string);
     procedure LoadFromJsonFile(afilename : string);
+
+    procedure LoadFromBinFile(afilename : string);
+
+  private
+    fdata : array of byte;  // local buffer
   end;
 
 
@@ -264,10 +269,11 @@ begin
   if not jnode.Find('SAMPLT', jv) then EXIT;
   samplt := jv.AsNumber;
 
-  if not jnode.Find('VALUES', jv) then EXIT;
-
-  rawdatastr := jv.AsString;
-  LoadFloatArray(rawdatastr);
+  if jnode.Find('VALUES', jv) then
+  begin
+    rawdatastr := jv.AsString;
+    LoadFloatArray(rawdatastr);
+  end;
 
   // optional fields
   startt := 0;
@@ -744,11 +750,13 @@ end;
 constructor TScopeData.Create;
 begin
   waves := TWaveDataList.Create;
+  SetLength(fdata, 256 * 1024); // allocate a static data buffer
 end;
 
 destructor TScopeData.Destroy;
 begin
   ClearWaves;
+  SetLength(fdata, 0);
   inherited Destroy;
 end;
 
@@ -827,6 +835,12 @@ begin
     if w <> nil then DeleteWave(w);
     jf.Free;
   end;
+end;
+
+procedure TScopeData.LoadFromBinFile(afilename : string);
+begin
+  ClearWaves;
+
 end;
 
 initialization
