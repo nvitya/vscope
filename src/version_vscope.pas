@@ -11,6 +11,7 @@ const
 
 v2.0.0:
   - Reading binary format (.bscope)
+  - fixed wave rendering performance at high sample counts
 
 v1.2.4:
   - Wave looping

@@ -519,8 +519,10 @@ begin
     x += dx * i;
   end;
 
-  maxdi := length(disp_data);
+  maxdi := di + trunc(11 / dx);
+  if maxdi > length(disp_data) then maxdi := length(disp_data);
   if maxdi < 0 then maxdi := 0;
+
   vcnt := maxdi - di;
   if steps then vcnt *= 2;
 
