@@ -146,10 +146,9 @@ type
     procedure miWaveLoopClick(Sender : TObject);
     procedure sbScopeScroll(Sender : TObject; ScrollCode : TScrollCode; var ScrollPos : Integer);
 
-
     procedure btnChScalePlusMinusClick(Sender : TObject);
     procedure btnChOffsPlusMinusClick(Sender : TObject);
-    procedure miSaveClick(Sender : TObject);
+
     procedure miAutoscaleClick(Sender : TObject);
     procedure miAutoscaleAllClick(Sender : TObject);
     procedure chgridSelection(Sender : TObject; aCol, aRow : Integer);
@@ -160,27 +159,30 @@ type
     procedure pnlScopeViewMouseUp(Sender : TObject; Button : TMouseButton; Shift : TShiftState; X, Y : Integer);
     procedure pnlScopeViewMouseMove(Sender : TObject; Shift : TShiftState; X, Y : Integer);
 
+    procedure FormKeyDown(Sender : TObject; var Key : Word; Shift : TShiftState);
+
     procedure miDrawStepsClick(Sender : TObject);
     procedure tbZoomInClick(Sender : TObject);
     procedure tbZoomOutClick(Sender : TObject);
     procedure tbMarkerAClick(Sender : TObject);
     procedure tbMarkerClearClick(Sender : TObject);
     procedure tbMarkerBClick(Sender : TObject);
-    procedure tbOpenClick(Sender : TObject);
-    procedure tbSaveAsClick(Sender : TObject);
     procedure FormDropFiles(Sender : TObject; const FileNames : array of string);
     procedure tbZoomAllClick(Sender : TObject);
     procedure tbWavePropsClick(Sender : TObject);
     procedure pnlScopeViewDblClick(Sender : TObject);
     procedure miAboutBoxClick(Sender : TObject);
-    procedure FormKeyDown(Sender : TObject; var Key : Word; Shift : TShiftState);
     procedure tbABMeasureClick(Sender : TObject);
     procedure miCutWavesClick(Sender : TObject);
     procedure miCutCurWaveClick(Sender : TObject);
     procedure miSyncWaveClick(Sender : TObject);
     procedure miWaveDuplicateClick(Sender : TObject);
     procedure miWaveDeleteClick(Sender : TObject);
+
+    procedure tbOpenClick(Sender : TObject);
     procedure miFileMergeClick(Sender : TObject);
+    procedure miSaveClick(Sender : TObject);
+    procedure tbSaveAsClick(Sender : TObject);
   private
 
   public

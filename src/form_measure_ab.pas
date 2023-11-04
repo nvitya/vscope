@@ -137,6 +137,8 @@ begin
     end;
 
     scnt := 0;
+    minval := 0;
+    maxval := 0;
     sumval := 0;
     sqrsum := 0;
     while ia <= ib do

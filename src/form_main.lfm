@@ -1503,7 +1503,7 @@ object frmMain: TfrmMain
   object dlgFileOpen: TOpenDialog
     Title = 'Open VScope'
     DefaultExt = '.vscope'
-    Filter = 'VScope Files (*.vscope)|*.vscope|JSON Files (*.json)|*.json|Any File (*.*)|*.*'
+    Filter = 'VScope Files (*.vscope;*.bscope)|*.vscope;*.bscope|*.vscope|*.bscope|JSON Files (*.json)|*.json|Any File (*.*)|*.*'
     FilterIndex = 0
     Left = 120
     Top = 232
@@ -1511,7 +1511,7 @@ object frmMain: TfrmMain
   object dlgFileSave: TSaveDialog
     Title = 'Save VScope as'
     DefaultExt = '.vscope'
-    Filter = 'VScope Files (*.vscope)|*.vscope|JSON Files (*.json)|*.json|Any File (*.*)|*.*'
+    Filter = 'VScope Files (*.vscope;*.bscope)|*.vscope;*.bscope|*.vscope|*.bscope|JSON Files (*.json)|*.json|Any File (*.*)|*.*'
     FilterIndex = 0
     Left = 244
     Top = 232

@@ -54,6 +54,10 @@ type
     color  : cardinal;
     basealpha : single;
 
+    storage_type : byte;  // for the binary format
+
+    run_autoscale : boolean;
+
     constructor Create(aname: string; asamplt: double);
     destructor Destroy; override;
     function DataCount : integer;
@@ -62,7 +66,7 @@ type
 
     procedure AllocateData(asamples : cardinal);
 
-    procedure SaveToJsonNode(jnode : TJsonNode);
+    procedure SaveToJsonNode(jnode : TJsonNode; binary_data : boolean);
     procedure SaveToJsonFile(afilename : string);
     function LoadFromJsonNode(jnode : TJsonNode) : boolean;
     function LoadFromJsonFile(afilename : string) : boolean;
@@ -211,6 +215,8 @@ begin
   viewoffset := 0;
   basealpha := 0.8;
   color := $FFFFFFFF;
+  storage_type := $28;  // $28 = double, $12 = int16, $14 = int32
+  run_autoscale := true;
 end;
 
 destructor TWaveData.Destroy;
@@ -241,13 +247,15 @@ begin
   SetLength(data, asamples);
 end;
 
-procedure TWaveData.SaveToJsonNode(jnode : TJsonNode);
+procedure TWaveData.SaveToJsonNode(jnode : TJsonNode; binary_data : boolean);
 begin
   jnode := jnode.AsObject;  // forces the type of object
   jnode.Add('NAME', name);
   jnode.Add('SAMPLT', samplt);
 
-  jnode.Add('VALUES', GetFloatArrayStr());
+  if not binary_data
+  then
+     jnode.Add('VALUES', GetFloatArrayStr());
 
   jnode.Add('STARTT', startt);
   jnode.Add('DATAUNIT', dataunit);
@@ -269,7 +277,7 @@ begin
   if not jnode.Find('SAMPLT', jv) then EXIT;
   samplt := jv.AsNumber;
 
-  if jnode.Find('VALUES', jv) then
+  if jnode.Find('VALUES', jv) then  // not existing for binary files
   begin
     rawdatastr := jv.AsString;
     LoadFloatArray(rawdatastr);
@@ -281,19 +289,24 @@ begin
   viewscale := 1;
   viewoffset := 0;
   color := $FFFFFFFF;
+  run_autoscale := true;
 
   if jnode.Find('STARTT', jv)   then startt   := jv.AsNumber;
   if jnode.Find('DATAUNIT', jv) then dataunit := jv.AsString;
   if jnode.Find('COLOR', jv)    then color    := trunc(jv.AsNumber);
   if jnode.Find('ALPHA', jv)    then basealpha:= jv.AsNumber;
 
-  // deprecated:
-  if jnode.Find('DSCALE', jv)   then viewscale   := jv.AsNumber;
-  if jnode.Find('DOFFSET', jv)  then viewoffset  := jv.AsNumber;
+  if jnode.Find('VIEWSCALE', jv) or jnode.Find('DSCALE', jv) then    // (DSCALE is deprecated)
+  begin
+    viewscale   := jv.AsNumber;
+    run_autoscale := false;
+  end;
 
-  if jnode.Find('VIEWSCALE', jv)   then viewscale   := jv.AsNumber;
-  if jnode.Find('VIEWOFFSET', jv)  then viewoffset  := jv.AsNumber;
-
+  if jnode.Find('VIEWOFFSET', jv) or jnode.Find('DOFFSET', jv) then  // (DOFFSET is deprecated)
+  begin
+    viewoffset  := jv.AsNumber;
+    run_autoscale := false;
+  end;
 
   DoOnDataUpdate;
 
@@ -306,7 +319,7 @@ var
 begin
   jf := TJsonNode.Create();
   try
-    SaveToJsonNode(jf);
+    SaveToJsonNode(jf, false);
     jf.SaveToFile(afilename);
   finally
     jf.Free;
@@ -796,7 +809,7 @@ begin
   for w in waves do
   begin
     jn := jwarr.Add();
-    w.SaveToJsonNode(jn);
+    w.SaveToJsonNode(jn, false);
   end;
 
   try

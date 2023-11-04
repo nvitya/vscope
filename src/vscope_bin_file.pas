@@ -5,7 +5,10 @@ unit vscope_bin_file;
 interface
 
 uses
-  Classes, SysUtils, vscope_data;
+  Classes, SysUtils, jsontools, vscope_data;
+
+const
+  bscope_block_marker = $4B425356; // = 'VSBK'
 
 type
 
@@ -13,16 +16,20 @@ type
 
   TVscopeBinRec = class
   public
-    marker   :  char;
-    len64bit :  cardinal;
-    lenbytes :  cardinal;
+    marker   : char;
+    bytelen  : cardinal;
+    maxbytes : cardinal;  // used only at writes
 
     addinfo  : uint32;  // additional info right after the 4-byte record head
 
     startptr : PByte;
     dataptr  : PByte;
+    endptr   : PByte;
 
     function ReadRecord(aptr : PByte; aendptr : PByte) : boolean;
+    function CreateRecord(aptr : PByte; amarker : char; abytes : cardinal; aaddinfo : uint32) : PByte;
+    procedure SetByteLength(abytelength : cardinal);
+    procedure SetAddInfo(aaddinfo : uint32);
   end;
 
 
@@ -52,18 +59,18 @@ type
     fopened   : boolean;
     fbpos     : int64;
     blkpos    : integer;
-    blklen    : uint32;
+    blklen    : uint32;  // in bytes
     blkend    : PByte;
 
     currec    : TVscopeBinRec;
 
-    waves     : array of TVsBinFileChannel;
-    wavecnt   : integer;
+    // full channel list
+    channels     : array of TVsBinFileChannel;
 
     // last F-Record:
-    chcnt        : byte;
-    sample_width : byte;
-    chlist       : array of TVsBinFileChannel;
+    fchcnt        : byte;
+    fsample_width : byte;
+    fchlist       : array of TVsBinFileChannel;
 
     constructor Create;
     destructor Destroy; override;
@@ -82,6 +89,10 @@ type
     procedure ProcessFRecord();
     procedure ProcessDataRecord();
 
+    procedure Save(afilename : string; jroot : TJsonNode);
+    function NewBlock(ablksize : cardinal) : PByte;
+    procedure WriteCurBlock();
+
   end;
 
 implementation
@@ -91,7 +102,7 @@ implementation
 constructor TVsBinFileChannel.Create(awavedata : TWaveData);
 begin
   wd := awavedata;
-  SetLength(wd.data, 0);
+  //SetLength(wd.data, 0);
   fillpos := 0;
   lastindex := 0;
   datalen := 0;
@@ -100,6 +111,8 @@ end;
 { TVscopeBinRec }
 
 function TVscopeBinRec.ReadRecord(aptr : PByte; aendptr : PByte) : boolean;
+var
+  len64bit : uint32;
 begin
   if aptr + 8 > aendptr
   then
@@ -108,15 +121,45 @@ begin
   startptr   := aptr;
   marker     := PChar(startptr)^;
   len64bit   := PUint32(startptr)^ shr 8;
-  lenbytes   := len64bit shl 3;
+  bytelen    := len64bit shl 3;
   addinfo    := PUint32(startptr + 4)^;
   dataptr    := startptr + 8;
 
-  if aptr + lenbytes > aendptr
+  if aptr + bytelen > aendptr
   then
       EXIT(false);
 
   result := (marker = 'J') or (marker = 'F') or (marker = 'D') or (marker = 'S');
+end;
+
+function TVscopeBinRec.CreateRecord(aptr : PByte; amarker : char; abytes : cardinal; aaddinfo : uint32) : PByte;
+var
+  pb : PByte;
+  reclen : uint32;
+begin
+  startptr := aptr;
+  marker   := amarker;
+  reclen   := 8 + ((abytes + 7) and $FFFFFFF8);
+  maxbytes := abytes;
+  bytelen  := abytes;
+  addinfo  := aaddinfo;
+
+  pb := startptr;
+  PUint32(pb + 0)^ := ord(marker) or ((reclen shr 3) shl 8);
+  PUint32(pb + 4)^ := addinfo;
+  result := pb + 8;
+end;
+
+procedure TVscopeBinRec.SetByteLength(abytelength : cardinal);
+begin
+  bytelen := abytelength;
+  PUint32(startptr)^ := ord(marker) or ((bytelen shr 3) shl 8);
+end;
+
+procedure TVscopeBinRec.SetAddInfo(aaddinfo : uint32);
+begin
+  addinfo := aaddinfo;
+  PUint32(startptr + 4)^ := addinfo;
 end;
 
 { TVscopeBinFile }
@@ -125,7 +168,7 @@ constructor TVscopeBinFile.Create;
 begin
   SetLength(fbuf, 256 * 1024); // allocate a static data buffer
   currec := TVscopeBinRec.Create;
-  waves := [];
+  channels := [];
 end;
 
 destructor TVscopeBinFile.Destroy;
@@ -148,7 +191,7 @@ begin
 
   // check for the 'VSBK' = $4B425356 marker
   pu32 := PUint32(@fbuf[0]);
-  if pu32^ <> $4B425356 then // = 'VSBK' ?
+  if pu32^ <> bscope_block_marker then // = 'VSBK' ?
   begin
     EXIT;
   end;
@@ -186,7 +229,7 @@ begin
   end
   else
   begin
-    result := currec.ReadRecord(currec.startptr + currec.lenbytes, blkend);
+    result := currec.ReadRecord(currec.startptr + currec.bytelen, blkend);
   end;
 end;
 
@@ -198,11 +241,11 @@ var
   chtype : byte;
   ch : TVsBinFileChannel;
 begin
-  chcnt := (currec.addinfo and $FF);
+  fchcnt := (currec.addinfo and $FF);
   pb := currec.dataptr;
-  chlist := [];
-  sample_width := 0;
-  for i := 0 to chcnt - 1 do
+  fchlist := [];
+  fsample_width := 0;
+  for i := 0 to fchcnt - 1 do
   begin
     chidx := (pb^ and $3F);
     inc(pb);
@@ -211,15 +254,15 @@ begin
 
     // TODO: handle padding!
 
-    if chidx >= wavecnt then raise EScopeData.Create('Invalid channel index: '+IntToStr(chidx));
+    if chidx >= length(channels) then raise EScopeData.Create('Invalid channel index: '+IntToStr(chidx));
 
-    ch := waves[chidx];
+    ch := channels[chidx];
     ch.datalen := chtype and $F;
     ch.issigned := ((chtype and $F0) = $10);
     ch.isfloat  := ((chtype and $F0) = $20);
-    Insert(ch, chlist, length(chlist));
+    Insert(ch, fchlist, length(fchlist));
 
-    sample_width += ch.datalen;
+    fsample_width += ch.datalen;
   end;
 end;
 
@@ -242,15 +285,15 @@ begin
   then
       raise EScopeData.Create('D-Record data out of the block boundary');
 
-  if swidth < sample_width
+  if swidth < fsample_width
   then
       raise EScopeData.Create('D-Record sample width mismatch');
 
-  padding_bytes := swidth - sample_width;
+  padding_bytes := swidth - fsample_width;
 
   while scnt > 0 do
   begin
-    for ch in chlist do
+    for ch in fchlist do
     begin
       if ch.isfloat then
       begin
@@ -315,9 +358,8 @@ procedure TVscopeBinFile.ClearWaves;
 var
   bw : TVsBinFileChannel;
 begin
-  for bw in waves do bw.Free;
-  waves := [];
-  wavecnt := 0;
+  for bw in channels do bw.Free;
+  channels := [];
 end;
 
 procedure TVscopeBinFile.AddWave(awave : TWaveData);
@@ -325,8 +367,7 @@ var
   bw : TVsBinFileChannel;
 begin
   bw := TVsBinFileChannel.Create(awave);
-  Insert(bw, waves, length(waves)+1);
-  wavecnt := length(waves);
+  Insert(bw, channels, length(channels)+1);
 end;
 
 procedure TVscopeBinFile.LoadWaveData;
@@ -340,7 +381,7 @@ begin
       if currec.marker = 'F' then
       begin
         ProcessFRecord();
-        //raise EScopeData.Create('F-Record found, sample width: '+IntToStr(sample_width));
+        //raise EScopeData.Create('F-Record found, sample width: '+IntToStr(fsample_width));
       end
       else if currec.marker = 'D' then
       begin
@@ -355,12 +396,114 @@ begin
   end; // while
 
   // data load finished, trim back the data
-  for ch in waves do
+  for ch in channels do
   begin
     wd := ch.wd;
     if length(wd.data) <> ch.fillpos then SetLength(wd.data, ch.fillpos);
   end;
 
+end;
+
+procedure TVscopeBinFile.Save(afilename : string; jroot : TJsonNode);
+var
+  s  : ansistring;
+  pb : PByte;
+  wd : TWaveData;
+  ch : TVsBinFileChannel;
+  chidx : byte;
+  wremaining  : integer;
+  blkrembytes : integer;
+  blksamples  : integer;
+  swidth : byte;
+  smpidx      : integer;
+  smpidx_offs : integer;
+begin
+  blklen := 65536;  // use 64k Blocks
+
+  System.Assign(fbinfile, afilename);
+  Rewrite(fbinfile, 1);
+  fopened := true;
+  fbpos := FilePos(fbinfile);
+
+  // write the J-Block (always the first)
+
+  s := jroot.Value; // get a nice, formatted JSON
+  if length(s) > blklen - 16
+  then
+      raise EScopeData.Create('JSON data too long: '+IntToStr(length(s)));
+
+  pb := NewBlock(blklen);
+  pb := currec.CreateRecord(pb, 'J', length(s), length(s));
+  move(s[1], pb^, length(s));
+  WriteCurBlock();
+
+  // write the data blocks
+  chidx := 0;
+  for ch in channels do
+  begin
+    wd := ch.wd;
+    smpidx := 0;
+    smpidx_offs := 0;  // does not matter here anymore
+    wremaining := length(wd.data);
+    while wremaining > 0 do
+    begin
+      pb := NewBlock(blklen);
+      pb := currec.CreateRecord(pb, 'F', 2, 1);  // 2 bytes, 1 channel only
+
+      pb^ := $C0 + chidx;
+      pb += 1;
+      pb^ := $28; // format: double
+      pb += 1;
+      swidth := 8;
+
+      pb += 6; // skip the padding up to the 64 bit
+
+      // the D-Record has a 16 byte header
+
+      blkrembytes := blkend - pb - 16;
+      blksamples  := blkrembytes div swidth;
+      if blksamples > wremaining then blksamples := wremaining;
+
+      pb := currec.CreateRecord(pb, 'D', blksamples * swidth, swidth);
+      PUint32(pb + 0)^ := blksamples;
+      PUint32(pb + 4)^ := smpidx - smpidx_offs;
+      pb += 8;
+
+      move(wd.data[smpidx], pb^, blksamples * swidth);
+
+      WriteCurBlock();
+
+      smpidx     += blksamples;
+      wremaining -= blksamples;
+    end;
+    inc(chidx);
+  end;
+
+  Close;
+end;
+
+function TVscopeBinFile.NewBlock(ablksize : cardinal) : PByte;
+var
+  pb : PByte;
+begin
+  // add block header
+  blklen := ablksize;
+  pb := @fbuf[0];
+  blkend := pb + blklen;
+
+  PUint32(pb)^ := bscope_block_marker;
+  pb += 4;
+  PUint32(pb)^ := (blklen shr 3);
+  pb += 4;
+
+  FillChar(pb^, blklen - 8, 0);  // fill with zeroes
+
+  result := pb;
+end;
+
+procedure TVscopeBinFile.WriteCurBlock;
+begin
+  BlockWrite(fbinfile, fbuf[0], blklen);
 end;
 
 end.

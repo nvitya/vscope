@@ -1109,6 +1109,8 @@ var
   //rlen : integer;
   brec : TVscopeBinRec; // to shorten some lines
 
+  run_autoscale : boolean;
+
 begin
   t0 := nstime();
   jf := TJsonNode.Create();
@@ -1148,6 +1150,8 @@ begin
     ClearWaves;
     ClearMarkers;
 
+    run_autoscale := true;
+
     jwlist := jf.Find('WAVES');
     if jwlist = nil then raise EScopeData.Create('Scope data format error: "WAVES" node not found.');
 
@@ -1155,10 +1159,11 @@ begin
     begin
       jw := jwlist.Child(i);
       wd := AddWave('???', 1/1000);
-      if not wd.LoadFromJsonNode(jw) then
-      begin
-        DeleteWave(wd);
-      end;
+      if wd.LoadFromJsonNode(jw)
+      then
+          run_autoscale := (run_autoscale and wd.run_autoscale)
+      else
+          DeleteWave(wd);
     end;
 
     if binary_file then
@@ -1170,6 +1175,8 @@ begin
     end;
 
     CalcTimeRange;
+
+    if run_autoscale then AutoScale;
 
     draw_steps := true;
     tdiv := -1;
@@ -1207,6 +1214,7 @@ begin
     UpdateTimeDivInfo;
 
   finally
+    fbfile.Close;
     jf.Free;
   end;
 
@@ -1230,8 +1238,9 @@ var
 
   t0, t1, t2 : int64;
 begin
-
   t0 := nstime();
+
+  binary_file := afilename.EndsWith('.bscope');
 
   jf := TJsonNode.Create();
 
@@ -1253,7 +1262,7 @@ begin
   for w in waves do
   begin
     jn := jwarr.Add();
-    w.SaveToJsonNode(jn);
+    w.SaveToJsonNode(jn, binary_file);
   end;
 
   t1 := nstime();
@@ -1262,8 +1271,18 @@ begin
   {$endif}
 
   try
-    jf.SaveToFile(afilename);
+    if binary_file then
+    begin
+      fbfile.ClearWaves();
+      for w in waves do  fbfile.AddWave(w);
+      fbfile.Save(afilename, jf);
+    end
+    else
+    begin
+      jf.SaveToFile(afilename);
+    end;
   finally
+    fbfile.Close;
     jf.Free;
   end;
 

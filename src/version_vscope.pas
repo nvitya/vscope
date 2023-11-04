@@ -5,9 +5,13 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.0.0';
+  VSCOPE_VERSION = '2.0.1';
 
 (* Version Log
+
+v2.0.1:
+  - Running autoscale when no view parameters are defined
+  - Saving binary format (only double yet)
 
 v2.0.0:
   - Reading binary format (.bscope)
