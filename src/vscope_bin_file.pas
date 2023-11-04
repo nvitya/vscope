@@ -262,6 +262,8 @@ begin
     ch.isfloat  := ((chtype and $F0) = $20);
     Insert(ch, fchlist, length(fchlist));
 
+    ch.wd.bin_storage_type := chtype;  // store it for the next save
+
     fsample_width += ch.datalen;
   end;
 end;
@@ -414,9 +416,11 @@ var
   wremaining  : integer;
   blkrembytes : integer;
   blksamples  : integer;
-  swidth : byte;
-  smpidx      : integer;
+  smpidx, max_smpidx : integer;
   smpidx_offs : integer;
+  v : double;
+  vint  : int32;
+  vuint : uint32;
 begin
   blklen := 65536;  // use 64k Blocks
 
@@ -444,6 +448,11 @@ begin
     wd := ch.wd;
     smpidx := 0;
     smpidx_offs := 0;  // does not matter here anymore
+
+    ch.datalen  := wd.bin_storage_type and $F;
+    ch.issigned := ((wd.bin_storage_type and $F0) = $10);
+    ch.isfloat  := ((wd.bin_storage_type and $F0) = $20);
+
     wremaining := length(wd.data);
     while wremaining > 0 do
     begin
@@ -452,28 +461,58 @@ begin
 
       pb^ := $C0 + chidx;
       pb += 1;
-      pb^ := $28; // format: double
+      pb^ := wd.bin_storage_type; // format: double
       pb += 1;
-      swidth := 8;
 
       pb += 6; // skip the padding up to the 64 bit
 
       // the D-Record has a 16 byte header
 
       blkrembytes := blkend - pb - 16;
-      blksamples  := blkrembytes div swidth;
+      blksamples  := blkrembytes div ch.datalen;
       if blksamples > wremaining then blksamples := wremaining;
 
-      pb := currec.CreateRecord(pb, 'D', blksamples * swidth, swidth);
+      pb := currec.CreateRecord(pb, 'D', blksamples * ch.datalen, ch.datalen);
       PUint32(pb + 0)^ := blksamples;
       PUint32(pb + 4)^ := smpidx - smpidx_offs;
       pb += 8;
 
-      move(wd.data[smpidx], pb^, blksamples * swidth);
+      max_smpidx := smpidx + blksamples;
+      while smpidx < max_smpidx do
+      begin
+        v := wd.data[smpidx];
+        if ch.isfloat then
+        begin
+          if 8 = ch.datalen then PDouble(pb)^ := v
+                            else PSingle(pb)^ := v;
+        end
+        else
+        begin
+          if ch.issigned then
+          begin
+            vint := round(v);
+            if      2 = ch.datalen then PInt16(pb)^ := vint
+            else if 4 = ch.datalen then PInt32(pb)^ := vint
+            else if 8 = ch.datalen then PInt64(pb)^ := vint
+                                   else PInt8(pb)^  := vint;
+          end
+          else
+          begin
+            vuint := round(v);
+            if      2 = ch.datalen then PUInt16(pb)^ := vuint
+            else if 4 = ch.datalen then PUInt32(pb)^ := vuint
+            else if 8 = ch.datalen then PUInt64(pb)^ := vuint
+                                   else PUInt8(pb)^  := vuint;
+          end;
+        end;
+        pb += ch.datalen;
+        inc(smpidx);
+      end;
+
+      //move(wd.data[smpidx], pb^, blksamples * ch.datalen);
 
       WriteCurBlock();
 
-      smpidx     += blksamples;
       wremaining -= blksamples;
     end;
     inc(chidx);

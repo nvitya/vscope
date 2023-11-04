@@ -54,7 +54,7 @@ type
     color  : cardinal;
     basealpha : single;
 
-    storage_type : byte;  // for the binary format
+    bin_storage_type : byte;  // for the binary format
 
     run_autoscale : boolean;
 
@@ -215,7 +215,7 @@ begin
   viewoffset := 0;
   basealpha := 0.8;
   color := $FFFFFFFF;
-  storage_type := $28;  // $28 = double, $12 = int16, $14 = int32
+  bin_storage_type := $28;  // $28 = double, $12 = int16, $14 = int32
   run_autoscale := true;
 end;
 

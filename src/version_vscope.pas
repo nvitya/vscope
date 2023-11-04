@@ -11,7 +11,7 @@ const
 
 v2.0.1:
   - Running autoscale when no view parameters are defined
-  - Saving binary format (only double yet)
+  - Saving binary format, keeping the original binary storage format
 
 v2.0.0:
   - Reading binary format (.bscope)
