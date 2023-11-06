@@ -8,7 +8,7 @@
         <Filename Value="vscope.lpr"/>
         <IsPartOfProject Value="True"/>
         <CursorPos X="90" Y="31"/>
-        <UsageCount Value="149"/>
+        <UsageCount Value="150"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -20,7 +20,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="181"/>
         <CursorPos X="15" Y="227"/>
-        <UsageCount Value="149"/>
+        <UsageCount Value="150"/>
         <Bookmarks Count="1">
           <Item0 Y="988" ID="3"/>
         </Bookmarks>
@@ -36,7 +36,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="22"/>
         <CursorPos X="17" Y="75"/>
-        <UsageCount Value="82"/>
+        <UsageCount Value="83"/>
       </Unit>
       <Unit>
         <Filename Value="src/form_wave_rescale.pas"/>
@@ -47,15 +47,15 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <CursorPos X="3" Y="9"/>
-        <UsageCount Value="79"/>
+        <UsageCount Value="80"/>
       </Unit>
       <Unit>
         <Filename Value="src/version_vscope.pas"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <CursorPos X="69" Y="14"/>
-        <UsageCount Value="77"/>
+        <CursorPos X="37" Y="26"/>
+        <UsageCount Value="78"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -65,7 +65,7 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="41"/>
-        <UsageCount Value="77"/>
+        <UsageCount Value="78"/>
       </Unit>
       <Unit>
         <Filename Value="src/form_measure_ab.pas"/>
@@ -76,7 +76,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="92"/>
         <CursorPos X="64" Y="145"/>
-        <UsageCount Value="71"/>
+        <UsageCount Value="72"/>
       </Unit>
       <Unit>
         <Filename Value="src/form_sync_wave.pas"/>
@@ -87,7 +87,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="47"/>
         <CursorPos Y="131"/>
-        <UsageCount Value="59"/>
+        <UsageCount Value="60"/>
       </Unit>
       <Unit>
         <Filename Value="src/form_wave_loop.pas"/>
@@ -98,7 +98,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="97"/>
         <CursorPos X="75" Y="161"/>
-        <UsageCount Value="40"/>
+        <UsageCount Value="41"/>
       </Unit>
       <Unit>
         <Filename Value="src/vscope_bin_file.pas"/>
@@ -107,7 +107,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="407"/>
         <CursorPos X="75" Y="420"/>
-        <UsageCount Value="32"/>
+        <UsageCount Value="33"/>
         <Bookmarks Count="1">
           <Item0 X="42" Y="475" ID="1"/>
         </Bookmarks>
@@ -118,7 +118,7 @@
         <EditorIndex Value="3"/>
         <WindowIndex Value="1"/>
         <CursorPos X="56" Y="34"/>
-        <UsageCount Value="70"/>
+        <UsageCount Value="71"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -133,7 +133,7 @@
         <EditorIndex Value="3"/>
         <TopLine Value="1226"/>
         <CursorPos X="88" Y="1241"/>
-        <UsageCount Value="70"/>
+        <UsageCount Value="71"/>
         <Bookmarks Count="1">
           <Item0 X="3" Y="1028" ID="2"/>
         </Bookmarks>
@@ -144,7 +144,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="9"/>
         <CursorPos X="21" Y="57"/>
-        <UsageCount Value="70"/>
+        <UsageCount Value="71"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -209,12 +209,11 @@
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/objpas/sysutils/syshelp.inc"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <TopLine Value="192"/>
         <CursorPos X="6" Y="325"/>
         <UsageCount Value="14"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="extlib/jsontools.pas"/>
@@ -223,7 +222,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="156"/>
         <CursorPos X="14" Y="201"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit>
     </Units>
