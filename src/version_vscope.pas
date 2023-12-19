@@ -5,9 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.0.1';
+  VSCOPE_VERSION = '2.0.2';
 
 (* Version Log
+
+v2.0.2:
+  - Processing RAW_DATA_SCALE json field
 
 v2.0.1:
   - Running autoscale when no view parameters are defined

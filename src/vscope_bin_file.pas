@@ -327,7 +327,7 @@ begin
         if length(wd.data) = 0 then SetLength(wd.data, 1000000)  // start with one millione
                                else SetLength(wd.data, length(wd.data) * 2); // double it
       end;
-      wd.data[ch.fillpos] := v;
+      wd.data[ch.fillpos] := v * wd.raw_data_scale;
       inc(ch.fillpos);
 
       pb += ch.datalen;
@@ -480,7 +480,7 @@ begin
       max_smpidx := smpidx + blksamples;
       while smpidx < max_smpidx do
       begin
-        v := wd.data[smpidx];
+        v := wd.data[smpidx] / wd.raw_data_scale;
         if ch.isfloat then
         begin
           if 8 = ch.datalen then PDouble(pb)^ := v

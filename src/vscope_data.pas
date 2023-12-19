@@ -56,6 +56,8 @@ type
 
     bin_storage_type : byte;  // for the binary format
 
+    raw_data_scale : double;
+
     run_autoscale : boolean;
 
     constructor Create(aname: string; asamplt: double);
@@ -216,6 +218,7 @@ begin
   basealpha := 0.8;
   color := $FFFFFFFF;
   bin_storage_type := $28;  // $28 = double, $12 = int16, $14 = int32
+  raw_data_scale := 1;
   run_autoscale := true;
 end;
 
@@ -259,6 +262,8 @@ begin
 
   jnode.Add('STARTT', startt);
   jnode.Add('DATAUNIT', dataunit);
+  if raw_data_scale <> 1 then jnode.Add('RAW_DATA_SCALE', raw_data_scale);
+
   jnode.Add('COLOR', color);
   jnode.Add('ALPHA', basealpha);
 
@@ -288,11 +293,13 @@ begin
   dataunit := '';
   viewscale := 1;
   viewoffset := 0;
+  raw_data_scale := 1;
   color := $FFFFFFFF;
   run_autoscale := true;
 
   if jnode.Find('STARTT', jv)   then startt   := jv.AsNumber;
   if jnode.Find('DATAUNIT', jv) then dataunit := jv.AsString;
+  if jnode.Find('RAW_DATA_SCALE', jv) then raw_data_scale := jv.AsNumber;
   if jnode.Find('COLOR', jv)    then color    := trunc(jv.AsNumber);
   if jnode.Find('ALPHA', jv)    then basealpha:= jv.AsNumber;
 
