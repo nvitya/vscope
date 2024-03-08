@@ -104,6 +104,7 @@ type
   TScopeData = class
   public
     waves : TWaveDataList;
+    time_unit   : string;
 
     constructor Create;
     destructor Destroy; override;
@@ -267,8 +268,11 @@ begin
   jnode.Add('COLOR', color);
   jnode.Add('ALPHA', basealpha);
 
-  jnode.Add('VIEWSCALE', viewscale);
-  jnode.Add('VIEWOFFSET', viewoffset);
+  if not run_autoscale or (viewscale <> 1) or (viewoffset <> 0) then
+  begin
+    jnode.Add('VIEWSCALE', viewscale);
+    jnode.Add('VIEWOFFSET', viewoffset);
+  end;
 end;
 
 function TWaveData.LoadFromJsonNode(jnode : TJsonNode) : boolean;
@@ -770,6 +774,7 @@ end;
 constructor TScopeData.Create;
 begin
   waves := TWaveDataList.Create;
+  time_unit := 's';
   SetLength(fdata, 256 * 1024); // allocate a static data buffer
 end;
 
@@ -809,8 +814,16 @@ var
   jf : TJsonNode;
   w  : TWaveData;
   jwarr, jn : TJSonNode;
+  jview : TJsonNode;
 begin
   jf := TJsonNode.Create();
+
+  jview := jf.Add('VIEW', nkObject);
+  jview.Add('TIMEUNIT', time_unit);
+
+  //jview.Add('TIMEDIV', TimeDiv);
+  //jview.Add('VIEWSTART', ViewStart);
+  //jview.Add('DRAWSTEPS', draw_steps);
 
   jwarr := jf.Add('WAVES', nkArray);
   for w in waves do
