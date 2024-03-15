@@ -1,12 +1,12 @@
 object frmWaveProps: TfrmWaveProps
-  Left = 1843
-  Height = 185
-  Top = 630
-  Width = 319
+  Left = 1704
+  Height = 160
+  Top = 639
+  Width = 356
   BorderStyle = bsDialog
   Caption = 'Wave Properties'
-  ClientHeight = 185
-  ClientWidth = 319
+  ClientHeight = 160
+  ClientWidth = 356
   OnClose = FormClose
   OnShow = FormShow
   PopupMode = pmAuto
@@ -14,26 +14,26 @@ object frmWaveProps: TfrmWaveProps
   LCLVersion = '2.2.6.0'
   object Label1: TLabel
     Left = 4
-    Height = 15
+    Height = 14
     Top = 8
-    Width = 35
+    Width = 36
     Caption = 'Name:'
     ParentColor = False
   end
   object edName: TEdit
     Left = 4
-    Height = 23
+    Height = 26
     Top = 25
-    Width = 114
+    Width = 88
     OnChange = edNameChange
     TabOrder = 0
     Text = 'edName'
   end
   object tbAlpha: TTrackBar
-    Left = 4
+    Left = 76
     Height = 38
-    Top = 136
-    Width = 112
+    Top = 64
+    Width = 88
     Frequency = 10
     Max = 100
     OnChange = tbAlphaChange
@@ -41,10 +41,10 @@ object frmWaveProps: TfrmWaveProps
     TabOrder = 1
   end
   object btnColor: TColorButton
-    Left = 5
+    Left = 4
     Height = 25
-    Top = 104
-    Width = 113
+    Top = 77
+    Width = 68
     BorderWidth = 2
     ButtonColorSize = 16
     ButtonColor = clBlack
@@ -52,35 +52,35 @@ object frmWaveProps: TfrmWaveProps
     OnColorChanged = btnColorColorChanged
   end
   object Label2: TLabel
-    Left = 4
-    Height = 15
-    Top = 56
-    Width = 52
+    Left = 100
+    Height = 14
+    Top = 8
+    Width = 54
     Caption = 'Data Unit:'
     ParentColor = False
   end
   object edDataUnit: TEdit
-    Left = 4
-    Height = 23
-    Top = 73
-    Width = 62
+    Left = 100
+    Height = 26
+    Top = 25
+    Width = 64
     OnChange = edDataUnitChange
     TabOrder = 2
     Text = 'edDataUnit'
   end
   object btnRescale: TBitBtn
-    Left = 236
+    Left = 196
     Height = 30
-    Top = 148
-    Width = 75
+    Top = 123
+    Width = 72
     Caption = 'Rescale'
     OnClick = btnRescaleClick
     TabOrder = 3
   end
   object pnlInfo: TPanel
-    Left = 128
+    Left = 172
     Height = 99
-    Top = 12
+    Top = 7
     Width = 184
     BevelOuter = bvNone
     ClientHeight = 99
@@ -88,33 +88,33 @@ object frmWaveProps: TfrmWaveProps
     TabOrder = 4
     object Label3: TLabel
       Left = 5
-      Height = 15
+      Height = 14
       Top = 78
-      Width = 57
+      Width = 58
       Caption = 'Total Time:'
       ParentColor = False
     end
     object Label4: TLabel
       Left = 5
-      Height = 15
+      Height = 14
       Top = 54
-      Width = 56
+      Width = 57
       Caption = 'Start Time:'
       ParentColor = False
     end
     object Label5: TLabel
       Left = 5
-      Height = 15
+      Height = 14
       Top = 30
-      Width = 78
+      Width = 81
       Caption = 'Sample Count:'
       ParentColor = False
     end
     object Label6: TLabel
       Left = 5
-      Height = 15
+      Height = 14
       Top = 6
-      Width = 82
+      Width = 84
       Caption = 'Sampling Time:'
       ParentColor = False
     end
@@ -185,13 +185,50 @@ object frmWaveProps: TfrmWaveProps
     end
   end
   object btnSyncWave: TBitBtn
-    Left = 136
+    Left = 276
     Height = 30
-    Top = 148
-    Width = 80
-    Caption = 'Sync'
+    Top = 123
+    Width = 72
+    Caption = 'Resync'
     OnClick = btnSyncWaveClick
     TabOrder = 5
+  end
+  object cbVisible: TCheckBox
+    Left = 103
+    Height = 21
+    Top = 129
+    Width = 61
+    Caption = 'Visible'
+    OnChange = cbVisibleChange
+    TabOrder = 6
+  end
+  object sedGroupId: TSpinEdit
+    Left = 28
+    Height = 24
+    Top = 129
+    Width = 44
+    Alignment = taRightJustify
+    MaxValue = 9
+    MinValue = 1
+    OnChange = sedGroupIdChange
+    TabOrder = 7
+    Value = 1
+  end
+  object Label7: TLabel
+    Left = 4
+    Height = 14
+    Top = 112
+    Width = 37
+    Caption = 'Group:'
+    ParentColor = False
+  end
+  object Label8: TLabel
+    Left = 4
+    Height = 14
+    Top = 59
+    Width = 33
+    Caption = 'Color:'
+    ParentColor = False
   end
   object dlgColors: TColorDialog
     Color = clBlack
@@ -210,7 +247,7 @@ object frmWaveProps: TfrmWaveProps
       'ColorL=F0CAA6'
       'ColorM=FFFF00'
     )
-    Left = 80
-    Top = 28
+    Left = 128
+    Top = 68
   end
 end

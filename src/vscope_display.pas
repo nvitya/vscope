@@ -483,6 +483,11 @@ begin
 
   wshp.Clear; // removes all primitives
 
+  wshp.visible := visible;
+  zeroline.visible := visible;
+
+  if not visible then EXIT; // --->
+
   vi := 0;
   steps := scope.draw_steps;
 
@@ -1104,7 +1109,7 @@ var
 
   t0, t1, t2 : int64;
   tdiv, vstart : double;
-  jstr : ansistring;
+  jstr : ansistring = '';
 
   //rlen : integer;
   brec : TVscopeBinRec; // to shorten some lines
@@ -1382,41 +1387,44 @@ begin
 
   for wd in waves do
   begin
-    maxdi := trunc((maxt - wd.startt) / wd.samplt);
-    if maxdi < 0
-    then
-        continue;
-
-    if maxdi > length(wd.data) then maxdi := length(wd.data);
-
-    di := trunc((mint - wd.startt) / wd.samplt);
-    if di < 0 then di := 0;
-    if di >= length(wd.data)
-    then
-        continue;
-
-    wx := fmargin_pixels + gw * (wd.GetDataIndexTime(di) - ViewStart) / ViewRange;
-    xinc := wd.samplt * gw / ViewRange;
-
-    while di <= maxdi do
+    if wd.visible then
     begin
-      gv := wd.data[di] * wd.viewscale + wd.viewoffset;
+      maxdi := trunc((maxt - wd.startt) / wd.samplt);
+      if maxdi < 0
+      then
+          continue;
 
-      // convert to screen Y coordinates:
-      wy := fmargin_pixels + gh * (0.5 - 0.1 * gv);
+      if maxdi > length(wd.data) then maxdi := length(wd.data);
 
-      dx := wx - x;
-      dy := wy - y;
-      d2 := dx * dx + dy * dy;
-      if d2 < mindist2 then
+      di := trunc((mint - wd.startt) / wd.samplt);
+      if di < 0 then di := 0;
+      if di >= length(wd.data)
+      then
+          continue;
+
+      wx := fmargin_pixels + gw * (wd.GetDataIndexTime(di) - ViewStart) / ViewRange;
+      xinc := wd.samplt * gw / ViewRange;
+
+      while di <= maxdi do
       begin
-        result := wd;
-        mindist2 := d2;
-        rdi := di; //wd.GetDataIndexTime(di);
-      end;
+        gv := wd.data[di] * wd.viewscale + wd.viewoffset;
 
-      inc(di);
-      wx += xinc;
+        // convert to screen Y coordinates:
+        wy := fmargin_pixels + gh * (0.5 - 0.1 * gv);
+
+        dx := wx - x;
+        dy := wy - y;
+        d2 := dx * dx + dy * dy;
+        if d2 < mindist2 then
+        begin
+          result := wd;
+          mindist2 := d2;
+          rdi := di; //wd.GetDataIndexTime(di);
+        end;
+
+        inc(di);
+        wx += xinc;
+      end;
     end;
   end;
 end;

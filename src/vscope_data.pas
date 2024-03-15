@@ -48,6 +48,8 @@ type
 
     dataunit : string;  // data unit
 
+    visible     : boolean;
+    groupid     : integer;
     viewscale   : double;  // display scale
     viewoffset  : double;  // display offset
 
@@ -214,6 +216,8 @@ begin
   startt := 0;
   data := [];
   dataunit := '';
+  visible := true;
+  groupid := 1;
   viewscale := 1;
   viewoffset := 0;
   basealpha := 0.8;
@@ -267,6 +271,8 @@ begin
 
   jnode.Add('COLOR', color);
   jnode.Add('ALPHA', basealpha);
+  jnode.Add('VISIBLE', visible);
+  jnode.Add('GROUPID', groupid);
 
   if not run_autoscale or (viewscale <> 1) or (viewoffset <> 0) then
   begin
@@ -306,6 +312,8 @@ begin
   if jnode.Find('RAW_DATA_SCALE', jv) then raw_data_scale := jv.AsNumber;
   if jnode.Find('COLOR', jv)    then color    := trunc(jv.AsNumber);
   if jnode.Find('ALPHA', jv)    then basealpha:= jv.AsNumber;
+  if jnode.Find('VISIBLE', jv)  then visible  := jv.AsBoolean;
+  if jnode.Find('GROUPID', jv)  then groupid  := trunc(jv.AsNumber);
 
   if jnode.Find('VIEWSCALE', jv) or jnode.Find('DSCALE', jv) then    // (DSCALE is deprecated)
   begin

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, Buttons,
-  ComCtrls, ExtCtrls, vscope_data, vscope_display;
+  ComCtrls, ExtCtrls, Spin, vscope_data, vscope_display;
 
 type
 
@@ -34,6 +34,10 @@ type
     Bevel8 : TBevel;
     Bevel10 : TBevel;
     btnSyncWave : TBitBtn;
+    cbVisible : TCheckBox;
+    sedGroupId : TSpinEdit;
+    Label7 : TLabel;
+    Label8 : TLabel;
     procedure FormClose(Sender : TObject; var CloseAction : TCloseAction);
     procedure FormShow(Sender : TObject);
     procedure btnColorColorChanged(Sender : TObject);
@@ -42,6 +46,8 @@ type
     procedure edDataUnitChange(Sender : TObject);
     procedure btnRescaleClick(Sender : TObject);
     procedure btnSyncWaveClick(Sender : TObject);
+    procedure cbVisibleChange(Sender : TObject);
+    procedure sedGroupIdChange(Sender : TObject);
   private
 
   public
@@ -49,6 +55,8 @@ type
     scope : TScopeDisplay;
 
     procedure UpdateWaveInfo;
+
+    procedure OnPropertyChanged(aredrawwave : boolean);
 
   end;
 
@@ -78,20 +86,21 @@ end;
 procedure TfrmWaveProps.btnColorColorChanged(Sender : TObject);
 begin
   wave.SetColor((wave.color and $FF000000) or (cardinal(btnColor.ButtonColor) and $00FFFFFF));
-  scope.RenderWaves;
-  scope.DoOnPaint;
+  OnPropertyChanged(true);
 end;
 
 procedure TfrmWaveProps.edNameChange(Sender : TObject);
 begin
+  if not edName.Focused then EXIT;
   wave.name := edName.Text;
-  frmMain.chgrid.Repaint;
+  OnPropertyChanged(false);
 end;
 
 procedure TfrmWaveProps.edDataUnitChange(Sender : TObject);
 begin
+  if not edDataUnit.Focused then EXIT;
   wave.dataunit := edDataUnit.Text;
-  //frmMain.chgrid.Repaint;
+  OnPropertyChanged(false);
 end;
 
 procedure TfrmWaveProps.btnRescaleClick(Sender : TObject);
@@ -103,6 +112,20 @@ end;
 procedure TfrmWaveProps.btnSyncWaveClick(Sender : TObject);
 begin
   frmMain.miSyncWave.Click;
+end;
+
+procedure TfrmWaveProps.cbVisibleChange(Sender : TObject);
+begin
+  if not cbVisible.Focused then EXIT;
+  wave.visible := cbVisible.Checked;
+  OnPropertyChanged(true);
+end;
+
+procedure TfrmWaveProps.sedGroupIdChange(Sender : TObject);
+begin
+  if not sedGroupId.Focused then EXIT;
+  wave.groupid := sedGroupId.Value;
+  OnPropertyChanged(false);
 end;
 
 procedure TfrmWaveProps.tbAlphaChange(Sender : TObject);
@@ -130,6 +153,18 @@ begin
   edDataUnit.Text := wave.dataunit;
   btnColor.ButtonColor := (wave.color and $00FFFFFF);
   tbAlpha.Position := round(wave.basealpha * 100);
+  sedGroupId.Value := wave.groupid;
+  cbVisible.Checked := wave.visible;
+end;
+
+procedure TfrmWaveProps.OnPropertyChanged(aredrawwave : boolean);
+begin
+  frmMain.UpdateChGrid;
+  if aredrawwave then
+  begin
+    scope.RenderWaves;
+    scope.DoOnPaint;
+  end;
 end;
 
 initialization

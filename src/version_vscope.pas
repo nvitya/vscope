@@ -5,9 +5,13 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.0.2';
+  VSCOPE_VERSION = '2.1.0';
 
 (* Version Log
+
+v2.1.0:
+  - Added visibility switches (hotkey V)
+  - Added group selection (hotkey 1-9)
 
 v2.0.2:
   - Processing RAW_DATA_SCALE json field

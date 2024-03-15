@@ -1,7 +1,7 @@
 object frmMain: TfrmMain
-  Left = 1609
+  Left = 1298
   Height = 600
-  Top = 139
+  Top = 67
   Width = 800
   AllowDropFiles = True
   Caption = 'VScope'
@@ -189,17 +189,17 @@ object frmMain: TfrmMain
     Left = 0
     Height = 550
     Top = 26
-    Width = 612
+    Width = 564
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 550
-    ClientWidth = 612
+    ClientWidth = 564
     TabOrder = 1
     object sbScope: TScrollBar
       Left = 0
       Height = 20
       Top = 530
-      Width = 612
+      Width = 564
       Align = alBottom
       PageSize = 0
       TabOrder = 0
@@ -210,7 +210,7 @@ object frmMain: TfrmMain
       Left = 0
       Height = 530
       Top = 0
-      Width = 612
+      Width = 564
       Align = alClient
       BevelOuter = bvNone
       Color = clGray
@@ -224,63 +224,85 @@ object frmMain: TfrmMain
     end
   end
   object pnlRight: TPanel
-    Left = 612
+    Left = 564
     Height = 550
     Top = 26
-    Width = 188
+    Width = 236
     Align = alRight
     BevelOuter = bvLowered
     ClientHeight = 550
-    ClientWidth = 188
+    ClientWidth = 236
     TabOrder = 2
     object pnlWaves: TPanel
       Left = 1
       Height = 398
       Top = 1
-      Width = 186
+      Width = 234
       Align = alClient
       ClientHeight = 398
-      ClientWidth = 186
+      ClientWidth = 234
       TabOrder = 0
-      object chgrid: TDrawGrid
+      object chgrid: TStringGrid
         Left = 1
         Height = 396
         Top = 1
-        Width = 184
+        Width = 232
         Align = alClient
-        ColCount = 3
         Columns = <        
           item
+            ButtonStyle = cbsNone
+            Tag = 1
             Title.Caption = 'Ch.'
             Width = 25
           end        
           item
+            ButtonStyle = cbsNone
+            Tag = 2
             Title.Caption = 'Wave'
             Width = 90
           end        
           item
+            Alignment = taRightJustify
+            ButtonStyle = cbsNone
+            Tag = 3
             Title.Caption = 'Units / Div'
             Width = 65
+          end        
+          item
+            ButtonStyle = cbsCheckboxColumn
+            Tag = 4
+            Title.Caption = 'V.'
+            Width = 25
+          end        
+          item
+            Alignment = taCenter
+            ButtonStyle = cbsNone
+            Tag = 5
+            Title.Caption = 'G.'
+            Width = 22
           end>
         ExtendedSelect = False
         FixedCols = 0
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goSmoothScroll]
-        ScrollBars = ssNone
+        MouseWheelOption = mwGrid
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goRowSelect, goThumbTracking, goSmoothScroll]
+        ScrollBars = ssAutoVertical
         TabOrder = 0
-        OnDblClick = tbWavePropsClick
+        OnDblClick = chgridDblClick
         OnDrawCell = chgridDrawCell
+        OnKeyDown = chgridKeyDown
         OnSelection = chgridSelection
+        OnSetCheckboxState = chgridSetCheckboxState
       end
     end
     object pnlInfo: TPanel
       Left = 1
       Height = 150
       Top = 399
-      Width = 186
+      Width = 234
       Align = alBottom
       BevelOuter = bvNone
       ClientHeight = 150
-      ClientWidth = 186
+      ClientWidth = 234
       ParentColor = False
       TabOrder = 1
       object Label1: TLabel
@@ -319,7 +341,7 @@ object frmMain: TfrmMain
         Left = 93
         Height = 20
         Top = 78
-        Width = 89
+        Width = 134
         Alignment = taRightJustify
         Caption = '123'
         Font.Style = [fsBold]
@@ -330,7 +352,7 @@ object frmMain: TfrmMain
         Left = 93
         Height = 20
         Top = 102
-        Width = 89
+        Width = 134
         Alignment = taRightJustify
         Caption = '123'
         Font.Style = [fsBold]
@@ -341,7 +363,7 @@ object frmMain: TfrmMain
         Left = 93
         Height = 20
         Top = 54
-        Width = 89
+        Width = 134
         Alignment = taRightJustify
         Caption = '123'
         Font.Style = [fsBold]
@@ -352,7 +374,7 @@ object frmMain: TfrmMain
         Left = 93
         Height = 20
         Top = 30
-        Width = 89
+        Width = 134
         Alignment = taRightJustify
         Caption = '123'
         Font.Style = [fsBold]
@@ -371,7 +393,7 @@ object frmMain: TfrmMain
         Left = 93
         Height = 20
         Top = 126
-        Width = 89
+        Width = 134
         Alignment = taRightJustify
         Caption = '123'
         Font.Style = [fsBold]
@@ -382,28 +404,28 @@ object frmMain: TfrmMain
         Left = 7
         Height = 6
         Top = 50
-        Width = 175
+        Width = 220
         Shape = bsTopLine
       end
       object Bevel8: TBevel
         Left = 7
         Height = 6
         Top = 74
-        Width = 175
+        Width = 220
         Shape = bsTopLine
       end
       object Bevel10: TBevel
         Left = 7
         Height = 6
         Top = 98
-        Width = 175
+        Width = 220
         Shape = bsTopLine
       end
       object Bevel11: TBevel
         Left = 8
         Height = 6
         Top = 122
-        Width = 175
+        Width = 220
         Shape = bsTopLine
       end
       object Label7: TLabel
@@ -418,14 +440,14 @@ object frmMain: TfrmMain
         Left = 7
         Height = 6
         Top = 26
-        Width = 175
+        Width = 220
         Shape = bsTopLine
       end
       object txtTimeUnit: TStaticText
         Left = 92
         Height = 20
         Top = 6
-        Width = 89
+        Width = 134
         Alignment = taRightJustify
         Caption = 's'
         Font.Style = [fsBold]

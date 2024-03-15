@@ -62,7 +62,6 @@ type
     pnlRight : TPanel;
     pnlWaves : TPanel;
     pnlInfo : TPanel;
-    chgrid : TDrawGrid;
     miSave : TMenuItem;
     miSaveAs : TMenuItem;
     menuWave : TMenuItem;
@@ -136,6 +135,7 @@ type
     miWaveDuplicate : TMenuItem;
     miWaveDelete : TMenuItem;
     miFileMerge : TMenuItem;
+    chgrid : TStringGrid;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -183,6 +183,13 @@ type
     procedure miFileMergeClick(Sender : TObject);
     procedure miSaveClick(Sender : TObject);
     procedure tbSaveAsClick(Sender : TObject);
+    procedure chgridGetCheckboxState(Sender : TObject; ACol, ARow : Integer;
+      var Value : TCheckboxState);
+    procedure chgridSetCheckboxState(Sender : TObject; ACol, ARow : Integer;
+      const Value : TCheckboxState);
+    procedure chgridDblClick(Sender : TObject);
+    procedure chgridKeyDown(Sender : TObject; var Key : Word;
+      Shift : TShiftState);
   private
 
   public
@@ -321,6 +328,8 @@ var
 begin
   if arow = 0 then Exit;  // keep the header as it is
 
+  if acol <> 0 then Exit; // this is only for the channel number
+
   w := scope.waves[aRow - 1];
   if w = nil then Exit;
 
@@ -339,6 +348,7 @@ begin
     ts.Alignment := taCenter;
     c.Font.Color := 0;  // always black (even when the row is highlighted)
   end
+{
   else if 1 = acol then
   begin
     s := w.name;
@@ -348,6 +358,7 @@ begin
     s := w.ScalingStr;
     ts.Alignment := taRightJustify;
   end
+}
   {
   else if 3 = acol then // cursor value
   begin
@@ -355,7 +366,7 @@ begin
     ts.Alignment := taRightJustify;
   end
   }
-  else s := '?';
+  else s := '';
 
   c.TextStyle := ts;
   c.TextRect(aRect, arect.Left, arect.top, s);
@@ -677,6 +688,44 @@ begin
   end;
 end;
 
+procedure TfrmMain.chgridGetCheckboxState(Sender : TObject; ACol,
+  ARow : Integer; var Value : TCheckboxState);
+begin
+  //if ((arow and 1) = 1) then Value := cbChecked else Value := cbUnchecked;
+end;
+
+procedure TfrmMain.chgridSetCheckboxState(Sender : TObject; ACol, ARow : Integer; const Value : TCheckboxState);
+var
+  wi : integer;
+  wd : TWaveDisplay;
+begin
+  wi := ARow - 1;
+  if (wi < 0) or (wi >= scope.waves.Count)
+  then
+      EXIT;
+
+  wd := scope.waves[wi];
+  wd.visible := (Value = cbChecked);
+  chgrid.Cells[ACol, ARow] := IntToStr(ord(wd.visible));
+
+  UpdateWavePopupWins;
+  scope.RenderWaves;
+  scope.Refresh;
+end;
+
+procedure TfrmMain.chgridDblClick(Sender : TObject);
+var
+  pt: TPoint;
+  col, row : integer;
+begin
+  pt := chgrid.ScreenToClient(Mouse.CursorPos);
+  chgrid.MouseToCell(pt.X, pt.Y, Col, Row);
+  if col <> 3 then
+  begin
+    tbWavePropsClick(Sender);
+  end;
+end;
+
 procedure TfrmMain.FormDropFiles(Sender : TObject; const FileNames : array of string);
 begin
   LoadScopeFile(FileNames[0]);
@@ -694,7 +743,8 @@ end;
 
 procedure TfrmMain.tbWavePropsClick(Sender : TObject);
 var
-  gpos : TPoint;
+  gpos, mpos : TPoint;
+  maxx : integer;
 begin
   if SelectedWave = nil then SelectWave(0);
   if SelectedWave = nil then EXIT;
@@ -704,8 +754,14 @@ begin
     Application.CreateForm(TfrmWaveProps, frmWaveProps);
     frmWaveProps.scope := self.scope;
     gpos := chgrid.ClientToScreen( Point(0,0) );
-    frmWaveProps.Left := gpos.x;
-    frmWaveProps.Top  := gpos.y + chgrid.Height - frmWaveProps.Height;
+    mpos := Mouse.CursorPos;
+
+    maxx := gpos.x - frmWaveProps.Width + chgrid.Width;
+    //frmWaveProps.Left := maxx;
+    frmWaveProps.Left := mpos.x - frmWaveProps.Width div 2;
+    if frmWaveProps.Left > maxx then frmWaveProps.Left := maxx;
+    //frmWaveProps.Top  := gpos.y + chgrid.Height - frmWaveProps.Height;
+    frmWaveProps.Top  := mpos.y + 20;
   end;
 
   frmWaveProps.wave := SelectedWave;
@@ -727,12 +783,15 @@ end;
 procedure TfrmMain.FormKeyDown(Sender : TObject; var Key : Word; Shift : TShiftState);
 var
   scpos : TPoint;
+  w : TWaveDisplay;
 begin
   scpos := scope.ScreenToClient(Mouse.CursorPos);
   if (scpos.x < 0) or (scpos.x > scope.Width)
      or (scpos.y < 0) or (scpos.y > scope.Height)
   then
       EXIT;
+
+  w := SelectedWave;
 
   if key = VK_A then
   begin
@@ -745,6 +804,19 @@ begin
   begin
     //marker_placing := 2;
     scope.SetMarker(1, cursor_time);
+    scope.DoOnPaint;
+    UpdateWavePopupWins;
+  end
+  else if key = VK_V then
+  begin
+    if w <> nil then
+    begin
+      w.visible := not w.visible;
+      scope.RenderWaves;
+      scope.DoOnPaint;
+      UpdateChGrid;
+      UpdateWavePopupWins;
+    end;
     scope.DoOnPaint;
     UpdateWavePopupWins;
   end
@@ -763,10 +835,48 @@ begin
   else if key = VK_PRIOR then
   begin
     tbScalePlus.Click;
-  end;
+  end
+  else if (key >= VK_1) and (key <= VK_9) then
+  begin
+    if w <> nil then
+    begin
+      w.groupid := (key - VK_0);
+      UpdateChGrid;
+      UpdateWavePopupWins;
+    end;
+  end
+  ;
+
 
   key := 0; // do not pass on the keypresses to other controls
 end;
+
+procedure TfrmMain.chgridKeyDown(Sender : TObject; var Key : Word; Shift : TShiftState);
+var
+  w : TWaveDisplay;
+begin
+  w := SelectedWave;
+  if w = nil then Exit;
+
+  if (key >= VK_1) and (key <= VK_9) then
+  begin
+    w.groupid := (key - VK_0);
+    UpdateChGrid;
+    UpdateWavePopupWins;
+    key := 0;
+  end
+  else if key = VK_V then
+  begin
+    w.visible := not w.visible;
+    scope.RenderWaves;
+    scope.DoOnPaint;
+    UpdateChGrid;
+    UpdateWavePopupWins;
+    key := 0;
+  end
+  ;
+end;
+
 
 procedure TfrmMain.tbABMeasureClick(Sender : TObject);
 begin
@@ -977,8 +1087,30 @@ begin
 end;
 
 procedure TfrmMain.UpdateChGrid;
+var
+  wd : TWaveDisplay;
+  row : integer;
+  col : integer;
+  coltag : integer;
+  s : string;
 begin
   chgrid.RowCount := 1 + scope.waves.Count;
+  row := 1;
+  for wd in scope.waves do
+  begin
+    for col := 0 to chgrid.ColCount-1 do
+    begin
+      coltag := chgrid.Columns[col].Tag; // kind of equivalend of field name, allows free column re-ordering
+      if      coltag = 1 then  s := IntToStr(row)  // channel number
+      else if coltag = 2 then  s := wd.name        // channel name
+      else if coltag = 3 then  s := wd.ScalingStr
+      else if coltag = 4 then  s := IntToStr(ord(wd.visible))
+      else if coltag = 5 then  s := IntToStr(wd.groupid)
+      ;
+      chgrid.Cells[col, row] := s;
+    end;
+    Inc(row);
+  end;
   chgrid.Refresh;
   //UpdateSampling;
   //UpdateChGrid2;
@@ -1111,7 +1243,7 @@ begin
   wd.CorrectOffset;
   scope.RenderWaves;
   scope.Repaint;
-  chgrid.Refresh;
+  UpdateChGrid;
 end;
 
 procedure TfrmMain.UpdateInfoGrid;
@@ -1120,14 +1252,14 @@ var
   sm : TScopeMarker;
 begin
   txtTimeUnit.Caption := scope.time_unit;
-  txtTotalLength.Caption := format('%.6f', [scope.TimeRange]);
-  txtViewLength.Caption := format('%.6f', [scope.ViewRange]);
-  txtCursorTime.Caption := format('%.6f', [cursor_time]);
+  txtTotalLength.Caption := format('%.9f', [scope.TimeRange]);
+  txtViewLength.Caption := format('%.9f', [scope.ViewRange]);
+  txtCursorTime.Caption := format('%.9f', [cursor_time]);
 
   sm := scope.marker[0];
   if sm.Visible
   then
-      s := format('%.6f', [cursor_time - sm.mtime])
+      s := format('%.9f', [cursor_time - sm.mtime])
   else
       s := '-';
   txtCursorToA.Caption := s;
@@ -1135,7 +1267,7 @@ begin
   sm := scope.marker[1];
   if sm.Visible
   then
-      s := format('%.6f', [cursor_time - sm.mtime])
+      s := format('%.9f', [cursor_time - sm.mtime])
   else
       s := '-';
   txtCursorToB.Caption := s;
