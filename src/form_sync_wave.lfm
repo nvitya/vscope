@@ -11,12 +11,12 @@ object frmSyncWave: TfrmSyncWave
   OnClose = FormClose
   PopupMode = pmAuto
   Position = poDefaultSizeOnly
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '2.2.6.0'
   object pnlWaveColor: TPanel
     Left = 4
     Height = 26
     Top = 8
-    Width = 325
+    Width = 206
     Anchors = [akTop, akLeft, akRight]
     Caption = '-'
     TabOrder = 0
@@ -157,5 +157,14 @@ object frmSyncWave: TfrmSyncWave
     Width = 70
     Caption = 'Mouse Drag:'
     ParentColor = False
+  end
+  object cbGroup: TCheckBox
+    Left = 232
+    Height = 21
+    Top = 10
+    Width = 78
+    Caption = '+ Group 2'
+    OnChange = cbGroupChange
+    TabOrder = 10
   end
 end

@@ -10,6 +10,12 @@ uses
 
 type
 
+  TOrigWaveData = record
+    wd     : TWaveDisplay;
+    samplt : double;
+    startt : double;
+  end;
+
   { TfrmSyncWave }
 
   TfrmSyncWave = class(TForm)
@@ -28,23 +34,28 @@ type
     btnClose : TBitBtn;
     rbStrechToB : TRadioButton;
     Label5 : TLabel;
+    cbGroup : TCheckBox;
     procedure FormClose(Sender : TObject; var CloseAction : TCloseAction);
     procedure btnCloseClick(Sender : TObject);
     procedure btnResetClick(Sender : TObject);
     procedure speStartTimeChange(Sender : TObject);
     procedure FormActivate(Sender : TObject);
+    procedure cbGroupChange(Sender : TObject);
   private
 
   public
     wave  : TWaveDisplay;
     scope : TScopeDisplay;
+    groupid : integer;
 
-    orig_startt : double;
-    orig_samplt  : double;
+    origdata : array of TOrigWaveData;
+    odw_samplt : double;
+    odw_startt : double;
 
     procedure SetupWave;
 
     procedure UpdateWaveInfo;
+    procedure ApplyToGroup;
 
   end;
 
@@ -74,9 +85,16 @@ begin
 end;
 
 procedure TfrmSyncWave.btnResetClick(Sender : TObject);
+var
+  wd    : TWaveDisplay;
+  odidx : integer;
 begin
-  wave.startt := orig_startt;
-  wave.samplt := orig_samplt;
+  for odidx := 0 to length(origdata) - 1 do
+  begin
+    wd := origdata[odidx].wd;
+    wd.startt := origdata[odidx].startt;
+    wd.samplt := origdata[odidx].samplt;
+  end;
   UpdateWaveInfo;
   scope.RenderWaves;
   scope.Repaint;
@@ -106,21 +124,48 @@ begin
   speStartTime.Increment := scope.ViewRange / 100;
 end;
 
+procedure TfrmSyncWave.cbGroupChange(Sender : TObject);
+begin
+  ApplyToGroup;
+  scope.Refresh;
+end;
+
 procedure TfrmSyncWave.SetupWave;
+var
+  wd    : TWaveDisplay;
+  odcnt : integer;
 begin
   pnlWaveColor.Color := (wave.color and $00FFFFFF);
   pnlWaveColor.Caption := wave.name;
+  groupid := wave.groupid;
+  cbGroup.Caption := '+ Group '+IntToStr(groupid);
 
-  orig_startt := wave.startt;
-  orig_samplt := wave.samplt;
+  // save origdata for all waves in this group;
+  odcnt := 0;
+  SetLength(origdata, 0);
+  for wd in scope.waves do
+  begin
+    if wd.groupid = groupid then
+    begin
+      SetLength(origdata, odcnt + 1);
+      origdata[odcnt].wd     := wd;
+      origdata[odcnt].samplt := wd.samplt;
+      origdata[odcnt].startt := wd.startt;
+      Inc(odcnt);
+    end;
+  end;
 
-  txtOrigStart.Caption := FloatToStr(orig_startt, float_number_format);
-  txtOrigSmpt.Caption  := FloatToStr(orig_samplt, float_number_format);
+  // for the simplicity of transform calculations save the selected wave original data here too:
+  odw_samplt := wave.samplt;
+  odw_startt := wave.startt;
+
+  txtOrigStart.Caption := FloatToStr(odw_startt, float_number_format);
+  txtOrigSmpt.Caption  := FloatToStr(odw_samplt, float_number_format);
 
   UpdateWaveInfo;
 end;
 
-procedure TfrmSyncWave.UpdateWaveInfo;
+procedure TfrmSyncWave.UpdateWaveInfo;  // called when the wave was moved
 begin
   if wave = nil then EXIT;
 
@@ -128,6 +173,39 @@ begin
   speSamplingTime.Value := wave.samplt;
 
   speStartTime.Increment := scope.ViewRange / 100;
+
+  ApplyToGroup;
+end;
+
+procedure TfrmSyncWave.ApplyToGroup;
+var
+  new_waveshift   : double;
+  new_wavestretch : double;
+  gwi : integer;
+  wd : TWaveDisplay;
+begin
+
+  if cbGroup.Checked then
+  begin
+    new_waveshift   := wave.startt - odw_startt;
+    new_wavestretch := wave.samplt / odw_samplt;
+  end
+  else
+  begin
+    new_waveshift   := 0;
+    new_wavestretch := 1;
+  end;
+
+  for gwi := 0 to length(origdata) - 1 do
+  begin
+    wd := origdata[gwi].wd;
+    if wd <> wave then
+    begin
+      wd.startt := origdata[gwi].startt + new_waveshift;
+      wd.samplt := origdata[gwi].samplt * new_wavestretch;
+      wd.ReDrawWave;
+    end;
+  end;
 end;
 
 initialization

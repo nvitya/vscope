@@ -5,9 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.1.0';
+  VSCOPE_VERSION = '2.1.1';
 
 (* Version Log
+
+v2.1.1:
+  - Wave Syncronization can be applied to the wave group
 
 v2.1.0:
   - Added visibility switches (hotkey V)
