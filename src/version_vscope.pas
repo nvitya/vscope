@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.1.2';
+  VSCOPE_VERSION = '2.1.3';
 
 (* Version Log
 
+v2.1.3:
+  - Wave stretching with lo-res wave fixed
 v2.1.2:
   - Exponential sampling time display/edit
 v2.1.1:

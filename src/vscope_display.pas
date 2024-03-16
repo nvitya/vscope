@@ -43,7 +43,7 @@ type
   TWaveDisplay = class(TWaveData)
   public
     lores_data : array of double;
-    lores_samplt : double;
+    lores_samplt_mul : double;
 
     procedure MakeLoresData;
     procedure InvalidateLoresData;
@@ -417,8 +417,8 @@ begin
 
   // search min and max every loresmul / 2 points
   lrdi := 0;
-  lores_samplt := samplt * (loresmul shr 1);
-  SetLength(lores_data, length(data) div (loresmul shr 2));
+  lores_samplt_mul := (loresmul div 2);
+  SetLength(lores_data, length(data) div (loresmul div 4));
   maxdi := length(data) - 1;
   minval := 0;
   maxval := 0;
@@ -498,7 +498,7 @@ begin
     if length(lores_data) <= 0 then MakeLoresData;
 
     disp_data := lores_data;
-    disp_samplt := lores_samplt;
+    disp_samplt := samplt * lores_samplt_mul;
     steps := false;
   end
   else

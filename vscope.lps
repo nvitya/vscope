@@ -109,7 +109,7 @@
       <Unit>
         <Filename Value="src/vscope_bin_file.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="1"/>
         <TopLine Value="429"/>
         <CursorPos X="42" Y="475"/>
@@ -118,7 +118,7 @@
       </Unit>
       <Unit>
         <Filename Value="extlib/ddgfx.pas"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="1"/>
         <CursorPos Y="30"/>
         <UsageCount Value="84"/>
@@ -133,10 +133,10 @@
       </Unit>
       <Unit>
         <Filename Value="src/vscope_display.pas"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="15"/>
-        <CursorPos X="14" Y="169"/>
+        <TopLine Value="456"/>
+        <CursorPos X="22" Y="478"/>
         <UsageCount Value="84"/>
         <Bookmarks Count="1">
           <Item0 X="19" Y="1390" ID="1"/>
@@ -222,7 +222,7 @@
       <Unit>
         <Filename Value="extlib/jsontools.pas"/>
         <UnitName Value="JsonTools"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
         <TopLine Value="156"/>
         <CursorPos X="14" Y="201"/>
@@ -262,38 +262,24 @@
       </Unit>
       <Unit>
         <Filename Value="C:/lazarus64/fpc/3.2.2/source/rtl/objpas/sysutils/sysstrh.inc"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <TopLine Value="124"/>
         <CursorPos X="10" Y="167"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="C:/lazarus64/fpc/3.2.2/source/rtl/objpas/sysutils/sysinth.inc"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <CursorPos X="3" Y="33"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit>
     </Units>
     <OtherDefines Count="1">
       <Define0 Value="TRACES"/>
     </OtherDefines>
-    <JumpHistory HistoryIndex="28">
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="817" TopLine="770"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="858" Column="36" TopLine="839"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="815" Column="42" TopLine="794"/>
-      </Position>
+    <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="src/form_main.pas"/>
         <Caret Line="858" Column="3" TopLine="794"/>
@@ -387,10 +373,6 @@
         <Caret Line="179" Column="49" TopLine="142"/>
       </Position>
       <Position>
-        <Filename Value="C:/lazarus64/fpc/3.2.2/source/rtl/objpas/sysutils/sysstrh.inc"/>
-        <Caret Line="184" Column="10" TopLine="147"/>
-      </Position>
-      <Position>
         <Filename Value="src/version_vscope.pas"/>
         <Caret Line="34" Column="86"/>
       </Position>
@@ -399,8 +381,24 @@
         <Caret Line="179" Column="58" TopLine="142"/>
       </Position>
       <Position>
-        <Filename Value="C:/lazarus64/fpc/3.2.2/source/rtl/objpas/sysutils/sysstrh.inc"/>
-        <Caret Line="167" Column="10" TopLine="124"/>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="61" Column="21" TopLine="25"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="501" Column="32" TopLine="465"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="423" Column="25" TopLine="375"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="46" Column="21"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="420" Column="41" TopLine="375"/>
       </Position>
     </JumpHistory>
     <RunParams>
@@ -408,7 +406,7 @@
       <Modes ActiveMode="default">
         <Mode Name="default">
           <local>
-            <CommandLineParams Value="scopex.vscope"/>
+            <CommandLineParams Value="ms_scope_0001.bscope"/>
           </local>
         </Mode>
       </Modes>
@@ -421,10 +419,10 @@
         <Item4 Value="C:\Windows\system32\cmd.exe /C ${TargetCmdLine}"/>
       </List>
       <List Name="CommandLineParameters" Count="14">
-        <Item1 Value="scopex.vscope"/>
-        <Item2 Value="scopex.bscope"/>
-        <Item3 Value="ms_scope_0001b.bscope"/>
-        <Item4 Value="ms_scope_0001.bscope"/>
+        <Item1 Value="ms_scope_0001.bscope"/>
+        <Item2 Value="scopex.vscope"/>
+        <Item3 Value="scopex.bscope"/>
+        <Item4 Value="ms_scope_0001b.bscope"/>
         <Item5 Value="hs_scope_0001b.bscope"/>
         <Item6 Value="hs_scope_0001.bscope"/>
         <Item7 Value="hs_scope_0002.bscope"/>
@@ -436,6 +434,7 @@
         <Item13 Value="wdttest.vscope"/>
         <Item14 Value="ni_onephase.vscope"/>
       </List>
+      <List Name="WorkingDirectory" Type="File" Count="1"/>
     </HistoryLists>
   </ProjectSession>
   <Debugging>
