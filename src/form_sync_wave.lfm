@@ -11,7 +11,7 @@ object frmSyncWave: TfrmSyncWave
   OnClose = FormClose
   PopupMode = pmAuto
   Position = poDefaultSizeOnly
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '3.2.0.0'
   object pnlWaveColor: TPanel
     Left = 4
     Height = 26
@@ -23,48 +23,36 @@ object frmSyncWave: TfrmSyncWave
   end
   object Label1: TLabel
     Left = 6
-    Height = 14
+    Height = 15
     Top = 88
-    Width = 57
+    Width = 56
     Caption = 'Start Time:'
     ParentColor = False
   end
   object speStartTime: TFloatSpinEdit
     Left = 6
-    Height = 24
+    Height = 23
     Top = 108
     Width = 102
-    DecimalPlaces = 6
+    DecimalPlaces = 9
     MaxValue = 1000000000
     MinValue = -1000000000
     OnChange = speStartTimeChange
     TabOrder = 1
   end
-  object speSamplingTime: TFloatSpinEdit
-    Left = 122
-    Height = 24
-    Top = 108
-    Width = 90
-    DecimalPlaces = 6
-    Increment = 1E-6
-    MaxValue = 1000000000
-    MinValue = -1000000000
-    OnChange = speStartTimeChange
-    TabOrder = 2
-  end
   object Label2: TLabel
     Left = 122
-    Height = 14
+    Height = 15
     Top = 88
-    Width = 84
+    Width = 82
     Caption = 'Sampling Time:'
     ParentColor = False
   end
   object Label3: TLabel
     Left = 6
-    Height = 14
+    Height = 15
     Top = 43
-    Width = 74
+    Width = 72
     Caption = 'Original Start:'
     ParentColor = False
   end
@@ -78,13 +66,13 @@ object frmSyncWave: TfrmSyncWave
     Caption = '123'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 3
+    TabOrder = 2
   end
   object Label4: TLabel
     Left = 120
-    Height = 14
+    Height = 15
     Top = 43
-    Width = 90
+    Width = 87
     Caption = 'Original Smp. T.:'
     ParentColor = False
   end
@@ -98,25 +86,25 @@ object frmSyncWave: TfrmSyncWave
     Caption = '123'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 4
+    TabOrder = 3
   end
   object rbShifting: TRadioButton
     Left = 236
-    Height = 21
+    Height = 19
     Top = 64
-    Width = 48
+    Width = 42
     Caption = 'Shift'
     Checked = True
-    TabOrder = 5
+    TabOrder = 4
     TabStop = True
   end
   object rbStrechToA: TRadioButton
     Left = 236
-    Height = 21
+    Height = 19
     Top = 88
-    Width = 86
+    Width = 80
     Caption = 'Stretch to A'
-    TabOrder = 6
+    TabOrder = 5
   end
   object btnReset: TBitBtn
     Left = 122
@@ -128,7 +116,7 @@ object frmSyncWave: TfrmSyncWave
     Kind = bkCancel
     ModalResult = 2
     OnClick = btnResetClick
-    TabOrder = 7
+    TabOrder = 6
   end
   object btnClose: TBitBtn
     Left = 6
@@ -140,31 +128,39 @@ object frmSyncWave: TfrmSyncWave
     Kind = bkOK
     ModalResult = 1
     OnClick = btnCloseClick
-    TabOrder = 8
+    TabOrder = 7
   end
   object rbStrechToB: TRadioButton
     Left = 236
-    Height = 21
+    Height = 19
     Top = 112
-    Width = 86
+    Width = 79
     Caption = 'Stretch to B'
-    TabOrder = 9
+    TabOrder = 8
   end
   object Label5: TLabel
     Left = 228
-    Height = 14
+    Height = 15
     Top = 43
-    Width = 70
+    Width = 67
     Caption = 'Mouse Drag:'
     ParentColor = False
   end
   object cbGroup: TCheckBox
     Left = 232
-    Height = 21
+    Height = 19
     Top = 10
-    Width = 78
+    Width = 71
     Caption = '+ Group 2'
+    TabOrder = 9
     OnChange = cbGroupChange
+  end
+  object edSamplingTime: TEdit
+    Left = 122
+    Height = 23
+    Top = 108
+    Width = 90
     TabOrder = 10
+    OnChange = speStartTimeChange
   end
 end

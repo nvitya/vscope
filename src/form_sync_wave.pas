@@ -21,8 +21,8 @@ type
   TfrmSyncWave = class(TForm)
     pnlWaveColor : TPanel;
     Label1 : TLabel;
+    edSamplingTime: TEdit;
     speStartTime : TFloatSpinEdit;
-    speSamplingTime : TFloatSpinEdit;
     Label2 : TLabel;
     Label3 : TLabel;
     txtOrigStart : TStaticText;
@@ -101,6 +101,8 @@ begin
 end;
 
 procedure TfrmSyncWave.speStartTimeChange(Sender : TObject);
+var
+  fv : double;
 begin
   if speStartTime.Focused then
   begin
@@ -109,11 +111,15 @@ begin
     scope.Repaint;
   end;
 
-  if speSamplingTime.Focused then
+  if edSamplingTime.Focused then
   begin
-    wave.samplt := speSamplingTime.Value;
-    scope.RenderWaves;
-    scope.Repaint;
+    try
+      wave.samplt := StrToFloat(edSamplingTime.Text);
+      scope.RenderWaves;
+      scope.Repaint;
+    except
+      ;
+    end;
   end;
 end;
 
@@ -170,7 +176,7 @@ begin
   if wave = nil then EXIT;
 
   speStartTime.Value := wave.startt;
-  speSamplingTime.Value := wave.samplt;
+  edSamplingTime.Text := FloatToStrF(wave.samplt, ffExponent, 9, 0, float_number_format);
 
   speStartTime.Increment := scope.ViewRange / 100;
 

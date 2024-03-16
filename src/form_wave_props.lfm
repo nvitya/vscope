@@ -11,23 +11,23 @@ object frmWaveProps: TfrmWaveProps
   OnShow = FormShow
   PopupMode = pmAuto
   Position = poDefaultSizeOnly
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '3.2.0.0'
   object Label1: TLabel
     Left = 4
-    Height = 14
+    Height = 15
     Top = 8
-    Width = 36
+    Width = 35
     Caption = 'Name:'
     ParentColor = False
   end
   object edName: TEdit
     Left = 4
-    Height = 26
+    Height = 23
     Top = 25
     Width = 88
-    OnChange = edNameChange
     TabOrder = 0
     Text = 'edName'
+    OnChange = edNameChange
   end
   object tbAlpha: TTrackBar
     Left = 76
@@ -53,20 +53,20 @@ object frmWaveProps: TfrmWaveProps
   end
   object Label2: TLabel
     Left = 100
-    Height = 14
+    Height = 15
     Top = 8
-    Width = 54
+    Width = 52
     Caption = 'Data Unit:'
     ParentColor = False
   end
   object edDataUnit: TEdit
     Left = 100
-    Height = 26
+    Height = 23
     Top = 25
     Width = 64
-    OnChange = edDataUnitChange
     TabOrder = 2
     Text = 'edDataUnit'
+    OnChange = edDataUnitChange
   end
   object btnRescale: TBitBtn
     Left = 196
@@ -88,33 +88,33 @@ object frmWaveProps: TfrmWaveProps
     TabOrder = 4
     object Label3: TLabel
       Left = 5
-      Height = 14
+      Height = 15
       Top = 78
-      Width = 58
+      Width = 57
       Caption = 'Total Time:'
       ParentColor = False
     end
     object Label4: TLabel
       Left = 5
-      Height = 14
+      Height = 15
       Top = 54
-      Width = 57
+      Width = 56
       Caption = 'Start Time:'
       ParentColor = False
     end
     object Label5: TLabel
       Left = 5
-      Height = 14
+      Height = 15
       Top = 30
-      Width = 81
+      Width = 78
       Caption = 'Sample Count:'
       ParentColor = False
     end
     object Label6: TLabel
       Left = 5
-      Height = 14
+      Height = 15
       Top = 6
-      Width = 84
+      Width = 82
       Caption = 'Sampling Time:'
       ParentColor = False
     end
@@ -195,16 +195,16 @@ object frmWaveProps: TfrmWaveProps
   end
   object cbVisible: TCheckBox
     Left = 103
-    Height = 21
+    Height = 19
     Top = 129
-    Width = 61
+    Width = 52
     Caption = 'Visible'
-    OnChange = cbVisibleChange
     TabOrder = 6
+    OnChange = cbVisibleChange
   end
   object sedGroupId: TSpinEdit
     Left = 28
-    Height = 24
+    Height = 23
     Top = 129
     Width = 44
     Alignment = taRightJustify
@@ -216,17 +216,17 @@ object frmWaveProps: TfrmWaveProps
   end
   object Label7: TLabel
     Left = 4
-    Height = 14
+    Height = 15
     Top = 112
-    Width = 37
+    Width = 36
     Caption = 'Group:'
     ParentColor = False
   end
   object Label8: TLabel
     Left = 4
-    Height = 14
+    Height = 15
     Top = 59
-    Width = 33
+    Width = 32
     Caption = 'Color:'
     ParentColor = False
   end

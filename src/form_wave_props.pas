@@ -141,7 +141,8 @@ var
 begin
   if wave = nil then EXIT; // unexpected call
 
-  txtSamplingTime.Caption := FloatToStrF(wave.samplt, ffFixed, 0, 6, float_number_format);
+  txtSamplingTime.Caption := FloatToStrF(wave.samplt, ffExponent, 6, 0, float_number_format);
+  //txtSamplingTime.Caption := FloatToStrF(wave.samplt, ffFixed, 0, 6, float_number_format);
   txtSampleCount.Caption  := IntToStr(length(wave.data));
   txtTotalTime.Caption := FloatToStrF(wave.EndTime - wave.StartTime, ffFixed, 0, 6, float_number_format);
   txtStartTime.Caption := FloatToStrF(wave.StartTime, ffFixed, 0, 6, float_number_format);
