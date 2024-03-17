@@ -105,8 +105,11 @@ type
 
   TScopeData = class
   public
+    jroot : TJsonNode;
+
     waves : TWaveDataList;
     time_unit   : string;
+    binary_data : boolean;
 
     constructor Create;
     destructor Destroy; override;
@@ -116,13 +119,11 @@ type
 
     procedure ClearWaves;
 
-    procedure SaveToJsonFile(afilename : string);
-    procedure LoadFromJsonFile(afilename : string);
-
-    procedure LoadFromBinFile(afilename : string);
+    procedure LoadFromFile(afilename : string);
+    procedure SaveToFile(afilename : string);
 
   private
-    fdata : array of byte;  // local buffer
+    fdata  : array of byte;  // local buffer
   end;
 
 
@@ -135,6 +136,9 @@ var
   float_number_format : TFormatSettings;
 
 implementation
+
+uses
+  vscope_bin_file;
 
 const
   hexchar_array : array of char = ('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F');
@@ -781,7 +785,9 @@ end;
 
 constructor TScopeData.Create;
 begin
+  jroot := TJsonNode.Create;
   waves := TWaveDataList.Create;
+  binary_data := false;
   time_unit := 's';
   SetLength(fdata, 256 * 1024); // allocate a static data buffer
 end;
@@ -790,6 +796,7 @@ destructor TScopeData.Destroy;
 begin
   ClearWaves;
   SetLength(fdata, 0);
+  jroot.Free;
   inherited Destroy;
 end;
 
@@ -817,71 +824,136 @@ begin
   waves.Clear;
 end;
 
-procedure TScopeData.SaveToJsonFile(afilename : string);
+procedure TScopeData.LoadFromFile(afilename : string);
 var
-  jf : TJsonNode;
-  w  : TWaveData;
-  jwarr, jn : TJSonNode;
-  jview : TJsonNode;
-begin
-  jf := TJsonNode.Create();
+  i : integer;
+  brec : TVscopeBinRec; // to shorten some lines
+  jstr : ansistring = '';
 
-  jview := jf.Add('VIEW', nkObject);
+  run_autoscale : boolean;
+
+  wd : TWaveData;
+
+  jf, jwlist, jw : TJsonNode;
+  jn : TJsonNode;
+  jview, jv : TJsonNode;
+  jmarkers : TJsonNode;
+
+  fbfile : TVscopeBinFile = nil;
+begin
+  jroot.Clear;
+  ClearWaves;
+
+  try
+    binary_data := (UpperCase(ExtractFileExt(afilename)) = '.BSCOPE');
+    if binary_data then
+    begin
+      fbfile := TVscopeBinFile.Create;
+      fbfile.Open(afilename);
+      brec := fbfile.currec;
+      if brec.marker <> 'J'
+      then
+          raise EScopeData.Create('J-Record is missing!');
+
+      if brec.addinfo > 64000
+      then
+          raise EScopeData.Create('J-Record is too long: '+IntToStr(brec.addinfo));
+
+      SetLength(jstr, brec.addinfo);
+      move(brec.dataptr^, jstr[1], brec.addinfo);
+
+      jroot.Parse(jstr);
+    end
+    else
+    begin
+      jroot.LoadFromFile(afilename);
+    end;
+
+    run_autoscale := true;
+
+    jwlist := jroot.Find('WAVES');
+    if jwlist = nil
+    then
+        raise EScopeData.Create('Scope data format error: "WAVES" node not found.');
+
+    for i := 0 to jwlist.Count - 1 do
+    begin
+      jw := jwlist.Child(i);
+      wd := AddWave('???', 1/1000);
+      if wd.LoadFromJsonNode(jw)
+      then
+          run_autoscale := (run_autoscale and wd.run_autoscale)
+      else
+          DeleteWave(wd);
+
+      jw.Add('VALUES', '');  // clear the wave data, as it might require lot of RAM
+    end;
+
+    if binary_data then
+    begin
+      fbfile.ClearWaves();
+      for wd in waves do  fbfile.AddWave(wd);
+
+      fbfile.LoadWaveData();
+    end;
+
+    // MARKERS and some VIEW fields are not loaded here.
+
+  finally
+    if fbfile <> nil then FreeAndNil(fbfile);
+  end;
+end;
+
+procedure TScopeData.SaveToFile(afilename : string);
+var
+  wd    : TWaveData;
+  jview : TJsonNode;
+  //jmarkers : TJsonNode;
+  jwarr, jn : TJSonNode;
+  fbfile : TVscopeBinFile = nil;
+begin
+  binary_data := (UpperCase(ExtractFileExt(afilename)) = '.BSCOPE');
+
+  if not jroot.Find('VIEW', jview) then jview := jroot.Add('VIEW', nkObject);
   jview.Add('TIMEUNIT', time_unit);
 
   //jview.Add('TIMEDIV', TimeDiv);
   //jview.Add('VIEWSTART', ViewStart);
   //jview.Add('DRAWSTEPS', draw_steps);
 
-  jwarr := jf.Add('WAVES', nkArray);
-  for w in waves do
+  (*
+  jmarkers := jf.Add('MARKERS', nkArray);
+  for i := 0 to 1 do
+  begin
+    jn := jmarkers.Add();
+    jn.Add('VISIBLE', marker[i].Visible);
+    jn.Add('MTIME',   marker[i].mtime);
+  end;
+  *)
+
+  jwarr := jroot.Add('WAVES', nkArray);
+  jwarr.Clear;
+  for wd in waves do
   begin
     jn := jwarr.Add();
-    w.SaveToJsonNode(jn, false);
+    wd.SaveToJsonNode(jn, binary_data);
   end;
 
   try
-    jf.SaveToFile(afilename);
-  finally
-    jf.Free;
-  end;
-end;
-
-procedure TScopeData.LoadFromJsonFile(afilename : string);
-var
-  jf : TJsonNode;
-  w  : TWaveData = nil;
-  i  : integer;
-  jwarr, jn : TJSonNode;
-begin
-  ClearWaves;
-  jf := TJsonNode.Create();
-  try
-    jf.LoadFromFile(afilename);
-    if not jf.Find('WAVES', jwarr)
-    then
-        raise Exception.Create('Error loading scope data: no WAVES node was found.');
-
-    for i := 0 to jwarr.Count - 1 do
+    if binary_data then
     begin
-      jn := jwarr.Child(i);
-      w := AddWave('???', 1/1000);
-      if not w.LoadFromJsonNode(jn) then
-      begin
-        DeleteWave(w);
-      end;
-      w := nil;
+      fbfile := TVscopeBinFile.Create;
+      fbfile.ClearWaves();
+      for wd in waves do  fbfile.AddWave(wd);
+      fbfile.Save(afilename, jroot);
+    end
+    else
+    begin
+      jroot.SaveToFile(afilename);
     end;
   finally
-    if w <> nil then DeleteWave(w);
-    jf.Free;
+    if fbfile <> nil then FreeAndNil(fbfile);
   end;
-end;
-
-procedure TScopeData.LoadFromBinFile(afilename : string);
-begin
-  ClearWaves;
-
 end;
 
 initialization

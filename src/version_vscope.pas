@@ -5,10 +5,13 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.1.3';
+  VSCOPE_VERSION = '2.1.4';
 
 (* Version Log
 
+v2.1.4:
+  - vscope_data unit can load and save both formats
+  - Merging .bscope files
 v2.1.3:
   - Wave stretching with lo-res wave fixed
 v2.1.2:

@@ -1147,7 +1147,7 @@ var
 begin
   mscope := TScopeData.Create;
   try
-    mscope.LoadFromJsonFile(afilename);
+    mscope.LoadFromFile(afilename);
   except
     on e : Exception do
     begin

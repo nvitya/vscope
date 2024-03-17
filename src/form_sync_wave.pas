@@ -101,8 +101,6 @@ begin
 end;
 
 procedure TfrmSyncWave.speStartTimeChange(Sender : TObject);
-var
-  fv : double;
 begin
   if speStartTime.Focused then
   begin

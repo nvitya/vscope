@@ -11,7 +11,7 @@ object frmSyncWave: TfrmSyncWave
   OnClose = FormClose
   PopupMode = pmAuto
   Position = poDefaultSizeOnly
-  LCLVersion = '3.2.0.0'
+  LCLVersion = '2.2.6.0'
   object pnlWaveColor: TPanel
     Left = 4
     Height = 26
@@ -23,15 +23,15 @@ object frmSyncWave: TfrmSyncWave
   end
   object Label1: TLabel
     Left = 6
-    Height = 15
+    Height = 14
     Top = 88
-    Width = 56
+    Width = 57
     Caption = 'Start Time:'
     ParentColor = False
   end
   object speStartTime: TFloatSpinEdit
     Left = 6
-    Height = 23
+    Height = 24
     Top = 108
     Width = 102
     DecimalPlaces = 9
@@ -42,17 +42,17 @@ object frmSyncWave: TfrmSyncWave
   end
   object Label2: TLabel
     Left = 122
-    Height = 15
+    Height = 14
     Top = 88
-    Width = 82
+    Width = 84
     Caption = 'Sampling Time:'
     ParentColor = False
   end
   object Label3: TLabel
     Left = 6
-    Height = 15
+    Height = 14
     Top = 43
-    Width = 72
+    Width = 74
     Caption = 'Original Start:'
     ParentColor = False
   end
@@ -70,9 +70,9 @@ object frmSyncWave: TfrmSyncWave
   end
   object Label4: TLabel
     Left = 120
-    Height = 15
+    Height = 14
     Top = 43
-    Width = 87
+    Width = 90
     Caption = 'Original Smp. T.:'
     ParentColor = False
   end
@@ -90,9 +90,9 @@ object frmSyncWave: TfrmSyncWave
   end
   object rbShifting: TRadioButton
     Left = 236
-    Height = 19
+    Height = 21
     Top = 64
-    Width = 42
+    Width = 48
     Caption = 'Shift'
     Checked = True
     TabOrder = 4
@@ -100,9 +100,9 @@ object frmSyncWave: TfrmSyncWave
   end
   object rbStrechToA: TRadioButton
     Left = 236
-    Height = 19
+    Height = 21
     Top = 88
-    Width = 80
+    Width = 86
     Caption = 'Stretch to A'
     TabOrder = 5
   end
@@ -132,35 +132,35 @@ object frmSyncWave: TfrmSyncWave
   end
   object rbStrechToB: TRadioButton
     Left = 236
-    Height = 19
+    Height = 21
     Top = 112
-    Width = 79
+    Width = 86
     Caption = 'Stretch to B'
     TabOrder = 8
   end
   object Label5: TLabel
     Left = 228
-    Height = 15
+    Height = 14
     Top = 43
-    Width = 67
+    Width = 70
     Caption = 'Mouse Drag:'
     ParentColor = False
   end
   object cbGroup: TCheckBox
     Left = 232
-    Height = 19
+    Height = 21
     Top = 10
-    Width = 71
+    Width = 78
     Caption = '+ Group 2'
-    TabOrder = 9
     OnChange = cbGroupChange
+    TabOrder = 9
   end
   object edSamplingTime: TEdit
     Left = 122
-    Height = 23
+    Height = 26
     Top = 108
     Width = 90
-    TabOrder = 10
     OnChange = speStartTimeChange
+    TabOrder = 10
   end
 end

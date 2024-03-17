@@ -1128,12 +1128,11 @@ begin
       brec := fbfile.currec;
       if brec.marker <> 'J'
       then
-          EScopeData.Create('J-Record is missing!');
+          raise EScopeData.Create('J-Record is missing!');
 
-      if brec.addinfo > 64000 then
-      begin
-        EScopeData.Create('J-Record is too long: '+IntToStr(brec.addinfo));
-      end;
+      if brec.addinfo > 64000
+      then
+          raise EScopeData.Create('J-Record is too long: '+IntToStr(brec.addinfo));
 
       SetLength(jstr, brec.addinfo);
       move(brec.dataptr^, jstr[1], brec.addinfo);
