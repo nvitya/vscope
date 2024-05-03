@@ -249,6 +249,12 @@ begin
   self.viewoffset := srcwave.viewoffset;
   self.basealpha  := srcwave.basealpha;
   self.color      := srcwave.color;
+  self.visible    := srcwave.visible;
+  self.groupid    := srcwave.groupid;
+
+  self.bin_storage_type := srcwave.bin_storage_type;
+  self.raw_data_scale := srcwave.raw_data_scale;
+
   self.data       := copy(srcwave.data);
 
   self.DoOnDataUpdate;
