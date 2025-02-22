@@ -56,7 +56,7 @@ type
     color  : cardinal;
     basealpha : single;
 
-    bin_storage_type : byte;  // for the binary format
+    bin_storage_type : byte;  // for the binary format, $28 = double, $24 = single, $12 = int16, $14 = int32, $02 = uint16, $04 = uint32
 
     raw_data_scale : double;
 
@@ -130,8 +130,6 @@ type
 procedure HexStrToBuffer(const astr : string; pbuf : pointer; buflen : cardinal);
 function  BufferToHexStr(pbuf : pointer; len : cardinal) : string;
 
-function FormatTime(t : double) : string;
-
 var
   float_number_format : TFormatSettings;
 
@@ -165,12 +163,6 @@ begin
     inc(pb);
   end;
 end;
-
-function FormatTime(t : double) : string;
-begin
-  result := FloatToStrF(t, ffFixed, 0, 6, float_number_format);
-end;
-
 
 procedure HexStrToBuffer(const astr : string; pbuf : pointer; buflen : cardinal);
 var
@@ -801,6 +793,7 @@ end;
 destructor TScopeData.Destroy;
 begin
   ClearWaves;
+  waves.Free;
   SetLength(fdata, 0);
   jroot.Free;
   inherited Destroy;

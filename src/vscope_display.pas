@@ -200,6 +200,9 @@ type
     procedure SetTimeDiv(AValue : double; fixtimepos : double);
     procedure UpdateTimeDivInfo;
     procedure SetTimeCursor(t : double);
+    function  FindNextTimeDiv(adiv : double; adir : integer) : double;
+
+    function FormatTime(t : double) : string;
 
   public
     function ConvertXToTime(x : integer) : double;
@@ -240,46 +243,7 @@ const
 
   scope_marker_letters : array[0..1] of char = ('A', 'B');
 
-function  FindNextTimeDiv(adiv : double; adir : integer) : double;
-
 implementation
-
-function FindNextTimeDiv(adiv : double; adir : integer) : double;
-var
-  log10_div : double;
-  log10_int_div : double;
-  smul : double;
-  newres : double;
-begin
-  newres := adiv;
-  repeat
-    if adir > 0 then newres := newres * 2
-                else newres := newres / 2;
-
-    log10_div := log10(newres);
-    log10_int_div := trunc(log10_div);
-    if log10_div < 0 then  // 0 < adiv < 1
-    begin
-      smul := power(10, log10_int_div) / newres;
-      if      smul > 5 then smul := 10
-      else if smul > 2 then smul := 5
-      else if smul > 1 then smul := 2
-      else                  smul := 1;
-
-      result := power(10, log10_int_div) / smul;
-    end
-    else  // adiv >= 1
-    begin
-      smul := newres / power(10, log10_int_div);
-      if      smul > 5 then smul := 10
-      else if smul > 2 then smul := 5
-      else if smul > 1 then smul := 2
-      else                  smul := 1;
-
-      result := power(10, log10_int_div) * smul;
-    end;
-  until result <> adiv;
-end;
 
 { TScopeMarker }
 
@@ -920,7 +884,7 @@ begin
     dt := marker[1].mtime - marker[0].mtime;
     hz := 1 / dt;
     txt_abinfo.Text := 'B-A: '
-       + FloatToStrF(dt, ffFixed, 0, 6, float_number_format) + ' ' + time_unit
+       + FormatTime(dt)
        + ', ' + FloatToStrF(hz, ffFixed, 0, 3, float_number_format) + ' Hz'
     ;
     txt_abinfo.Visible := true;
@@ -976,8 +940,21 @@ begin
 end;
 
 procedure TScopeDisplay.UpdateTimeDivInfo;
+var
+  s : string;
 begin
-  txt_timediv.Text := FloatToStrF(TimeDiv, ffFixed, 0, 6, float_number_format) + ' '+time_unit+' / div';
+  if ('s' = time_unit) and (TimeDiv > 60) then
+  begin
+    if TimeDiv < 3600 then s := FloatToStrF(TimeDiv / 60, ffFixed, 0, 6, float_number_format) + ' m'
+    else if TimeDiv < 86400 then s := FloatToStrF(TimeDiv / 3600, ffFixed, 0, 6, float_number_format) + ' h'
+    else s := FloatToStrF(TimeDiv / 86400, ffFixed, 0, 6, float_number_format) + ' d';
+  end
+  else
+  begin
+    s := FloatToStrF(TimeDiv, ffFixed, 0, 6, float_number_format) + ' '+time_unit;
+  end;
+
+  txt_timediv.Text := s+' / div';
 
   UpdateTimeDivPos;
 end;
@@ -1030,8 +1007,9 @@ var
   gridstep  : double;
 begin
   if waves.Count <= 4  then gridstep := 2
-  else if waves.Count <= 8 then gridstep := 1
-  else gridstep := 0.5;
+  else if waves.Count <= 8   then gridstep := 1
+  else if waves.Count <= 16  then gridstep := 0.5
+  else gridstep := 9 / waves.Count;
 
   gridstart := 5 - gridstep;
   for wd in waves do
@@ -1442,6 +1420,95 @@ begin
   begin
     timecursor.x := gt;
     timecursor.visible := true;
+  end;
+end;
+
+const
+  time_steps_s : array of double =
+  (
+        20,
+        30,
+        60,   // 1m
+       120,   // 2m
+       300,   // 5m
+       600,   // 10m
+      1200,   // 20m
+      1800,   // 30m
+      3600,   // 60m = 1h
+      7200,   // 2h
+     10800,   // 3h
+     21600,   // 6h
+     43200,   // 12h
+     86400,   // 24h = 1d
+    172800    // 2d
+  );
+
+function TScopeDisplay.FindNextTimeDiv(adiv : double; adir : integer) : double;
+var
+  log10_div : double;
+  log10_int_div : double;
+  smul : double;
+  newres : double;
+  tsi : integer;
+
+begin
+  newres := adiv;
+  repeat
+    if adir > 0 then newres := newres * 2
+                else newres := newres / 2;
+
+    log10_div := log10(newres);
+    log10_int_div := trunc(log10_div);
+
+    if ('s' = time_unit) and (newres >= time_steps_s[0]) and (newres <= time_steps_s[length(time_steps_s) - 1]) then
+    begin
+      // find the nearest in the time_steps_s
+      result := time_steps_s[0];
+      tsi := 1;
+      while tsi < length(time_steps_s) do
+      begin
+        if time_steps_s[tsi] > newres then Break;
+        result := time_steps_s[tsi];
+        Inc(tsi);
+      end;
+    end
+    else
+    begin
+      if log10_div < 0 then  // 0 < adiv < 1
+      begin
+        smul := power(10, log10_int_div) / newres;
+        if      smul > 5 then smul := 10
+        else if smul > 2 then smul := 5
+        else if smul > 1 then smul := 2
+        else                  smul := 1;
+
+        result := power(10, log10_int_div) / smul;
+      end
+      else  // adiv >= 1
+      begin
+        smul := newres / power(10, log10_int_div);
+        if      smul > 5 then smul := 10
+        else if smul > 2 then smul := 5
+        else if smul > 1 then smul := 2
+        else                  smul := 1;
+
+        result := power(10, log10_int_div) * smul;
+      end;
+    end;
+  until result <> adiv;
+end;
+
+function TScopeDisplay.FormatTime(t : double) : string;
+begin
+  if ('s' = time_unit) and (abs(t) > 60) then
+  begin
+    if abs(t) < 3600 then result := FloatToStrF(t / 60, ffFixed, 0, 6, float_number_format) + ' m'
+    else if abs(t) < 86400 then result := FloatToStrF(t / 3600, ffFixed, 0, 6, float_number_format) + ' h'
+    else result := FloatToStrF(t / 86400, ffFixed, 0, 6, float_number_format) + ' d';
+  end
+  else
+  begin
+    result := FloatToStrF(t, ffFixed, 0, 6, float_number_format) + ' ' + time_unit;
   end;
 end;
 

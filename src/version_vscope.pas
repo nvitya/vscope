@@ -5,10 +5,13 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.1.4';
+  VSCOPE_VERSION = '2.1.5';
 
 (* Version Log
 
+v2.1.5:
+  - Time displayed in days, hour and mins when the time unit is 's'
+  - Autoscale fix for more than 20 Waves
 v2.1.4:
   - vscope_data unit can load and save both formats
   - Merging .bscope files

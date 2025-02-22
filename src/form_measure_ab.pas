@@ -75,7 +75,7 @@ begin
 
   if scope.marker[0].Visible then
   begin
-    igrid.Cells[1, 0] := FormatTime(scope.marker[0].mtime);
+    igrid.Cells[1, 0] := scope.FormatTime(scope.marker[0].mtime);
 
     ia := trunc((scope.marker[0].mtime - wave.startt) / wave.samplt);
     if ia >= length(wave.data) then ia := length(wave.data) - 1;
@@ -89,7 +89,7 @@ begin
 
   if scope.marker[1].Visible then
   begin
-    igrid.Cells[1, 1] := FormatTime(scope.marker[1].mtime);
+    igrid.Cells[1, 1] := scope.FormatTime(scope.marker[1].mtime);
     ib := trunc((scope.marker[1].mtime - wave.startt) / wave.samplt);
     if ib >= length(wave.data) then ib := length(wave.data) - 1;
     if ib < 0 then ib := 0;
@@ -103,7 +103,7 @@ begin
   if scope.marker[0].Visible and scope.marker[1].Visible then
   begin
     tdiff := scope.marker[1].mtime - scope.marker[0].mtime;
-    igrid.Cells[1, 2] := FormatTime(tdiff);
+    igrid.Cells[1, 2] := scope.FormatTime(tdiff);
     if tdiff <> 0 then igrid.Cells[1, 3] := FloatToStrF(1 / tdiff, ffFixed, 0, 3, float_number_format) + ' Hz'
                   else igrid.Cells[1, 3] := ''
   end

@@ -374,7 +374,7 @@ end;
 
 procedure TfrmMain.btnTdMinusClick(Sender : TObject);
 begin
-  scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, -1), scope.ViewStart + scope.ViewRange / 2);
+  scope.SetTimeDiv(scope.FindNextTimeDiv(scope.TimeDiv, -1), scope.ViewStart + scope.ViewRange / 2);
   UpdateTimeDiv;
   UpdateScrollBar;
   scope.Repaint;
@@ -404,7 +404,7 @@ end;
 
 procedure TfrmMain.btnTdPlusClick(Sender : TObject);
 begin
-  scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, 1), scope.ViewStart + scope.ViewRange / 2);
+  scope.SetTimeDiv(scope.FindNextTimeDiv(scope.TimeDiv, 1), scope.ViewStart + scope.ViewRange / 2);
   UpdateTimeDiv;
   UpdateScrollBar;
   scope.Repaint;
@@ -427,7 +427,7 @@ begin
 
   if Shift = [] then  // normal time zoom
   begin
-    scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, pm), scope.ConvertXToTime(MousePos.x));
+    scope.SetTimeDiv(scope.FindNextTimeDiv(scope.TimeDiv, pm), scope.ConvertXToTime(MousePos.x));
     UpdateTimeDiv;
     UpdateScrollBar;
     scope.Repaint;
@@ -637,7 +637,7 @@ end;
 
 procedure TfrmMain.tbZoomInClick(Sender : TObject);
 begin
-  scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, -1), scope.ViewStart + scope.ViewRange / 2);
+  scope.SetTimeDiv(scope.FindNextTimeDiv(scope.TimeDiv, -1), scope.ViewStart + scope.ViewRange / 2);
   UpdateTimeDiv;
   UpdateScrollBar;
   scope.Repaint;
@@ -645,7 +645,7 @@ end;
 
 procedure TfrmMain.tbZoomOutClick(Sender : TObject);
 begin
-  scope.SetTimeDiv(FindNextTimeDiv(scope.TimeDiv, 1), scope.ViewStart + scope.ViewRange / 2);
+  scope.SetTimeDiv(scope.FindNextTimeDiv(scope.TimeDiv, 1), scope.ViewStart + scope.ViewRange / 2);
   UpdateTimeDiv;
   UpdateScrollBar;
   scope.Repaint;
@@ -1252,14 +1252,14 @@ var
   sm : TScopeMarker;
 begin
   txtTimeUnit.Caption := scope.time_unit;
-  txtTotalLength.Caption := format('%.9f', [scope.TimeRange]);
-  txtViewLength.Caption := format('%.9f', [scope.ViewRange]);
-  txtCursorTime.Caption := format('%.9f', [cursor_time]);
+  txtTotalLength.Caption := scope.FormatTime(scope.TimeRange);
+  txtViewLength.Caption := scope.FormatTime(scope.ViewRange);
+  txtCursorTime.Caption := scope.FormatTime(cursor_time);
 
   sm := scope.marker[0];
   if sm.Visible
   then
-      s := format('%.9f', [cursor_time - sm.mtime])
+      s := scope.FormatTime(cursor_time - sm.mtime)
   else
       s := '-';
   txtCursorToA.Caption := s;
@@ -1267,7 +1267,7 @@ begin
   sm := scope.marker[1];
   if sm.Visible
   then
-      s := format('%.9f', [cursor_time - sm.mtime])
+      s := scope.FormatTime(cursor_time - sm.mtime)
   else
       s := '-';
   txtCursorToB.Caption := s;
