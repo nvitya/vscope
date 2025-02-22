@@ -109,6 +109,7 @@ type
 
     waves : TWaveDataList;
     time_unit   : string;
+    zero_microtime : int64;
     binary_data : boolean;
 
     constructor Create;
@@ -787,6 +788,7 @@ begin
   waves := TWaveDataList.Create;
   binary_data := false;
   time_unit := 's';
+  zero_microtime := 0;
   SetLength(fdata, 256 * 1024); // allocate a static data buffer
 end;
 
@@ -896,7 +898,13 @@ begin
       fbfile.LoadWaveData();
     end;
 
-    // MARKERS and some VIEW fields are not loaded here.
+    if jroot.Find('VIEW', jview) then
+    begin
+      if jview.Find('TIMEUNIT', jv) then time_unit := jv.AsString;
+      if jview.Find('ZERO_MICROTIME', jv) then zero_microtime := StrToInt64Def(jv.AsString, 0);
+
+      // MARKERS and some VIEW fields are not loaded here.
+    end;
 
   finally
     if fbfile <> nil then FreeAndNil(fbfile);
@@ -915,6 +923,7 @@ begin
 
   if not jroot.Find('VIEW', jview) then jview := jroot.Add('VIEW', nkObject);
   jview.Add('TIMEUNIT', time_unit);
+  jview.Add('ZERO_MICROTIME', IntToStr(zero_microtime));
 
   //jview.Add('TIMEDIV', TimeDiv);
   //jview.Add('VIEWSTART', ViewStart);

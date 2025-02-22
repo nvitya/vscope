@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.1.5';
+  VSCOPE_VERSION = '2.1.6';
 
 (* Version Log
 
+v2.1.6:
+  - Handling VIEW.ZERO_MICROTIME
 v2.1.5:
   - Time displayed in days, hour and mins when the time unit is 's'
   - Autoscale fix for more than 20 Waves

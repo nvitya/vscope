@@ -136,6 +136,9 @@ type
     miWaveDelete : TMenuItem;
     miFileMerge : TMenuItem;
     chgrid : TStringGrid;
+    Label8 : TLabel;
+    Bevel13 : TBevel;
+    txtZeroTime : TStaticText;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -1251,10 +1254,11 @@ var
   s : string;
   sm : TScopeMarker;
 begin
+  txtZeroTime.Caption := scope.FormatAbsTime(0, false);
   txtTimeUnit.Caption := scope.time_unit;
   txtTotalLength.Caption := scope.FormatTime(scope.TimeRange);
   txtViewLength.Caption := scope.FormatTime(scope.ViewRange);
-  txtCursorTime.Caption := scope.FormatTime(cursor_time);
+  txtCursorTime.Caption := scope.FormatAbsTime(cursor_time);
 
   sm := scope.marker[0];
   if sm.Visible

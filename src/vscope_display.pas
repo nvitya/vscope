@@ -31,7 +31,7 @@ unit vscope_display;
 interface
 
 uses
-  Classes, SysUtils, Controls, Dialogs, Forms, fgl, math, jsontools, dglOpenGL,
+  Classes, SysUtils, DateUtils, Controls, Dialogs, Forms, fgl, math, jsontools, dglOpenGL,
   ddgfx, ddgfx_font, vscope_data, vscope_bin_file, util_nstime;
 
 type
@@ -174,6 +174,7 @@ type
   public
     waves       : TWaveDisplayList;
 
+    zero_microtime : int64;
     draw_steps  : boolean;
     time_unit   : string;
 
@@ -203,6 +204,7 @@ type
     function  FindNextTimeDiv(adiv : double; adir : integer) : double;
 
     function FormatTime(t : double) : string;
+    function FormatAbsTime(t : double; shortformat : boolean = true) : string;
 
   public
     function ConvertXToTime(x : integer) : double;
@@ -616,6 +618,7 @@ begin
   fbfile := TVscopeBinFile.Create;
 
   draw_steps := false;
+  zero_microtime := 0;
   time_unit := 's';
 
   scale_ratio := Forms.Screen.PixelsPerInch / 96;
@@ -1168,6 +1171,7 @@ begin
     if jf.Find('VIEW', jview) then
     begin
       if jview.Find('TIMEUNIT', jv) then time_unit := jv.AsString;
+      if jview.Find('ZERO_MICROTIME', jv) then zero_microtime := StrToInt64Def(jv.AsString, 0);
       if jview.Find('VIEWSTART', jv) then vstart := jv.AsNumber;
       if jview.Find('TIMEDIV', jv)   then tdiv := jv.AsNumber;
       if jview.Find('DRAWSTEPS', jv) then draw_steps := jv.AsBoolean;
@@ -1231,6 +1235,7 @@ begin
   jview.Add('TIMEDIV', TimeDiv);
   jview.Add('VIEWSTART', ViewStart);
   jview.Add('DRAWSTEPS', draw_steps);
+  jview.Add('ZERO_MICROTIME', IntToStr(zero_microtime));
 
   jmarkers := jf.Add('MARKERS', nkArray);
   for i := 0 to 1 do
@@ -1509,6 +1514,29 @@ begin
   else
   begin
     result := FloatToStrF(t, ffFixed, 0, 6, float_number_format) + ' ' + time_unit;
+  end;
+end;
+
+function TScopeDisplay.FormatAbsTime(t : double; shortformat : boolean) : string;
+var
+  zero_time_s : double;
+  dt : TDateTime;
+begin
+  zero_time_s := zero_microtime / 1000000;
+  if 's' = time_unit then
+  begin
+    dt := UnixToDateTime(trunc(zero_microtime / 1000000));
+  end;
+
+  dt += t / (24*60*60);
+
+  if shortformat then
+  begin
+    result := FormatDateTime('hh:nn:ss.zzz', dt);
+  end
+  else
+  begin
+    result := FormatDateTime('yyyy-mm-dd hh:nn:ss', dt);
   end;
 end;
 

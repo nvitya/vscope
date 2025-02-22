@@ -75,7 +75,7 @@ begin
 
   if scope.marker[0].Visible then
   begin
-    igrid.Cells[1, 0] := scope.FormatTime(scope.marker[0].mtime);
+    igrid.Cells[1, 0] := scope.FormatAbsTime(scope.marker[0].mtime);
 
     ia := trunc((scope.marker[0].mtime - wave.startt) / wave.samplt);
     if ia >= length(wave.data) then ia := length(wave.data) - 1;
@@ -89,7 +89,7 @@ begin
 
   if scope.marker[1].Visible then
   begin
-    igrid.Cells[1, 1] := scope.FormatTime(scope.marker[1].mtime);
+    igrid.Cells[1, 1] := scope.FormatAbsTime(scope.marker[1].mtime);
     ib := trunc((scope.marker[1].mtime - wave.startt) / wave.samplt);
     if ib >= length(wave.data) then ib := length(wave.data) - 1;
     if ib < 0 then ib := 0;
