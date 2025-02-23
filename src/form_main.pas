@@ -270,6 +270,8 @@ uses
 
 procedure TfrmMain.FormCreate(Sender : TObject);
 begin
+  Application.Title := 'VScope v'+VSCOPE_VERSION;
+  caption := Application.Title;
 
   exe_dir := ExtractFileDir(ParamStr(0));
   default_font_path :=  IncludeTrailingBackslash(exe_dir) + 'vscope_font.ttf';

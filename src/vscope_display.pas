@@ -1620,7 +1620,7 @@ begin
 
   dt += t / (24*60*60);
 
-  if shortformat then
+  if shortformat or (0 = zero_microtime) then
   begin
     result := FormatDateTime('hh:nn:ss.zzz', dt);
   end

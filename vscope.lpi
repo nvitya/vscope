@@ -136,6 +136,7 @@
         <Filename Value="src/form_load_view.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmLoadView"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>

@@ -18,8 +18,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="888"/>
-        <CursorPos X="67" Y="908"/>
+        <TopLine Value="271"/>
+        <CursorPos X="32" Y="274"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -51,8 +51,9 @@
       <Unit>
         <Filename Value="src/version_vscope.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <CursorPos X="96" Y="31"/>
+        <CursorPos X="50" Y="13"/>
         <UsageCount Value="137"/>
         <Loaded Value="True"/>
       </Unit>
@@ -112,6 +113,19 @@
         <Loaded Value="True"/>
       </Unit>
       <Unit>
+        <Filename Value="src/form_load_view.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmLoadView"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="49"/>
+        <CursorPos X="42" Y="56"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
         <Filename Value="extlib/ddgfx.pas"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
@@ -128,10 +142,9 @@
       </Unit>
       <Unit>
         <Filename Value="src/vscope_display.pas"/>
-        <IsVisibleTab Value="True"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="1274"/>
-        <CursorPos X="27" Y="1293"/>
+        <TopLine Value="1610"/>
+        <CursorPos X="68" Y="1614"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="3">
           <Item0 X="5" Y="1606" ID="3"/>
@@ -302,72 +315,11 @@
         <WindowIndex Value="1"/>
         <UsageCount Value="10"/>
       </Unit>
-      <Unit>
-        <Filename Value="src/form_load_view.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="frmLoadView"/>
-        <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="49"/>
-        <CursorPos X="15" Y="93"/>
-        <UsageCount Value="24"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
-      </Unit>
     </Units>
     <OtherDefines Count="1">
       <Define0 Value="TRACES"/>
     </OtherDefines>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="170" Column="20" TopLine="146"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_display.pas"/>
-        <Caret Line="1314" Column="24" TopLine="1303"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="648" Column="34" TopLine="644"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="241" Column="52" TopLine="197"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="1193" Column="35" TopLine="1191"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="170" Column="25" TopLine="157"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="651" TopLine="645"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="239" Column="25" TopLine="194"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="1144" TopLine="1132"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="241" Column="15" TopLine="194"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="1196" Column="20" TopLine="1191"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_display.pas"/>
-        <Caret Line="1350" Column="58" TopLine="1306"/>
-      </Position>
       <Position>
         <Filename Value="src/vscope_display.pas"/>
         <Caret Line="1355" Column="21" TopLine="1310"/>
@@ -439,6 +391,54 @@
       <Position>
         <Filename Value="src/form_load_view.pas"/>
         <Caret Line="77" Column="38" TopLine="49"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="957" Column="65" TopLine="925"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="38" TopLine="38"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="1276" Column="68" TopLine="1217"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_display.pas"/>
+        <Caret Line="207" Column="14" TopLine="170"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="1276" Column="68" TopLine="1217"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="146" Column="51" TopLine="124"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="365" Column="59" TopLine="337"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="188" Column="23" TopLine="133"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="680" Column="3" TopLine="678"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="240" Column="15" TopLine="203"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="1151" TopLine="1133"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_main.pas"/>
+        <Caret Line="147" Column="24" TopLine="137"/>
       </Position>
     </JumpHistory>
     <RunParams>

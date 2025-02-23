@@ -5,10 +5,13 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.1.7';
+  VSCOPE_VERSION = '2.1.8';
 
 (* Version Log
 
+v2.1.8:
+  - Displaying version without file name too
+  - Small display adjustments
 v2.1.7:
   - Import view settings from an other file
 v2.1.6:

@@ -13,7 +13,7 @@ object frmMain: TfrmMain
   OnDropFiles = FormDropFiles
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '3.8.0.0'
+  LCLVersion = '3.2.0.0'
   object tbMain: TToolBar
     Left = 0
     Height = 26
@@ -204,6 +204,7 @@ object frmMain: TfrmMain
     end
     object tbLoadView: TToolButton
       Left = 178
+      Hint = 'Import Scope View From File'
       Top = 2
       Caption = 'Load View Settings ...'
       ImageIndex = 18
@@ -335,40 +336,40 @@ object frmMain: TfrmMain
       TabOrder = 1
       object Label1: TLabel
         Left = 7
-        Height = 14
-        Top = 104
-        Width = 69
+        Height = 15
+        Top = 101
+        Width = 67
         Caption = 'Cursor Time:'
         ParentColor = False
       end
       object Label2: TLabel
         Left = 7
-        Height = 14
-        Top = 128
-        Width = 64
+        Height = 15
+        Top = 125
+        Width = 63
         Caption = 'Cursor to A:'
         ParentColor = False
       end
       object Label4: TLabel
         Left = 7
-        Height = 14
-        Top = 80
-        Width = 71
+        Height = 15
+        Top = 77
+        Width = 68
         Caption = 'View Length:'
         ParentColor = False
       end
       object Label5: TLabel
         Left = 6
-        Height = 14
-        Top = 56
-        Width = 70
+        Height = 15
+        Top = 53
+        Width = 68
         Caption = 'Total Length:'
         ParentColor = False
       end
       object txtCursorTime: TStaticText
         Left = 93
         Height = 20
-        Top = 102
+        Top = 99
         Width = 134
         Alignment = taRightJustify
         Caption = '123'
@@ -379,7 +380,7 @@ object frmMain: TfrmMain
       object txtCursorToA: TStaticText
         Left = 93
         Height = 20
-        Top = 126
+        Top = 123
         Width = 134
         Alignment = taRightJustify
         Caption = '123'
@@ -390,7 +391,7 @@ object frmMain: TfrmMain
       object txtViewLength: TStaticText
         Left = 93
         Height = 20
-        Top = 78
+        Top = 75
         Width = 134
         Alignment = taRightJustify
         Caption = '123'
@@ -401,7 +402,7 @@ object frmMain: TfrmMain
       object txtTotalLength: TStaticText
         Left = 93
         Height = 20
-        Top = 54
+        Top = 51
         Width = 134
         Alignment = taRightJustify
         Caption = '123'
@@ -411,16 +412,16 @@ object frmMain: TfrmMain
       end
       object Label6: TLabel
         Left = 7
-        Height = 14
-        Top = 152
-        Width = 64
+        Height = 15
+        Top = 149
+        Width = 62
         Caption = 'Cursor to B:'
         ParentColor = False
       end
       object txtCursorToB: TStaticText
         Left = 93
         Height = 20
-        Top = 150
+        Top = 147
         Width = 134
         Alignment = taRightJustify
         Caption = '123'
@@ -431,35 +432,35 @@ object frmMain: TfrmMain
       object Bevel2: TBevel
         Left = 7
         Height = 6
-        Top = 74
+        Top = 71
         Width = 220
         Shape = bsTopLine
       end
       object Bevel8: TBevel
         Left = 7
         Height = 6
-        Top = 98
+        Top = 95
         Width = 220
         Shape = bsTopLine
       end
       object Bevel10: TBevel
         Left = 7
         Height = 6
-        Top = 122
+        Top = 119
         Width = 220
         Shape = bsTopLine
       end
       object Bevel11: TBevel
         Left = 8
         Height = 6
-        Top = 146
+        Top = 143
         Width = 220
         Shape = bsTopLine
       end
       object Label7: TLabel
         Left = 7
-        Height = 14
-        Top = 32
+        Height = 15
+        Top = 29
         Width = 54
         Caption = 'Time Unit:'
         ParentColor = False
@@ -467,14 +468,14 @@ object frmMain: TfrmMain
       object Bevel12: TBevel
         Left = 7
         Height = 6
-        Top = 50
+        Top = 47
         Width = 220
         Shape = bsTopLine
       end
       object txtTimeUnit: TStaticText
         Left = 92
         Height = 20
-        Top = 30
+        Top = 27
         Width = 134
         Alignment = taRightJustify
         Caption = 's'
@@ -484,23 +485,23 @@ object frmMain: TfrmMain
       end
       object Label8: TLabel
         Left = 8
-        Height = 14
-        Top = 10
-        Width = 57
+        Height = 15
+        Top = 5
+        Width = 56
         Caption = 'Zero Time:'
         ParentColor = False
       end
       object Bevel13: TBevel
         Left = 7
         Height = 6
-        Top = 27
+        Top = 24
         Width = 220
         Shape = bsTopLine
       end
       object txtZeroTime: TStaticText
         Left = 73
         Height = 20
-        Top = 8
+        Top = 4
         Width = 154
         Alignment = taRightJustify
         Caption = '0'
@@ -512,9 +513,9 @@ object frmMain: TfrmMain
   end
   object Label3: TLabel
     Left = 9
-    Height = 14
+    Height = 15
     Top = 16
-    Width = 69
+    Width = 67
     Caption = 'Cursor Time:'
     ParentColor = False
   end
