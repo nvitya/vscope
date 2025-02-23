@@ -220,6 +220,8 @@ type
     procedure LoadScopeFile(afilename : string);
     procedure SaveScopeFile(afilename : string);
 
+    procedure LoadViewSettings(afilename : string);
+
   private
     fbfile    : TVscopeBinFile;
 
@@ -1280,6 +1282,94 @@ begin
 
   if t0 + t1 + t2 > 0 then ; // to supress unused warnings
 
+end;
+
+procedure TScopeDisplay.LoadViewSettings(afilename : string);
+var
+  jf, jwlist, jw : TJsonNode;
+  jn : TJsonNode;
+  jview, jv : TJsonNode;
+  i : integer;
+  wd : TWaveDisplay;
+  wavename : string;
+
+  tdiv, vstart : double;
+  jstr : ansistring = '';
+
+  brec : TVscopeBinRec; // to shorten some lines
+
+  run_autoscale : boolean;
+
+begin
+  jf := TJsonNode.Create();
+
+  try
+    binary_file := afilename.EndsWith('.bscope');
+    if binary_file then
+    begin
+      fbfile.Open(afilename);
+      brec := fbfile.currec;
+      if brec.marker <> 'J'
+      then
+          raise EScopeData.Create('J-Record is missing!');
+
+      if brec.addinfo > 64000
+      then
+          raise EScopeData.Create('J-Record is too long: '+IntToStr(brec.addinfo));
+
+      SetLength(jstr, brec.addinfo);
+      move(brec.dataptr^, jstr[1], brec.addinfo);
+
+      jf.Parse(jstr);
+    end
+    else
+    begin
+      jf.LoadFromFile(afilename);
+    end;
+
+    jwlist := jf.Find('WAVES');
+    if jwlist = nil then raise EScopeData.Create('Scope data format error: "WAVES" node not found.');
+
+    for i := 0 to jwlist.Count - 1 do
+    begin
+      jw := jwlist.Child(i);
+
+      (*
+          "NAME": "RMS-1-AVG",
+			    x "SAMPLT": 0.2,
+			    x "STARTT": 0,
+			    x "DATAUNIT": "V",
+			    "COLOR": 4278255615,
+			    "ALPHA": 0.800000011920929,
+			    "VISIBLE": true,
+			    "GROUPID": 1,
+			    "VIEWSCALE": 0.05,
+			    "VIEWOFFSET": -7
+      *)
+      // find the wave by name
+      if jw.Find('NAME', jv) then wavename := jv.AsString
+                             else wavename := '******""******'; // some invalid name
+
+      for wd in waves do
+      begin
+        if wd.name = wavename then
+        begin
+          // set the properties
+          if jw.Find('COLOR', jv) then wd.color := trunc(jv.AsNumber);
+          if jw.Find('ALPHA', jv) then wd.basealpha := jv.AsNumber;
+          if jw.Find('VISIBLE', jv) then wd.visible := jv.AsBoolean;
+          if jw.Find('GROUPID', jv) then wd.groupid := trunc(jv.AsNumber);
+          if jw.Find('VIEWSCALE', jv) then wd.viewscale := jv.AsNumber;
+          if jw.Find('VIEWOFFSET', jv) then wd.viewoffset := jv.AsNumber;
+          break;
+        end;
+      end;
+    end;
+
+  finally
+    fbfile.Close;
+    jf.Free;
+  end;
 end;
 
 

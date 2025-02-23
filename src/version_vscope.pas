@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.1.6';
+  VSCOPE_VERSION = '2.1.7';
 
 (* Version Log
 
+v2.1.7:
+  - Import view settings from an other file
 v2.1.6:
   - Handling VIEW.ZERO_MICROTIME
 v2.1.5:

@@ -139,6 +139,9 @@ type
     Label8 : TLabel;
     Bevel13 : TBevel;
     txtZeroTime : TStaticText;
+    Separator7 : TMenuItem;
+    miLoadView : TMenuItem;
+    tbLoadView : TToolButton;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -193,6 +196,7 @@ type
     procedure chgridDblClick(Sender : TObject);
     procedure chgridKeyDown(Sender : TObject; var Key : Word;
       Shift : TShiftState);
+    procedure miLoadViewClick(Sender : TObject);
   private
 
   public
@@ -235,6 +239,7 @@ type
 
     procedure LoadScopeFile(afilename : string);
     procedure MergeScopeFile(afilename : string);
+    procedure LoadViewSettings(afilename : string);
 
     procedure SelectWave(awidx : integer); overload;
     procedure SelectWave(wd : TWaveDisplay); overload;
@@ -257,7 +262,7 @@ var
 implementation
 
 uses
-  form_wave_props, form_measure_ab, version_vscope, form_about, form_sync_wave, form_wave_loop;
+  form_wave_props, form_measure_ab, version_vscope, form_about, form_sync_wave, form_wave_loop, form_load_view;
 
 {$R *.lfm}
 
@@ -880,6 +885,12 @@ begin
   ;
 end;
 
+procedure TfrmMain.miLoadViewClick(Sender : TObject);
+begin
+  Application.CreateForm(TfrmLoadView, frmLoadView);
+  frmLoadView.ShowModal;
+end;
+
 
 procedure TfrmMain.tbABMeasureClick(Sender : TObject);
 begin
@@ -1174,6 +1185,15 @@ begin
   UpdateTimeDiv;
   UpdateChGrid;
 
+  scope.RenderWaves;
+  scope.Repaint;
+end;
+
+procedure TfrmMain.LoadViewSettings(afilename : string);
+begin
+  scope.LoadViewSettings(afilename);
+
+  UpdateChGrid;
   scope.RenderWaves;
   scope.Repaint;
 end;
