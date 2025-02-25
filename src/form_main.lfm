@@ -13,7 +13,7 @@ object frmMain: TfrmMain
   OnDropFiles = FormDropFiles
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '3.2.0.0'
+  LCLVersion = '3.4.0.0'
   object tbMain: TToolBar
     Left = 0
     Height = 26
@@ -336,33 +336,33 @@ object frmMain: TfrmMain
       TabOrder = 1
       object Label1: TLabel
         Left = 7
-        Height = 15
+        Height = 14
         Top = 101
-        Width = 67
+        Width = 69
         Caption = 'Cursor Time:'
         ParentColor = False
       end
       object Label2: TLabel
         Left = 7
-        Height = 15
+        Height = 14
         Top = 125
-        Width = 63
+        Width = 64
         Caption = 'Cursor to A:'
         ParentColor = False
       end
       object Label4: TLabel
         Left = 7
-        Height = 15
+        Height = 14
         Top = 77
-        Width = 68
+        Width = 71
         Caption = 'View Length:'
         ParentColor = False
       end
       object Label5: TLabel
         Left = 6
-        Height = 15
+        Height = 14
         Top = 53
-        Width = 68
+        Width = 70
         Caption = 'Total Length:'
         ParentColor = False
       end
@@ -412,9 +412,9 @@ object frmMain: TfrmMain
       end
       object Label6: TLabel
         Left = 7
-        Height = 15
+        Height = 14
         Top = 149
-        Width = 62
+        Width = 64
         Caption = 'Cursor to B:'
         ParentColor = False
       end
@@ -459,7 +459,7 @@ object frmMain: TfrmMain
       end
       object Label7: TLabel
         Left = 7
-        Height = 15
+        Height = 14
         Top = 29
         Width = 54
         Caption = 'Time Unit:'
@@ -485,9 +485,9 @@ object frmMain: TfrmMain
       end
       object Label8: TLabel
         Left = 8
-        Height = 15
+        Height = 14
         Top = 5
-        Width = 56
+        Width = 57
         Caption = 'Zero Time:'
         ParentColor = False
       end
@@ -513,9 +513,9 @@ object frmMain: TfrmMain
   end
   object Label3: TLabel
     Left = 9
-    Height = 15
+    Height = 14
     Top = 16
-    Width = 67
+    Width = 69
     Caption = 'Cursor Time:'
     ParentColor = False
   end

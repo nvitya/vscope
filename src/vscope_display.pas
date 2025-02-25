@@ -1182,7 +1182,7 @@ begin
     if tdiv <= 0 then  // auto-range
     begin
       tdiv := TimeRange / 10;
-      vstart := 0;
+      vstart := MinTime;
     end;
 
     ViewStart := vstart;

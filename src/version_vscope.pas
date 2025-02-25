@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.1.8';
+  VSCOPE_VERSION = '2.1.9';
 
 (* Version Log
 
+v2.1.9:
+  - Autoscale with non-null wave offsets
 v2.1.8:
   - Displaying version without file name too
   - Small display adjustments

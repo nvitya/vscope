@@ -287,7 +287,6 @@ begin
       halt(1);
     end;
   end;
-  scope.ViewStart := 0;
   scope.ViewRange := 10;
   scope.ViewStart := 0; //-2;
   scope.UpdateTimeDivInfo;
@@ -744,7 +743,7 @@ end;
 procedure TfrmMain.tbZoomAllClick(Sender : TObject);
 begin
   scope.ViewRange := scope.TimeRange;
-  scope.ViewStart := 0;
+  scope.ViewStart := scope.MinTime;
   scope.UpdateTimeDivInfo;
   UpdateTimeDiv;
   UpdateScrollBar;
