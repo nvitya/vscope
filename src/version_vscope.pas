@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.1.9';
+  VSCOPE_VERSION = '2.1.10';
 
 (* Version Log
 
+v2.1.10:
+  - Keeping proper abstime when cutting waves (ZERO_MICROTIME correction)
 v2.1.9:
   - Autoscale with non-null wave offsets
 v2.1.8:

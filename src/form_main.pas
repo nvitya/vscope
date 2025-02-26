@@ -931,6 +931,11 @@ begin
     begin
       wd.startt -= stcorr;
     end;
+
+    if (scope.zero_microtime > 0) and ('s' = scope.time_unit) then
+    begin
+      scope.zero_microtime := scope.zero_microtime + round(stcorr * 1000000);
+    end;
   end;
 
   scope.CalcTimeRange;  // re-calculate the time ranges
