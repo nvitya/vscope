@@ -142,6 +142,7 @@ type
     Separator7 : TMenuItem;
     miLoadView : TMenuItem;
     tbLoadView : TToolButton;
+    miProcessWave : TMenuItem;
     procedure miExitClick(Sender : TObject);
 
     procedure FormCreate(Sender : TObject);
@@ -197,6 +198,7 @@ type
     procedure chgridKeyDown(Sender : TObject; var Key : Word;
       Shift : TShiftState);
     procedure miLoadViewClick(Sender : TObject);
+    procedure miProcessWaveClick(Sender : TObject);
   private
 
   public
@@ -262,7 +264,8 @@ var
 implementation
 
 uses
-  form_wave_props, form_measure_ab, version_vscope, form_about, form_sync_wave, form_wave_loop, form_load_view;
+  form_wave_props, form_measure_ab, version_vscope, form_about, form_sync_wave, form_wave_loop,
+  form_load_view, form_wave_process;
 
 {$R *.lfm}
 
@@ -890,6 +893,26 @@ procedure TfrmMain.miLoadViewClick(Sender : TObject);
 begin
   Application.CreateForm(TfrmLoadView, frmLoadView);
   frmLoadView.ShowModal;
+end;
+
+procedure TfrmMain.miProcessWaveClick(Sender : TObject);
+var
+  gpos : TPoint;
+begin
+  if frmWaveProcess = nil then
+  begin
+    Application.CreateForm(TfrmWaveProcess, frmWaveProcess);
+    frmWaveProcess.scope := self.scope;
+
+    gpos := scope.ClientToScreen( Point(0,0) );
+    frmWaveProcess.Left := gpos.x + scope.Width div 2 - frmWaveProcess.Width div 2;
+    frmWaveProcess.Top  := gpos.y + scope.Height - frmWaveProcess.Height;
+  end;
+
+  if SelectedWave = nil then SelectWave(0);
+  frmWaveProcess.wave := SelectedWave;
+  frmWaveProcess.SetupWave;
+  frmWaveProcess.Show;
 end;
 
 

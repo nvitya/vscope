@@ -1,0 +1,117 @@
+object frmWaveProcess: TfrmWaveProcess
+  Left = 1642
+  Height = 240
+  Top = 905
+  Width = 478
+  BorderStyle = bsDialog
+  Caption = 'Process Wave'
+  ClientHeight = 240
+  ClientWidth = 478
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PopupMode = pmAuto
+  Position = poDefaultSizeOnly
+  LCLVersion = '3.8.0.0'
+  object pnlWaveColor: TPanel
+    Left = 4
+    Height = 26
+    Top = 8
+    Width = 168
+    Anchors = [akTop, akLeft, akRight]
+    Caption = '-'
+    TabOrder = 0
+  end
+  object cbGroup: TCheckBox
+    Left = 184
+    Height = 21
+    Top = 12
+    Width = 78
+    Anchors = [akTop, akRight]
+    Caption = '+ Group 2'
+    TabOrder = 1
+    OnChange = cbGroupChange
+  end
+  object btnApply: TBitBtn
+    Left = 8
+    Height = 30
+    Top = 200
+    Width = 104
+    Caption = 'Apply - F9'
+    Default = True
+    Kind = bkOK
+    ModalResult = 1
+    OnClick = btnApplyClick
+    TabOrder = 2
+  end
+  object btnReset: TBitBtn
+    Left = 162
+    Height = 30
+    Top = 200
+    Width = 100
+    Cancel = True
+    Caption = 'Reset - ESC'
+    Kind = bkCancel
+    ModalResult = 2
+    OnClick = btnResetClick
+    TabOrder = 3
+  end
+  object Label1: TLabel
+    Left = 4
+    Height = 14
+    Top = 44
+    Width = 64
+    Caption = 'Expression:'
+  end
+  object memo: TMemo
+    Left = 4
+    Height = 126
+    Top = 64
+    Width = 260
+    Font.Name = 'Courier New'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 4
+    OnKeyDown = memoKeyDown
+  end
+  object pnlhelp: TPanel
+    Left = 272
+    Height = 240
+    Top = 0
+    Width = 206
+    Align = alRight
+    BevelOuter = bvNone
+    ClientHeight = 240
+    ClientWidth = 206
+    TabOrder = 5
+    object Label2: TLabel
+      Left = 8
+      Height = 14
+      Top = 8
+      Width = 29
+      Caption = 'Help:'
+    end
+    object memohelp: TMemo
+      Left = 8
+      Height = 206
+      Top = 28
+      Width = 192
+      Lines.Strings = (
+        'Supported functions:'
+        ''
+        'OFFSET(c)'
+        'SCALE(c)'
+        'MOVAVG(samples)'
+      )
+      ReadOnly = True
+      TabOrder = 0
+    end
+    object Bevel1: TBevel
+      Left = 0
+      Height = 240
+      Top = 0
+      Width = 8
+      Align = alLeft
+      Shape = bsLeftLine
+    end
+  end
+end

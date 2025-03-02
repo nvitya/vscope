@@ -7,7 +7,7 @@
       <Unit>
         <Filename Value="vscope.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="3" Y="29"/>
+        <CursorPos X="26" Y="27"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit>
@@ -18,8 +18,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="248"/>
-        <CursorPos X="45" Y="298"/>
+        <CursorPos X="46" Y="34"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -32,8 +31,8 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="3"/>
         <TopLine Value="85"/>
-        <CursorPos X="76" Y="107"/>
-        <UsageCount Value="142"/>
+        <CursorPos X="6" Y="107"/>
+        <UsageCount Value="148"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -46,15 +45,15 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <CursorPos X="3" Y="9"/>
-        <UsageCount Value="139"/>
+        <UsageCount Value="145"/>
       </Unit>
       <Unit>
         <Filename Value="src/version_vscope.pas"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <CursorPos X="41" Y="13"/>
-        <UsageCount Value="137"/>
+        <CursorPos X="79" Y="24"/>
+        <UsageCount Value="143"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -64,7 +63,7 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="41"/>
-        <UsageCount Value="137"/>
+        <UsageCount Value="143"/>
       </Unit>
       <Unit>
         <Filename Value="src/form_measure_ab.pas"/>
@@ -75,7 +74,7 @@
         <EditorIndex Value="2"/>
         <TopLine Value="33"/>
         <CursorPos X="41" Y="92"/>
-        <UsageCount Value="131"/>
+        <UsageCount Value="137"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -84,12 +83,12 @@
         <ComponentName Value="frmSyncWave"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="4"/>
-        <WindowIndex Value="1"/>
-        <TopLine Value="59"/>
-        <CursorPos X="53" Y="94"/>
-        <UsageCount Value="119"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="81"/>
+        <CursorPos X="102" Y="119"/>
+        <UsageCount Value="125"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="src/form_wave_loop.pas"/>
@@ -100,7 +99,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="97"/>
         <CursorPos X="75" Y="161"/>
-        <UsageCount Value="100"/>
+        <UsageCount Value="106"/>
       </Unit>
       <Unit>
         <Filename Value="src/vscope_bin_file.pas"/>
@@ -108,8 +107,8 @@
         <EditorIndex Value="3"/>
         <WindowIndex Value="1"/>
         <TopLine Value="259"/>
-        <CursorPos X="33" Y="277"/>
-        <UsageCount Value="92"/>
+        <CursorPos X="18" Y="277"/>
+        <UsageCount Value="98"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -120,10 +119,35 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="5"/>
         <TopLine Value="49"/>
-        <CursorPos X="72" Y="61"/>
-        <UsageCount Value="24"/>
+        <CursorPos X="6" Y="61"/>
+        <UsageCount Value="30"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/form_wave_process.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmWaveProcess"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="98"/>
+        <CursorPos X="54" Y="120"/>
+        <UsageCount Value="26"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="src/wave_processing.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="5"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="60"/>
+        <CursorPos X="29" Y="82"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="extlib/ddgfx.pas"/>
@@ -138,13 +162,13 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="855"/>
         <CursorPos X="72" Y="894"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit>
       <Unit>
         <Filename Value="src/vscope_display.pas"/>
         <WindowIndex Value="1"/>
         <TopLine Value="1125"/>
-        <CursorPos X="53" Y="1160"/>
+        <CursorPos Y="1160"/>
         <UsageCount Value="100"/>
         <Bookmarks Count="3">
           <Item0 X="5" Y="1606" ID="3"/>
@@ -167,7 +191,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1260"/>
         <CursorPos X="47" Y="1334"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/2.2.4/lcl/graphics.pp"/>
@@ -175,21 +199,21 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1083"/>
         <CursorPos X="15" Y="1132"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/2.2.4/lcl/include/intfbasewinapi.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2098"/>
         <CursorPos X="3" Y="2103"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/2.2.4/lcl/include/winapih.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="212"/>
         <CursorPos X="10" Y="261"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/objpas/math.pp"/>
@@ -198,21 +222,21 @@
         <WindowIndex Value="1"/>
         <TopLine Value="103"/>
         <CursorPos X="8" Y="152"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/objpas/classes/classesh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="59"/>
         <CursorPos X="44" Y="101"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="10"/>
       </Unit>
       <Unit>
         <Filename Value="C:/lazarus/fpc/3.2.2/source/rtl/objpas/sysutils/sysstrh.inc"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <CursorPos X="29" Y="26"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/2.2.4/lcl/lcltype.pp"/>
@@ -220,7 +244,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="420"/>
         <CursorPos X="3" Y="438"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/objpas/sysutils/syshelp.inc"/>
@@ -228,16 +252,16 @@
         <WindowIndex Value="1"/>
         <TopLine Value="192"/>
         <CursorPos X="6" Y="325"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="extlib/jsontools.pas"/>
         <UnitName Value="JsonTools"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="578"/>
-        <CursorPos Y="620"/>
-        <UsageCount Value="42"/>
+        <TopLine Value="572"/>
+        <CursorPos X="4" Y="606"/>
+        <UsageCount Value="45"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -246,7 +270,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="89"/>
         <CursorPos X="20" Y="134"/>
-        <UsageCount Value="17"/>
+        <UsageCount Value="16"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/2.2.6/lcl/stdctrls.pp"/>
@@ -254,14 +278,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1277"/>
         <CursorPos Y="1322"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="15"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/2.2.6/lcl/include/wincontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="6139"/>
         <CursorPos X="3" Y="6144"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="15"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/2.2.6/lcl/lcltype.pp"/>
@@ -269,7 +293,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="414"/>
         <CursorPos X="15" Y="449"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit>
       <Unit>
         <Filename Value="C:/lazarus64/fpc/3.2.2/source/rtl/objpas/sysutils/sysstrh.inc"/>
@@ -277,14 +301,14 @@
         <WindowIndex Value="1"/>
         <TopLine Value="124"/>
         <CursorPos X="10" Y="167"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit>
       <Unit>
         <Filename Value="C:/lazarus64/fpc/3.2.2/source/rtl/objpas/sysutils/sysinth.inc"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <CursorPos X="3" Y="33"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit>
       <Unit>
         <Filename Value="/home/vitya/.lazarus/onlinepackagemanager/packages/bgrabitmap-master/bgrabitmap/bgrautf8.pas"/>
@@ -293,152 +317,164 @@
         <WindowIndex Value="1"/>
         <TopLine Value="243"/>
         <CursorPos X="45" Y="270"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/2.2.6/components/opengl/openglcontext.pas"/>
         <UnitName Value="OpenGLContext"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="82" Y="28"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="/home/vitya/.lazarus/onlinepackagemanager/packages/bgrabitmap-master/bgrabitmap/bgraunicode.pas"/>
         <UnitName Value="BGRAUnicode"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit>
       <Unit>
         <Filename Value="/home/vitya/.lazarus/onlinepackagemanager/packages/bgrabitmap-master/bgrabitmap/bgrabitmap.inc"/>
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="extlib/strparseobj.pas"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="1"/>
+        <CursorPos X="17" Y="60"/>
+        <UsageCount Value="12"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/objpas/sysutils/sysstr.inc"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="1"/>
+        <TopLine Value="1783"/>
+        <CursorPos X="3" Y="1789"/>
+        <UsageCount Value="11"/>
       </Unit>
     </Units>
     <OtherDefines Count="1">
       <Define0 Value="TRACES"/>
     </OtherDefines>
-    <JumpHistory HistoryIndex="29">
+    <General>
+      <ActiveWindowIndexAtStart Value="1"/>
+    </General>
+    <JumpHistory HistoryIndex="28">
       <Position>
-        <Filename Value="src/form_load_view.pas"/>
-        <Caret Line="77" Column="38" TopLine="49"/>
+        <Filename Value="src/wave_processing.pas"/>
+        <Caret Line="89" Column="21" TopLine="44"/>
+      </Position>
+      <Position>
+        <Filename Value="src/wave_processing.pas"/>
+        <Caret Line="124" Column="12" TopLine="44"/>
+      </Position>
+      <Position>
+        <Filename Value="src/wave_processing.pas"/>
+        <Caret Line="125" Column="9" TopLine="44"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="143" Column="18" TopLine="96"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="176" TopLine="96"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="16"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="171" TopLine="93"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="168" Column="46" TopLine="105"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="50" Column="24"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="159" TopLine="110"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="162" TopLine="110"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="134" TopLine="110"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="159" TopLine="106"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="162" TopLine="106"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="189" Column="55" TopLine="108"/>
+      </Position>
+      <Position>
+        <Filename Value="src/wave_processing.pas"/>
+        <Caret Line="32" Column="24" TopLine="6"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="31" Column="78"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="32" Column="78"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="35" Column="43"/>
+      </Position>
+      <Position>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="122" Column="42" TopLine="119"/>
       </Position>
       <Position>
         <Filename Value="src/form_main.pas"/>
-        <Caret Line="957" Column="65" TopLine="925"/>
+        <Caret Line="966" Column="50" TopLine="953"/>
       </Position>
       <Position>
         <Filename Value="src/form_main.pas"/>
-        <Caret Line="38" TopLine="38"/>
       </Position>
       <Position>
         <Filename Value="src/form_main.pas"/>
-        <Caret Line="1276" Column="68" TopLine="1217"/>
+        <Caret Line="735" Column="42" TopLine="695"/>
       </Position>
       <Position>
-        <Filename Value="src/vscope_display.pas"/>
-        <Caret Line="207" Column="14" TopLine="170"/>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="107" Column="43" TopLine="76"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="1276" Column="68" TopLine="1217"/>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="120" Column="22" TopLine="96"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="146" Column="51" TopLine="124"/>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="121" Column="22" TopLine="97"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="365" Column="59" TopLine="337"/>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="120" Column="22" TopLine="96"/>
       </Position>
       <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="188" Column="23" TopLine="133"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="680" Column="3" TopLine="678"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="240" Column="15" TopLine="203"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="1151" TopLine="1133"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="147" Column="24" TopLine="137"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_display.pas"/>
-        <Caret Line="1626" Column="58" TopLine="1610"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_data.pas"/>
-        <Caret Line="852" Column="42" TopLine="839"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_data.pas"/>
-        <Caret Line="2"/>
-      </Position>
-      <Position>
-        <Filename Value="extlib/jsontools.pas"/>
-        <Caret Line="890" Column="32" TopLine="868"/>
-      </Position>
-      <Position>
-        <Filename Value="extlib/jsontools.pas"/>
-        <Caret Line="703" TopLine="661"/>
-      </Position>
-      <Position>
-        <Filename Value="extlib/jsontools.pas"/>
-        <Caret Line="552" TopLine="510"/>
-      </Position>
-      <Position>
-        <Filename Value="extlib/jsontools.pas"/>
-        <Caret Line="577" TopLine="510"/>
-      </Position>
-      <Position>
-        <Filename Value="extlib/jsontools.pas"/>
-        <Caret Line="545" TopLine="510"/>
-      </Position>
-      <Position>
-        <Filename Value="extlib/jsontools.pas"/>
-        <Caret Line="620" TopLine="578"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_load_view.pas"/>
-        <Caret Line="61" Column="72" TopLine="49"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_display.pas"/>
-        <Caret Line="1163" Column="34" TopLine="1125"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_display.pas"/>
-        <Caret Line="1165" Column="38" TopLine="1125"/>
-      </Position>
-      <Position>
-        <Filename Value="src/vscope_display.pas"/>
-        <Caret Line="1185" Column="22" TopLine="1125"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="309" Column="57" TopLine="271"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="177" Column="22" TopLine="105"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="747" Column="18" TopLine="744"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_main.pas"/>
-        <Caret Line="290" Column="9" TopLine="248"/>
+        <Filename Value="src/form_wave_process.pas"/>
+        <Caret Line="119" Column="54" TopLine="97"/>
       </Position>
     </JumpHistory>
     <RunParams>
@@ -446,7 +482,7 @@
       <Modes ActiveMode="default">
         <Mode Name="default">
           <local>
-            <CommandLineParams Value="250225_092435_hi.bscope"/>
+            <CommandLineParams Value="250301_170029_hi.bscope"/>
           </local>
         </Mode>
       </Modes>
@@ -458,26 +494,26 @@
         <Item3 Value="/usr/bin/konsole -T &apos;Lazarus Run Output&apos; -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
         <Item4 Value="C:\Windows\system32\cmd.exe /C ${TargetCmdLine}"/>
       </List>
-      <List Name="CommandLineParameters" Count="17">
-        <Item1 Value="250225_092435_hi.bscope"/>
-        <Item2 Value="250225_104537_hix.bscope"/>
-        <Item3 Value="250221_125022_lo_0000.bscope"/>
-        <Item4 Value="ms_scope_0001.bscope"/>
-        <Item5 Value="scopex.vscope"/>
-        <Item6 Value="scopex.bscope"/>
-        <Item7 Value="ms_scope_0001b.bscope"/>
-        <Item8 Value="hs_scope_0001b.bscope"/>
-        <Item9 Value="hs_scope_0001.bscope"/>
-        <Item10 Value="hs_scope_0002.bscope"/>
-        <Item11 Value="hs_scope_0004.bscope"/>
-        <Item12 Value="accelerometer_fullspeed.vscope"/>
-        <Item13 Value="sonic108_full.vscope"/>
-        <Item14 Value="test.vscope"/>
-        <Item15 Value="test.vscopex"/>
-        <Item16 Value="wdttest.vscope"/>
-        <Item17 Value="ni_onephase.vscope"/>
+      <List Name="CommandLineParameters" Count="18">
+        <Item1 Value="250301_170029_hi.bscope"/>
+        <Item2 Value="250225_092435_hi.bscope"/>
+        <Item3 Value="250225_104537_hix.bscope"/>
+        <Item4 Value="250221_125022_lo_0000.bscope"/>
+        <Item5 Value="ms_scope_0001.bscope"/>
+        <Item6 Value="scopex.vscope"/>
+        <Item7 Value="scopex.bscope"/>
+        <Item8 Value="ms_scope_0001b.bscope"/>
+        <Item9 Value="hs_scope_0001b.bscope"/>
+        <Item10 Value="hs_scope_0001.bscope"/>
+        <Item11 Value="hs_scope_0002.bscope"/>
+        <Item12 Value="hs_scope_0004.bscope"/>
+        <Item13 Value="accelerometer_fullspeed.vscope"/>
+        <Item14 Value="sonic108_full.vscope"/>
+        <Item15 Value="test.vscope"/>
+        <Item16 Value="test.vscopex"/>
+        <Item17 Value="wdttest.vscope"/>
+        <Item18 Value="ni_onephase.vscope"/>
       </List>
-      <List Name="WorkingDirectory" Type="File" Count="1"/>
     </HistoryLists>
   </ProjectSession>
   <Debugging>

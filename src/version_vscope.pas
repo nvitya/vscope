@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.1.10';
+  VSCOPE_VERSION = '2.2.0';
 
 (* Version Log
 
+v2.2.0:
+  - Wave Processing: SCALE, OFFSET, MOVAVG
 v2.1.10:
   - Keeping proper abstime when cutting waves (ZERO_MICROTIME correction)
 v2.1.9:
