@@ -90,6 +90,7 @@ type
     procedure ProcessDataRecord();
 
     procedure Save(afilename : string; jroot : TJsonNode);
+    procedure BeginWrite(afilename : string; jroot : TJsonNode);
     function NewBlock(ablksize : cardinal) : PByte;
     procedure WriteCurBlock();
 
@@ -166,7 +167,7 @@ end;
 
 constructor TVscopeBinFile.Create;
 begin
-  SetLength(fbuf, 256 * 1024); // allocate a static data buffer
+  SetLength(fbuf, 128 * 1024); // allocate a static data buffer
   currec := TVscopeBinRec.Create;
   channels := [];
 end;
@@ -406,30 +407,10 @@ begin
 
 end;
 
-procedure TVscopeBinFile.Save(afilename : string; jroot : TJsonNode);
+procedure TVscopeBinFile.BeginWrite(afilename : string; jroot : TJsonNode);
 var
   s  : ansistring;
   pb : PByte;
-  wd : TWaveData;
-  ch : TVsBinFileChannel;
-  chidx : byte;
-  i : integer;
-  wremaining  : integer;
-  blkrembytes : integer;
-  blksamples  : integer;
-  smpidx, max_smpidx : integer;
-  smpidx_offs : integer;
-  v : double;
-  vint  : int32;
-  vuint : uint32;
-
-  remaining_channels : array of TVsBinFileChannel;
-  remaining_chidx    : array of byte;
-  saving_channels : array of TVsBinFileChannel;
-
-  frec_data : array of byte;
-  save_sample_width : byte;
-
 begin
   blklen := 65536;  // use 64k Blocks
 
@@ -449,6 +430,26 @@ begin
   pb := currec.CreateRecord(pb, 'J', length(s), length(s));
   move(s[1], pb^, length(s));
   WriteCurBlock();
+end;
+
+procedure TVscopeBinFile.Save(afilename : string; jroot : TJsonNode);
+var
+  s  : ansistring;
+  pb : PByte;
+  wd : TWaveData;
+  ch : TVsBinFileChannel;
+  chidx : byte;
+  wremaining  : integer;
+  blkrembytes : integer;
+  blksamples  : integer;
+  smpidx, max_smpidx : integer;
+  smpidx_offs : integer;
+  v : double;
+  vint  : int32;
+  vuint : uint32;
+begin
+
+  BeginWrite(afilename, jroot);
 
   // write the data blocks
 
