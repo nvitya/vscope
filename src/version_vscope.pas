@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.2.0';
+  VSCOPE_VERSION = '2.2.1';
 
 (* Version Log
 
+v2.2.1:
+  - .bscope saving in streaming format
 v2.2.0:
   - Wave Processing: SCALE, OFFSET, MOVAVG
 v2.1.10:

@@ -413,6 +413,7 @@ var
   wd : TWaveData;
   ch : TVsBinFileChannel;
   chidx : byte;
+  i : integer;
   wremaining  : integer;
   blkrembytes : integer;
   blksamples  : integer;
@@ -421,6 +422,14 @@ var
   v : double;
   vint  : int32;
   vuint : uint32;
+
+  remaining_channels : array of TVsBinFileChannel;
+  remaining_chidx    : array of byte;
+  saving_channels : array of TVsBinFileChannel;
+
+  frec_data : array of byte;
+  save_sample_width : byte;
+
 begin
   blklen := 65536;  // use 64k Blocks
 
@@ -442,37 +451,76 @@ begin
   WriteCurBlock();
 
   // write the data blocks
+
+  // Write all waves with the same sample counts parallel in streaming format
+
+  remaining_channels := [];
+  remaining_chidx := [];
   chidx := 0;
   for ch in channels do
   begin
     wd := ch.wd;
-    smpidx := 0;
-    smpidx_offs := 0;  // does not matter here anymore
-
     ch.datalen  := wd.bin_storage_type and $F;
     ch.issigned := ((wd.bin_storage_type and $F0) = $10);
     ch.isfloat  := ((wd.bin_storage_type and $F0) = $20);
 
-    wremaining := length(wd.data);
+    insert(ch, remaining_channels, length(remaining_channels));
+    insert(chidx, remaining_chidx, length(remaining_chidx));
+
+    inc(chidx);
+  end;
+
+  while length(remaining_channels) > 0 do
+  begin
+    // 1. collect the channels with same sample counts
+    i := 0;
+    saving_channels := [];
+    frec_data := [];
+    save_sample_width := 0;
+    while i < length(remaining_channels) do
+    begin
+      ch := remaining_channels[i];
+      wd := ch.wd;
+      if (length(saving_channels) = 0) or (length(wd.data) = length(saving_channels[0].wd.data)) then
+      begin
+        insert(ch, saving_channels, length(saving_channels));
+
+        save_sample_width += wd.bin_storage_type and $F;
+
+        insert($C0 + remaining_chidx[i], frec_data, length(frec_data));
+        insert(wd.bin_storage_type, frec_data, length(frec_data));
+
+        delete(remaining_channels, i, 1);
+        delete(remaining_chidx, i, 1);
+      end
+      else
+      begin
+        inc(i);
+      end;
+    end;
+
+    // 2. save the saving_channels parallel
+    smpidx := 0;
+    smpidx_offs := 0;  // does not matter here anymore
+
+    wremaining := length(saving_channels[0].wd.data);
     while wremaining > 0 do
     begin
       pb := NewBlock(blklen);
-      pb := currec.CreateRecord(pb, 'F', 2, 1);  // 2 bytes, 1 channel only
 
-      pb^ := $C0 + chidx;
-      pb += 1;
-      pb^ := wd.bin_storage_type; // format: double
-      pb += 1;
-
-      pb += 6; // skip the padding up to the 64 bit
+      // write the F-Record
+      pb := currec.CreateRecord(pb, 'F', length(frec_data), length(frec_data) div 2);
+      move(frec_data[0], pb^, length(frec_data));
+      pb += length(frec_data);
+      // pad up to 64-bits (8 bytes)
+      pb += ((8 - (length(frec_data) and 7)) and 7);
 
       // the D-Record has a 16 byte header
-
       blkrembytes := blkend - pb - 16;
-      blksamples  := blkrembytes div ch.datalen;
+      blksamples  := blkrembytes div save_sample_width;
       if blksamples > wremaining then blksamples := wremaining;
 
-      pb := currec.CreateRecord(pb, 'D', blksamples * ch.datalen, ch.datalen);
+      pb := currec.CreateRecord(pb, 'D', blksamples * save_sample_width, save_sample_width);
       PUint32(pb + 0)^ := blksamples;
       PUint32(pb + 4)^ := smpidx - smpidx_offs;
       pb += 8;
@@ -480,32 +528,36 @@ begin
       max_smpidx := smpidx + blksamples;
       while smpidx < max_smpidx do
       begin
-        v := wd.data[smpidx] / wd.raw_data_scale;
-        if ch.isfloat then
+        for ch in saving_channels do
         begin
-          if 8 = ch.datalen then PDouble(pb)^ := v
-                            else PSingle(pb)^ := v;
-        end
-        else
-        begin
-          if ch.issigned then
+          wd := ch.wd;
+          v := wd.data[smpidx] / wd.raw_data_scale;
+          if ch.isfloat then
           begin
-            vint := round(v);
-            if      2 = ch.datalen then PInt16(pb)^ := vint
-            else if 4 = ch.datalen then PInt32(pb)^ := vint
-            else if 8 = ch.datalen then PInt64(pb)^ := vint
-                                   else PInt8(pb)^  := vint;
+            if 8 = ch.datalen then PDouble(pb)^ := v
+                              else PSingle(pb)^ := v;
           end
           else
           begin
-            vuint := round(v);
-            if      2 = ch.datalen then PUInt16(pb)^ := vuint
-            else if 4 = ch.datalen then PUInt32(pb)^ := vuint
-            else if 8 = ch.datalen then PUInt64(pb)^ := vuint
-                                   else PUInt8(pb)^  := vuint;
+            if ch.issigned then
+            begin
+              vint := round(v);
+              if      2 = ch.datalen then PInt16(pb)^ := vint
+              else if 4 = ch.datalen then PInt32(pb)^ := vint
+              else if 8 = ch.datalen then PInt64(pb)^ := vint
+                                     else PInt8(pb)^  := vint;
+            end
+            else
+            begin
+              vuint := round(v);
+              if      2 = ch.datalen then PUInt16(pb)^ := vuint
+              else if 4 = ch.datalen then PUInt32(pb)^ := vuint
+              else if 8 = ch.datalen then PUInt64(pb)^ := vuint
+                                     else PUInt8(pb)^  := vuint;
+            end;
           end;
+          pb += ch.datalen;
         end;
-        pb += ch.datalen;
         inc(smpidx);
       end;
 
@@ -515,8 +567,8 @@ begin
 
       wremaining -= blksamples;
     end;
-    inc(chidx);
-  end;
+
+  end;  // while remaining channels
 
   Close;
 end;
