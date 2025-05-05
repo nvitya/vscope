@@ -434,7 +434,7 @@ end;
 
 procedure TVscopeBinFile.Save(afilename : string; jroot : TJsonNode);
 var
-  s  : ansistring;
+  i  : integer;
   pb : PByte;
   wd : TWaveData;
   ch : TVsBinFileChannel;
@@ -447,6 +447,12 @@ var
   v : double;
   vint  : int32;
   vuint : uint32;
+
+  save_sample_width  : byte;
+  remaining_channels : array of TVsBinFileChannel;
+  saving_channels    : array of TVsBinFileChannel;
+  remaining_chidx    : array of byte;
+  frec_data          : array of byte;
 begin
 
   BeginWrite(afilename, jroot);
