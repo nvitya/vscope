@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.2.1';
+  VSCOPE_VERSION = '2.2.2';
 
 (* Version Log
 
+v2.2.2:
+  - Update the scale display after autoscaling
 v2.2.1:
   - .bscope saving in streaming format
 v2.2.0:

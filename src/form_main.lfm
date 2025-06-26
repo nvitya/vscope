@@ -13,7 +13,7 @@ object frmMain: TfrmMain
   OnDropFiles = FormDropFiles
   OnKeyDown = FormKeyDown
   Position = poScreenCenter
-  LCLVersion = '3.8.0.0'
+  LCLVersion = '3.4.0.0'
   object tbMain: TToolBar
     Left = 0
     Height = 26

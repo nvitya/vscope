@@ -1107,6 +1107,7 @@ begin
   scope.AutoScale;
   scope.RenderWaves;
   scope.Repaint;
+  UpdateChGrid;
 end;
 
 procedure TfrmMain.chgridSelection(Sender : TObject; aCol, aRow : Integer);
