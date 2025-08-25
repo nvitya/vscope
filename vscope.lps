@@ -7,7 +7,7 @@
       <Unit>
         <Filename Value="vscope.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="26" Y="27"/>
+        <CursorPos X="111" Y="30"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit>
@@ -17,10 +17,9 @@
         <ComponentName Value="frmMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="1105"/>
-        <CursorPos X="16" Y="1110"/>
+        <CursorPos X="68" Y="1130"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -34,7 +33,7 @@
         <EditorIndex Value="3"/>
         <TopLine Value="85"/>
         <CursorPos X="6" Y="107"/>
-        <UsageCount Value="148"/>
+        <UsageCount Value="149"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -47,14 +46,15 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <CursorPos X="3" Y="9"/>
-        <UsageCount Value="145"/>
+        <UsageCount Value="146"/>
       </Unit>
       <Unit>
         <Filename Value="src/version_vscope.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <CursorPos X="47" Y="13"/>
-        <UsageCount Value="143"/>
+        <CursorPos X="55" Y="13"/>
+        <UsageCount Value="144"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -64,7 +64,7 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="41"/>
-        <UsageCount Value="143"/>
+        <UsageCount Value="144"/>
       </Unit>
       <Unit>
         <Filename Value="src/form_measure_ab.pas"/>
@@ -75,7 +75,7 @@
         <EditorIndex Value="2"/>
         <TopLine Value="33"/>
         <CursorPos X="41" Y="92"/>
-        <UsageCount Value="137"/>
+        <UsageCount Value="138"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -86,8 +86,8 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="6"/>
         <TopLine Value="81"/>
-        <CursorPos X="102" Y="119"/>
-        <UsageCount Value="125"/>
+        <CursorPos X="8" Y="119"/>
+        <UsageCount Value="126"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -100,16 +100,17 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="97"/>
         <CursorPos X="75" Y="161"/>
-        <UsageCount Value="106"/>
+        <UsageCount Value="107"/>
       </Unit>
       <Unit>
         <Filename Value="src/vscope_bin_file.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="429"/>
-        <CursorPos Y="437"/>
-        <UsageCount Value="98"/>
+        <TopLine Value="272"/>
+        <CursorPos X="35" Y="319"/>
+        <UsageCount Value="99"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -121,7 +122,7 @@
         <EditorIndex Value="5"/>
         <TopLine Value="36"/>
         <CursorPos X="6" Y="61"/>
-        <UsageCount Value="30"/>
+        <UsageCount Value="31"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -134,8 +135,8 @@
         <EditorIndex Value="6"/>
         <WindowIndex Value="1"/>
         <TopLine Value="116"/>
-        <CursorPos X="54" Y="120"/>
-        <UsageCount Value="26"/>
+        <CursorPos X="46" Y="130"/>
+        <UsageCount Value="27"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -145,8 +146,8 @@
         <EditorIndex Value="5"/>
         <WindowIndex Value="1"/>
         <TopLine Value="60"/>
-        <CursorPos X="29" Y="82"/>
-        <UsageCount Value="24"/>
+        <CursorPos Y="82"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -361,22 +362,6 @@
     <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="src/form_wave_process.pas"/>
-        <Caret Line="176" TopLine="96"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_wave_process.pas"/>
-        <Caret Line="16"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_wave_process.pas"/>
-        <Caret Line="171" TopLine="93"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_wave_process.pas"/>
-        <Caret Line="168" Column="46" TopLine="105"/>
-      </Position>
-      <Position>
-        <Filename Value="src/form_wave_process.pas"/>
         <Caret Line="50" Column="24"/>
       </Position>
       <Position>
@@ -477,6 +462,22 @@
       <Position>
         <Filename Value="src/form_main.pas"/>
         <Caret Line="160" Column="34" TopLine="120"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_bin_file.pas"/>
+        <Caret Line="454" Column="58" TopLine="429"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_bin_file.pas"/>
+        <Caret Line="84" Column="21" TopLine="49"/>
+      </Position>
+      <Position>
+        <Filename Value="src/vscope_bin_file.pas"/>
+        <Caret Line="381" Column="3" TopLine="376"/>
+      </Position>
+      <Position>
+        <Filename Value="vscope.lpr"/>
+        <Caret Line="31" Column="87"/>
       </Position>
     </JumpHistory>
     <RunParams>

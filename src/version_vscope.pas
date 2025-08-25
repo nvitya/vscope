@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.2.2';
+  VSCOPE_VERSION = '2.2.3';
 
 (* Version Log
 
+v2.2.3:
+  - Faster big bscope loading by estimating the final wave length
 v2.2.2:
   - Update the scale display after autoscaling
 v2.2.1:

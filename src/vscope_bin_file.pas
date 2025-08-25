@@ -53,6 +53,7 @@ type
   TVscopeBinFile = class
   public
     filename  : string;
+    filebytesize : int64;
 
     fbuf      : array of byte;  // local buffer
     fbinfile  : File;
@@ -88,6 +89,8 @@ type
 
     procedure ProcessFRecord();
     procedure ProcessDataRecord();
+
+    function GetInitialDataLength() : integer;
 
     procedure Save(afilename : string; jroot : TJsonNode);
     procedure BeginWrite(afilename : string; jroot : TJsonNode);
@@ -325,7 +328,7 @@ begin
       wd := ch.wd;
       if ch.fillpos >= length(wd.data) then
       begin
-        if length(wd.data) = 0 then SetLength(wd.data, 1000000)  // start with one millione
+        if length(wd.data) = 0 then SetLength(wd.data, GetInitialDataLength())  // try to estimate the maximal length to avoid to much copiing
                                else SetLength(wd.data, length(wd.data) * 2); // double it
       end;
       wd.data[ch.fillpos] := v * wd.raw_data_scale;
@@ -338,12 +341,23 @@ begin
   end; // while
 end;
 
+function TVscopeBinFile.GetInitialDataLength() : integer;
+var
+  samples_per_block : uint32;
+  block_count : uint32;
+begin
+  samples_per_block := PUint32(currec.dataptr)^;   // sample count
+  block_count := 1 + filebytesize div currec.bytelen;
+  result := block_count * samples_per_block;
+end;
+
 procedure TVscopeBinFile.Open(afilename : string);
 begin
   System.Assign(fbinfile, afilename);
   Reset(fbinfile, 1);
   fopened := true;
   fbpos := FilePos(fbinfile);
+  filebytesize := FileSize(fbinfile);
 
   if not ReadNextBlock() then
   begin
