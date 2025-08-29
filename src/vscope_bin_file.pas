@@ -55,11 +55,16 @@ type
     filename  : string;
     filebytesize : int64;
 
+    fbuf_start_file_pos : int64;
+    fbuf_size     : uint32;  // larger read-ahead buffer
+    fbuf_fill     : uint32;
+    fbuf_pos      : uint32;
+    fbuf_next_block_pos : uint32;
+
     fbuf      : array of byte;  // local buffer
     fbinfile  : File;
     fopened   : boolean;
-    fbpos     : int64;
-    blkpos    : integer;
+
     blklen    : uint32;  // in bytes
     blkend    : PByte;
 
@@ -79,11 +84,16 @@ type
     procedure Open(afilename : string);
     procedure Close;
 
+    procedure SetFbufSize(asize : uint32);
+
     procedure ClearWaves;
     procedure AddWave(awave : TWaveData);
 
     procedure LoadWaveData();
 
+    procedure ReFillFbuf();
+    function FbufRemaining() : integer;
+    function FileRemaining() : int64;
     function ReadNextBlock() : boolean;
     function NextRecord() : boolean;
 
@@ -170,9 +180,11 @@ end;
 
 constructor TVscopeBinFile.Create;
 begin
-  SetLength(fbuf, 128 * 1024); // allocate a static data buffer
   currec := TVscopeBinRec.Create;
   channels := [];
+  SetFbufSize(1 * 1024 * 1024);
+  fbuf_pos := 0;
+  fbuf_next_block_pos := 0;
 end;
 
 destructor TVscopeBinFile.Destroy;
@@ -182,19 +194,58 @@ begin
   inherited Destroy;
 end;
 
+procedure TVscopeBinFile.ReFillFbuf();
+var
+  rlen : integer = 0;
+begin
+  fbuf_start_file_pos += fbuf_pos;
+
+  if fbuf_fill - fbuf_pos > 0 then
+  begin
+    move(fbuf[fbuf_pos], fbuf[0], fbuf_fill - fbuf_pos);
+    fbuf_fill := fbuf_pos;
+    fbuf_pos := 0;
+  end
+  else
+  begin
+    fbuf_fill := 0;
+    fbuf_pos := 0;
+  end;
+
+  BlockRead(fbinfile, fbuf[fbuf_pos], fbuf_size - fbuf_fill, rlen);
+  if rlen > 0 then
+  begin
+    fbuf_fill += rlen;
+  end;
+end;
+
+function TVscopeBinFile.FbufRemaining() : integer;
+begin
+  result := fbuf_fill - fbuf_pos;
+end;
+
+function TVscopeBinFile.FileRemaining() : int64;
+begin
+  result := filebytesize - fbuf_start_file_pos - fbuf_pos;
+end;
+
 function TVscopeBinFile.ReadNextBlock : boolean;
 var
-  rlen : integer;
   pu32 : PUint32;
 begin
   result := false;
 
-  System.Seek(fbinfile, fbpos);
-  rlen := 0;
-  BlockRead(fbinfile, fbuf[0], 8, rlen);
+  fbuf_pos := fbuf_next_block_pos;
+
+  if FileRemaining() < 48 then EXIT;  // end of file reached
+
+  if FbufRemaining() < 48 then
+  begin
+    ReFillFbuf();  // changes the fbuf_pos!
+  end;
 
   // check for the 'VSBK' = $4B425356 marker
-  pu32 := PUint32(@fbuf[0]);
+  pu32 := PUint32(@fbuf[fbuf_pos]);
   if pu32^ <> bscope_block_marker then // = 'VSBK' ?
   begin
     EXIT;
@@ -203,33 +254,29 @@ begin
   // check block length
   inc(pu32);
   blklen := pu32^ shl 3; // get the length in bytes
-  if (blklen > length(fbuf)) or (blklen < 16) then
+  if (blklen > FileRemaining()) or (blklen < 16) then
   begin
-    EXIT;
+    EXIT
+  end;
+  if blklen > FbufRemaining() then
+  begin
+    ReFillFbuf();
+    if blklen > FbufRemaining() then EXIT;  // should not happen
   end;
 
-  System.Seek(fbinfile, fbpos); // go back to block begin again
-  BlockRead(fbinfile, fbuf[0], blklen, rlen);
-  if rlen <> blklen then
-  begin
-    EXIT;
-  end;
+  fbuf_next_block_pos := fbuf_pos + blklen;
+  blkend := @fbuf[fbuf_next_block_pos]; // mark the end
 
-  fbpos := FilePos(fbinfile); // update the file position for the next block
-
-  blkend := @fbuf[blklen]; // mark the end
-
+  // there must be at least one record !
   currec.startptr := nil;
   result := NextRecord();
-
-  result := true;
 end;
 
 function TVscopeBinFile.NextRecord : boolean;
 begin
   if currec.startptr = nil then // get the first record
   begin
-    result := currec.ReadRecord(@fbuf[8], blkend);
+    result := currec.ReadRecord(@fbuf[fbuf_pos + 8], blkend);
   end
   else
   begin
@@ -356,8 +403,10 @@ begin
   System.Assign(fbinfile, afilename);
   Reset(fbinfile, 1);
   fopened := true;
-  fbpos := FilePos(fbinfile);
   filebytesize := FileSize(fbinfile);
+  fbuf_fill := 0;
+  fbuf_next_block_pos := 0;
+  fbuf_start_file_pos := 0;
 
   if not ReadNextBlock() then
   begin
@@ -369,6 +418,13 @@ procedure TVscopeBinFile.Close;
 begin
   if fopened then System.Close(fbinfile);
   fopened := false;
+end;
+
+procedure TVscopeBinFile.SetFbufSize(asize : uint32);
+begin
+  fbuf_size := asize;
+  if fbuf_size < 64 * 1024 then fbuf_size := 64 * 1024;
+  SetLength(fbuf, fbuf_size);
 end;
 
 procedure TVscopeBinFile.ClearWaves;
@@ -418,7 +474,6 @@ begin
     wd := ch.wd;
     if length(wd.data) <> ch.fillpos then SetLength(wd.data, ch.fillpos);
   end;
-
 end;
 
 procedure TVscopeBinFile.BeginWrite(afilename : string; jroot : TJsonNode);
@@ -431,7 +486,6 @@ begin
   System.Assign(fbinfile, afilename);
   Rewrite(fbinfile, 1);
   fopened := true;
-  fbpos := FilePos(fbinfile);
 
   // write the J-Block (always the first)
 

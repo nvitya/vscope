@@ -5,10 +5,12 @@ unit version_vscope;
 interface
 
 const
-  VSCOPE_VERSION = '2.2.3';
+  VSCOPE_VERSION = '2.2.4';
 
 (* Version Log
 
+v2.2.4:
+  - Loading bigger blocks from the disk 1M by default
 v2.2.3:
   - Faster big bscope loading by estimating the final wave length
 v2.2.2:
